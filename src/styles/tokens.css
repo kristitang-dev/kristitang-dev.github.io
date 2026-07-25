@@ -1,0 +1,31 @@
+:root {
+  /* Grey */
+  --grey-900: #1a1a1f;
+  --grey-700: #4a4a52;
+  --grey-500: #7a7a85;
+  --grey-300: #c8c8ce;
+  --grey-100: #f2f2f4;
+
+  /* Blue */
+  --blue-600: #2b4c7e;
+  --blue-900: #0f1b2e;
+
+  /* Red */
+  --red-500: #d63b3b;
+  --red-700: #a82e2e;
+
+  /* Typography */
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Spotlight */
+  --spot-radius: 200px;
+  --spot-x: 50%;
+  --spot-y: 50%;
+
+  /* Layout */
+  --hero-split: 40%;
+  --section-padding: clamp(1.5rem, 4vw, 4rem);
+  --max-width: 1200px;
+}

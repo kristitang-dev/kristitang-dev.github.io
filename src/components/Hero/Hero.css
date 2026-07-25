@@ -1,0 +1,121 @@
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  cursor: crosshair;
+  --spot-x: 50%;
+  --spot-y: 50%;
+  --spot-radius: 200px;
+}
+
+.hero__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Blueprint layer — always visible, grayscale draft state */
+.hero__layer--blueprint {
+  z-index: 1;
+  background-color: var(--grey-100);
+  filter: grayscale(1) contrast(1.05);
+}
+
+.hero__layer--blueprint::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grey-300) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grey-300) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.hero__layer--blueprint .isometric-scene {
+  --grid-color: #b0b0b8;
+}
+
+/* Reality layer — full color, revealed by spotlight mask */
+.hero__layer--reality {
+  z-index: 2;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    circle var(--spot-radius) at var(--spot-x) var(--spot-y),
+    black 0%,
+    black 60%,
+    rgba(0, 0, 0, 0.4) 80%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--spot-radius) at var(--spot-x) var(--spot-y),
+    black 0%,
+    black 60%,
+    rgba(0, 0, 0, 0.4) 80%,
+    transparent 100%
+  );
+}
+
+.hero__layer--reality .hero-placeholder__block {
+  opacity: 0.15;
+}
+
+.hero__layer--reality .hero-placeholder__block--title {
+  background-color: var(--red-500);
+  opacity: 0.2;
+}
+
+.hero__layer--reality .hero-placeholder__block--tagline {
+  background-color: var(--blue-600);
+  opacity: 0.25;
+}
+
+/* Scroll hint */
+.hero__scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.hero__scroll-line {
+  display: block;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--grey-500), transparent);
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+
+@keyframes scroll-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scaleY(0.8);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scaleY(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    --spot-radius: 160px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll-line {
+    animation: none;
+  }
+}

@@ -1,0 +1,100 @@
+.hero-content {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.hero-content__left {
+  flex: 0 0 var(--hero-split);
+  display: flex;
+  align-items: center;
+  padding: var(--section-padding);
+  padding-top: calc(var(--section-padding) + 3rem);
+}
+
+.hero-content__right {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: var(--section-padding);
+  padding-bottom: clamp(2rem, 6vh, 4rem);
+  overflow: hidden;
+}
+
+/* Placeholder blocks for future typography */
+.hero-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 320px;
+}
+
+.hero-placeholder__block {
+  background-color: var(--grey-300);
+  border-radius: 2px;
+  opacity: 0.35;
+}
+
+.hero-placeholder__block--title {
+  height: 2.75rem;
+  width: 85%;
+}
+
+.hero-placeholder__block--subtitle {
+  height: 1rem;
+  width: 55%;
+}
+
+.hero-placeholder__block--tagline {
+  height: 1.25rem;
+  width: 70%;
+  margin-top: 0.5rem;
+}
+
+.hero-placeholder__block--line {
+  height: 0.625rem;
+  width: 90%;
+  margin-top: 1.5rem;
+}
+
+.hero-placeholder__block--short {
+  width: 60%;
+}
+
+/* Isometric scene */
+.isometric-scene {
+  width: min(90%, 560px);
+  height: auto;
+  color: var(--grey-500);
+}
+
+.chair-anchor {
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .hero-content {
+    flex-direction: column;
+  }
+
+  .hero-content__left {
+    flex: none;
+    padding-top: calc(var(--section-padding) + 4rem);
+    min-height: 35vh;
+  }
+
+  .hero-content__right {
+    flex: 1;
+    min-height: 45vh;
+    align-items: flex-end;
+    justify-content: center;
+    padding-top: 0;
+  }
+
+  .isometric-scene {
+    width: min(95%, 420px);
+  }
+}
