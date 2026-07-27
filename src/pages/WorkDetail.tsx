@@ -1,0 +1,37 @@
+import { Navigate, useParams } from 'react-router-dom'
+import { useEffect } from 'react'
+import { DetailPage } from '../components/DetailPage/DetailPage'
+import { getWorkById } from '../data/work'
+
+export function WorkDetail() {
+  const { id } = useParams<{ id: string }>()
+  const item = id ? getWorkById(id) : undefined
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [id])
+
+  if (!item) {
+    return <Navigate to="/" replace />
+  }
+
+  return (
+    <DetailPage
+      backTo="/"
+      backLabel="Back to Work"
+      backState={{ scrollTo: 'work' }}
+      eyebrow={item.categoryLabel}
+      title={item.title}
+      subtitle={item.subtitle}
+      meta={[item.period, item.type, item.tools.join(' · ')]}
+      image={item.image}
+      imageAlt={item.title}
+      body={item.body}
+      gallery={item.gallery}
+      tags={item.tags}
+      externalLink={
+        item.link ? { href: item.link, label: 'External link' } : undefined
+      }
+    />
+  )
+}

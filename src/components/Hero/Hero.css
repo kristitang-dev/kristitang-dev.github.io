@@ -16,7 +16,7 @@
   height: 100%;
 }
 
-/* Blueprint layer — always visible, grayscale draft state */
+/* Blueprint layer — grayscale draft for text / background */
 .hero__layer--blueprint {
   z-index: 1;
   background-color: var(--grey-100);
@@ -35,45 +35,57 @@
   pointer-events: none;
 }
 
-.hero__layer--blueprint .isometric-scene {
-  --grid-color: #b0b0b8;
-}
-
-/* Reality layer — full color, revealed by spotlight mask */
+/* Reality layer — blue spotlight on words only (transparent bg) */
 .hero__layer--reality {
   z-index: 2;
+  background-color: transparent;
   pointer-events: none;
   -webkit-mask-image: radial-gradient(
     circle var(--spot-radius) at var(--spot-x) var(--spot-y),
     black 0%,
-    black 60%,
-    rgba(0, 0, 0, 0.4) 80%,
+    black 55%,
+    rgba(0, 0, 0, 0.45) 78%,
     transparent 100%
   );
   mask-image: radial-gradient(
     circle var(--spot-radius) at var(--spot-x) var(--spot-y),
     black 0%,
-    black 60%,
-    rgba(0, 0, 0, 0.4) 80%,
+    black 55%,
+    rgba(0, 0, 0, 0.45) 78%,
     transparent 100%
   );
 }
 
-.hero__layer--reality .hero-placeholder__block {
-  opacity: 0.15;
+/* Lit text: blue light — except Matter & Medium stay red */
+.hero__layer--reality .hero-copy__name,
+.hero__layer--reality .hero-copy__title,
+.hero__layer--reality .hero-copy__tagline {
+  color: #3d6ea8;
+  text-shadow:
+    0 0 12px rgba(61, 110, 168, 0.35),
+    0 0 28px rgba(61, 110, 168, 0.2);
 }
 
-.hero__layer--reality .hero-placeholder__block--title {
-  background-color: var(--red-500);
-  opacity: 0.2;
+.hero__layer--reality .hero-copy__tagline em {
+  color: var(--red-500);
+  text-shadow:
+    0 0 12px rgba(214, 59, 59, 0.4),
+    0 0 24px rgba(214, 59, 59, 0.2);
 }
 
-.hero__layer--reality .hero-placeholder__block--tagline {
-  background-color: var(--blue-600);
-  opacity: 0.25;
+/* Full-color scene sits above the spotlight layers */
+.hero__scene-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: var(--section-padding);
+  padding-bottom: clamp(1.5rem, 4vh, 3rem);
+  pointer-events: none;
 }
 
-/* Scroll hint */
 .hero__scroll-hint {
   position: absolute;
   bottom: 2rem;
@@ -110,7 +122,13 @@
 
 @media (max-width: 768px) {
   .hero {
-    --spot-radius: 160px;
+    --spot-radius: 140px;
+  }
+
+  .hero__scene-layer {
+    align-items: flex-end;
+    justify-content: center;
+    padding-top: 0;
   }
 }
 

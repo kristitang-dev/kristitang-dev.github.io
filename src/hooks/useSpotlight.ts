@@ -59,7 +59,6 @@ export function useSpotlight(
 
     snapToAnchor()
 
-    // Ensure layout is complete before first snap
     requestAnimationFrame(() => {
       requestAnimationFrame(snapToAnchor)
     })

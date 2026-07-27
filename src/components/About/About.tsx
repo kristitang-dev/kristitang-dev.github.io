@@ -1,3 +1,4 @@
+import { site } from '../../data/site'
 import './About.css'
 
 export function About() {
@@ -11,19 +12,27 @@ export function About() {
 
         <div className="about__grid">
           <div className="about__portrait">
-            <div className="about__portrait-placeholder" aria-hidden="true" />
+            <img
+              src="/images/about.jpg"
+              alt={`${site.name}`}
+              className="about__portrait-img"
+            />
           </div>
 
           <div className="about__text">
-            <div className="about__placeholder-block about__placeholder-block--heading" />
-            <div className="about__placeholder-block" />
-            <div className="about__placeholder-block" />
-            <div className="about__placeholder-block about__placeholder-block--short" />
+            <p className="about__lead">{site.about.lead}</p>
+            {site.about.body.map((paragraph) => (
+              <p key={paragraph} className="about__body">
+                {paragraph}
+              </p>
+            ))}
 
             <div className="about__tags">
-              <span className="about__tag">placeholder</span>
-              <span className="about__tag">tag</span>
-              <span className="about__tag">skills</span>
+              {site.about.skills.map((skill) => (
+                <span key={skill} className="about__tag">
+                  {skill}
+                </span>
+              ))}
             </div>
           </div>
         </div>

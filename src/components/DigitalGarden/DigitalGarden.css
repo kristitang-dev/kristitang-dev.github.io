@@ -1,0 +1,145 @@
+.garden {
+  background-color: #fafaf8;
+  padding: clamp(4rem, 10vh, 8rem) var(--section-padding);
+}
+
+.garden__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.garden__header {
+  margin-bottom: 3rem;
+  max-width: 46ch;
+}
+
+.garden__eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue-600);
+  margin-bottom: 0.5rem;
+}
+
+.garden__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 400;
+  color: var(--grey-900);
+  margin-bottom: 0.75rem;
+}
+
+.garden__intro {
+  color: var(--grey-700);
+  line-height: 1.65;
+}
+
+.garden__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+
+.garden-card {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+}
+
+.garden-card--text {
+  background: white;
+  border: 1px solid var(--grey-300);
+  padding: 1.5rem;
+  justify-content: flex-end;
+  min-height: 220px;
+}
+
+.garden-card__media {
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  margin-bottom: 1rem;
+  background: var(--grey-300);
+}
+
+.garden-card__media-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.garden-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s ease;
+}
+
+.garden-card__media-link:hover .garden-card__image {
+  transform: scale(1.03);
+}
+
+.garden-card__kind {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+  margin-bottom: 0.4rem;
+}
+
+.garden-card__title {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--grey-900);
+  margin-bottom: 0.5rem;
+}
+
+.garden-card__title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.garden-card__title a:hover {
+  color: var(--red-500);
+}
+
+.garden-card__desc {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--grey-700);
+}
+
+.garden-card__link {
+  display: inline-block;
+  margin-top: 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--red-500);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(214, 59, 59, 0.35);
+  padding-bottom: 0.1rem;
+}
+
+.garden-card__link:hover {
+  color: var(--red-700);
+  border-bottom-color: var(--red-700);
+}
+
+@media (max-width: 900px) {
+  .garden-card {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 600px) {
+  .garden-card {
+    grid-column: span 12;
+  }
+}

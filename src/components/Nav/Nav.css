@@ -51,6 +51,10 @@
   color: var(--grey-700);
   text-decoration: none;
   transition: color 0.2s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .nav__link:hover {
