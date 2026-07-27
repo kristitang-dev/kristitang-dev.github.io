@@ -45,10 +45,12 @@ export const researchItems: ResearchItem[] = [
       'Physical scale models exploring platform framing systems — translating structural logic into tangible form at ten-to-one.',
     tags: ['Physical Model', 'Structural Systems', 'Wood Construction'],
     status: 'ready',
+    image: '/images/timberhouse.png',
     body: [
       'Placeholder — detail page for the 1:10 platform framing models. Add process photos, joinery notes, and structural learnings here.',
       'Expand with construction sequence and material decisions.',
     ],
+    gallery: ['/images/timberhouse_breakdown.png'],
   },
 ]
 
