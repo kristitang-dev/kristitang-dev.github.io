@@ -39,24 +39,24 @@ export const gardenEntries: GardenEntry[] = [
     gallery: ['/images/citylife.jpg'],
   },
   {
-    id: 'breath',
-    title: 'Breath',
-    kind: 'photography',
-    description:
-      'To me, Chinese countryside always carries a quiet loneliness, a sense of being left behind by time, by progress. Even in some shared moments, that feeling still lingers.',
-    image: '/images/breath.jpg',
-    body: [
-      'Placeholder — Breath detail. Add selected countryside frames and short captions here.',
-    ],
-    gallery: ['/images/breath.jpg'],
-  },
-  {
     id: 'gaze',
     title: 'Gaze',
     kind: 'photography',
     description:
       'A photograph is never just one gaze. \n It might be the subject looking outward, \nand me looking at them.  \nAnd sometimes, we are looking at each other. ',
     image: '/images/gaze.jpg',
+    body: [
+      'Placeholder — Breath detail. Add selected countryside frames and short captions here.',
+    ],
+    gallery: ['/images/mother.jpg'],
+  },
+  {
+    id: 'breath',
+    title: 'Breath',
+    kind: 'photography',
+    description:
+      'To me, Chinese countryside always carries a quiet loneliness, a sense of being left behind by time, by progress. Even in some shared moments, that feeling still lingers.',
+    image: '/images/breath.jpg',
     body: [
       'Placeholder — Breath detail. Add selected countryside frames and short captions here.',
     ],
