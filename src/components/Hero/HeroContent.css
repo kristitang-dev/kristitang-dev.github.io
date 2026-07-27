@@ -11,6 +11,9 @@
   align-items: center;
   padding: var(--section-padding);
   padding-top: calc(var(--section-padding) + 3rem);
+  /* Push copy toward page center while staying in the left half */
+  padding-left: clamp(4.5rem, 14vw, 11rem);
+  justify-content: flex-end;
 }
 
 .hero-content__right {
@@ -106,8 +109,10 @@
   .hero-content__left {
     flex: none;
     padding-top: calc(var(--section-padding) + 4rem);
+    padding-left: clamp(1.5rem, 6vw, 3rem);
     min-height: 30vh;
     align-items: flex-end;
+    justify-content: flex-start;
   }
 
   .hero-content__right {
