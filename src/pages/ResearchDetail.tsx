@@ -22,6 +22,7 @@ export function ResearchDetail() {
       backState={{ scrollTo: 'research' }}
       eyebrow={researchKindLabels[item.kind]}
       title={item.title}
+      lead={item.contribution ?? item.description}
       meta={[item.period, ...item.tags].filter(Boolean) as string[]}
       image={item.image}
       imageAlt={item.title}
@@ -31,9 +32,6 @@ export function ResearchDetail() {
       externalLink={
         item.doi ? { href: item.doi, label: 'View publication (DOI)' } : undefined
       }
-    >
-      {item.description && <p>{item.description}</p>}
-      {item.contribution && <p>{item.contribution}</p>}
-    </DetailPage>
+    />
   )
 }

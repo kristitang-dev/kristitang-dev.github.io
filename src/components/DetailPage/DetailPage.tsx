@@ -9,6 +9,7 @@ interface DetailPageProps {
   eyebrow: string
   title: string
   subtitle?: string
+  lead?: string
   meta?: string[]
   image?: string
   imageAlt?: string
@@ -29,6 +30,7 @@ export function DetailPage({
   eyebrow,
   title,
   subtitle,
+  lead,
   meta,
   image,
   imageAlt = '',
@@ -53,6 +55,8 @@ export function DetailPage({
             <p className="detail__meta">{meta.join(' · ')}</p>
           )}
         </header>
+
+        {lead && <p className="detail__lead">{lead}</p>}
 
         {image && (
           <figure className="detail__hero">

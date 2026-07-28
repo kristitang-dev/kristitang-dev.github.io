@@ -31,9 +31,10 @@ export const researchItems: ResearchItem[] = [
     status: 'ready',
     image: '/images/actwear.jpg',
     body: [
-      'Placeholder — publication detail page. Add abstract, method overview, figures, and how this connects to ongoing ActWear / occupant-modeling research.',
-      'Your Unreal Engine pipeline contribution can be expanded here with diagrams and scenario examples.',
+      'I was responsible for designing and implementing the virtual simulation and interaction pipeline within ActWear.\nMy work focused on how human activity level (Met) and clothing insulation (Clo) are represented, coupled, and explored within a real-time virtual environment.',
+      'So I developed the overall Unreal Engine-based pipeline, enabling a virtual-to-data workflow for studying how activity and clothing jointly shape indoor thermal comfort and building energy control',
     ],
+    gallery: ['/images/actwear_pipeline.jpg'],
   },
   {
     id: 'platform-framing',
@@ -47,10 +48,9 @@ export const researchItems: ResearchItem[] = [
     status: 'ready',
     image: '/images/timberhouse.jpg',
     body: [
-      'Placeholder — detail page for the 1:10 platform framing models. Add process photos, joinery notes, and structural learnings here.',
-      'Expand with construction sequence and material decisions.',
-    ],
-    gallery: ['/images/timberhouse_breakdown.png'],
+      'As part of the research project at UBC’s Sustainable Built Environment Lab, I designed and built this model of a North American light-frame house.',
+      'Beginning with a Revit BIM model, I translated the digital design into a fully removable physical structure used for both teaching and research.'],
+    gallery: ['/images/timberhousemodel.png','/images/timberhouse_side.jpg','/images/timberhouse_breakdown.png'],
   },
 ]
 

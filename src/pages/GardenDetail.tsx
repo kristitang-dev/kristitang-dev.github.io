@@ -22,9 +22,10 @@ export function GardenDetail() {
       backState={{ scrollTo: 'garden' }}
       eyebrow={item.kind}
       title={item.title}
+      lead={item.description}
       image={item.image}
       imageAlt={item.title}
-      body={[item.description, ...item.body]}
+      body={item.body}
       gallery={item.gallery}
       externalLink={
         item.link

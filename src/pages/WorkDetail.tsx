@@ -23,6 +23,7 @@ export function WorkDetail() {
       eyebrow={getCategoryLabels(item).join(' · ')}
       title={item.title}
       subtitle={item.subtitle}
+      lead={item.description}
       meta={[item.period, item.type, item.tools.join(' · ')]}
       image={item.image}
       imageAlt={item.title}
