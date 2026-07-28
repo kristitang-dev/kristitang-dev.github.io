@@ -1,7 +1,7 @@
 import { Navigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { DetailPage } from '../components/DetailPage/DetailPage'
-import { getWorkById } from '../data/work'
+import { getCategoryLabels, getWorkById } from '../data/work'
 
 export function WorkDetail() {
   const { id } = useParams<{ id: string }>()
@@ -20,7 +20,7 @@ export function WorkDetail() {
       backTo="/"
       backLabel="Back to Work"
       backState={{ scrollTo: 'work' }}
-      eyebrow={item.categoryLabel}
+      eyebrow={getCategoryLabels(item).join(' · ')}
       title={item.title}
       subtitle={item.subtitle}
       meta={[item.period, item.type, item.tools.join(' · ')]}

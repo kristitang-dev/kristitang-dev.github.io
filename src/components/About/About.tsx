@@ -27,6 +27,19 @@ export function About() {
               </p>
             ))}
 
+            {site.cvUrl && (
+              <div className="about__cv">
+                <a
+                  href={site.cvUrl}
+                  className="about__cv-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View My CV
+                </a>
+              </div>
+            )}
+
             <div className="about__tags">
               {site.about.skills.map((skill) => (
                 <span key={skill} className="about__tag">

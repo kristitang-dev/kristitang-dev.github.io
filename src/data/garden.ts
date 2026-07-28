@@ -1,7 +1,7 @@
 export interface GardenEntry {
   id: string
   title: string
-  kind: 'photography' | 'game'
+  kind: 'photography' | 'game' | 'video'
   description: string
   image?: string
   link?: string
@@ -24,6 +24,20 @@ export const gardenEntries: GardenEntry[] = [
     body: [
       'Placeholder — Game Jam detail page. Add jam constraints, role split (design/code vs audio), and postmortem notes here.',
       'Expand with gameplay screenshots, control scheme, and what you’d iterate next.',
+    ],
+  },
+  {
+    id: 'chongqing-summer',
+    title: 'Chongqing Summer',
+    kind: 'video',
+    description:
+      'Edited in early 2026 from scattered clips filmed at home in summer 2023',
+    image: '/images/chongqingsummer.jpg',
+    link: 'https://weixin.qq.com/sph/AQxZyCAnI',
+    linkLabel: 'Watch on WeChat Channels',
+    body: [
+      'Fragments from summer 2023 in Chongqing, assembled later as a small editing practice.',
+      'In 2025 I spent a Vancouver summer that never rose above 30°C and still felt like something was missing. Watching these frames again, what I miss may be those unworried summers more than home itself.',
     ],
   },
   {

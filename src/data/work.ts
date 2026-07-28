@@ -1,15 +1,19 @@
-export type WorkCategory =
-  | 'critical'
-  | 'assistive'
-  | 'infrastructure'
-  | 'all'
+export type WorkCategory = 'critical' | 'vr-mr' | 'assistive' | 'all'
+
+export type WorkCategoryId = Exclude<WorkCategory, 'all'>
+
+export const workCategoryLabels: Record<WorkCategoryId, string> = {
+  critical: 'Critical & Experimental',
+  'vr-mr': 'VR / MR',
+  assistive: 'Assistive Tech',
+}
 
 export interface WorkItem {
   id: string
   title: string
   subtitle: string
-  category: Exclude<WorkCategory, 'all'>
-  categoryLabel: string
+  /** One or more categories — used for filters and card badges */
+  categories: WorkCategoryId[]
   period: string
   sortDate: string
   type: string
@@ -24,13 +28,16 @@ export interface WorkItem {
   gallery?: string[]
 }
 
+export function getCategoryLabels(item: WorkItem): string[] {
+  return item.categories.map((id) => workCategoryLabels[id])
+}
+
 export const workItems: WorkItem[] = [
   {
     id: 'graintwin',
     title: 'GrainTwin',
     subtitle: 'MR Platform with Smart PPE for Collaborative Woodworking',
-    category: 'infrastructure',
-    categoryLabel: 'Infrastructural Systems',
+    categories: ['vr-mr','assistive'],
     period: 'Jul 2025 – Oct 2025',
     sortDate: '2025-10',
     type: 'Group Project · Role: Concept & Interface Design, User Testing',
@@ -49,8 +56,7 @@ export const workItems: WorkItem[] = [
     id: 'lens-of-bias',
     title: 'Through the Lens of Bias',
     subtitle: 'VR Storytelling Experience',
-    category: 'critical',
-    categoryLabel: 'Critical & Experimental',
+    categories: ['vr-mr', 'critical'],
     period: 'Feb 2025 – July 2025',
     sortDate: '2025-07',
     type: 'Independent Project',
@@ -69,8 +75,7 @@ export const workItems: WorkItem[] = [
     id: 'somo',
     title: 'SoMo',
     subtitle: 'Assistive Device & Companion App',
-    category: 'assistive',
-    categoryLabel: 'Assistive Tech',
+    categories: ['assistive'],
     period: 'Mar 2025 – May 2025',
     sortDate: '2025-05',
     type: 'Independent Project',
@@ -89,8 +94,7 @@ export const workItems: WorkItem[] = [
     id: 'nutrisynth',
     title: 'NutriSynth',
     subtitle: 'LLM-Based AI Native Sci-Fi Speculative Game',
-    category: 'critical',
-    categoryLabel: 'Critical & Experimental',
+    categories: ['critical'],
     period: 'Nov 2024 – Feb 2025',
     sortDate: '2025-02',
     type: 'Independent Project',
@@ -109,9 +113,9 @@ export const workItems: WorkItem[] = [
 
 export const workFilters: { id: WorkCategory; label: string }[] = [
   { id: 'all', label: 'All' },
+  { id: 'vr-mr', label: 'VR / MR' },
   { id: 'critical', label: 'Critical' },
   { id: 'assistive', label: 'Assistive' },
-  { id: 'infrastructure', label: 'Systems' },
 ]
 
 export function getWorkById(id: string) {

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
+  getCategoryLabels,
   workFilters,
   workItems,
   type WorkCategory,
@@ -14,8 +15,8 @@ export function Work() {
     () =>
       [...(filter === 'all'
         ? workItems
-        : workItems.filter((item) => item.category === filter))].sort((a, b) =>
-        b.sortDate.localeCompare(a.sortDate),
+        : workItems.filter((item) => item.categories.includes(filter)))].sort(
+        (a, b) => b.sortDate.localeCompare(a.sortDate),
       ),
     [filter],
   )
@@ -28,8 +29,7 @@ export function Work() {
             <span className="work__eyebrow">The Medium</span>
             <h2 className="work__title">Work</h2>
             <p className="work__intro">
-              Digital work across games, VR/MR, assistive tech, and infrastructural systems —
-              where design meets computation.
+              Digital work across VR/MR, games, and assistive tech — where design meets computation.
             </p>
           </div>
 
@@ -61,7 +61,9 @@ export function Work() {
                       className="work-card__image"
                       loading="lazy"
                     />
-                    <span className="work-card__category">{item.categoryLabel}</span>
+                    <span className="work-card__category">
+                      {getCategoryLabels(item).join(' · ')}
+                    </span>
                   </div>
                 </Link>
 

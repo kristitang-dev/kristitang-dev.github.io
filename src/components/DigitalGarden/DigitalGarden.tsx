@@ -10,7 +10,7 @@ export function DigitalGarden() {
           <span className="garden__eyebrow">Personal</span>
           <h2 className="garden__title">Digital Garden</h2>
           <p className="garden__intro">
-            A softer notebook for photography, game jams, and visual experiments —
+            A softer notebook for photography, video, game jams, and visual experiments —
             curated without the pressure of a finished project.
           </p>
         </div>
