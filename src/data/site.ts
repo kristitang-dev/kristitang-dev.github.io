@@ -3,8 +3,7 @@ export const site = {
   shortName: 'KT',
   tagline: 'Between Matter & Medium',
   title: 'Designer · Engineer',
-  years: '2024–2025',
-  email: 'kristitang@outlook.com', // add when ready
+  email: 'kristitang@outlook.com', 
   cvUrl: 'https://drive.google.com/file/d/1afuIFP4d7Axhls3sJFrCaVTzuAszC0Oe/view?usp=drive_link',
   cvLabel: 'CV',
   about: {
@@ -21,7 +20,6 @@ export const site = {
       'Unity',
       'UI / UX',
       'Physical Making',
-      'Mass Timber',
       'Speculative Design',
     ],
   },

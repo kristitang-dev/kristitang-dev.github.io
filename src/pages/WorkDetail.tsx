@@ -28,10 +28,17 @@ export function WorkDetail() {
       image={item.image}
       imageAlt={item.title}
       body={item.body}
+      sections={item.sections}
+      timeline={item.timeline}
+      timelineTitle={item.timelineTitle}
       gallery={item.gallery}
+      galleryTitle={item.galleryTitle}
+      epilogue={item.epilogue}
       tags={item.tags}
       externalLink={
-        item.link ? { href: item.link, label: 'External link' } : undefined
+        item.link
+          ? { href: item.link, label: item.linkLabel ?? 'External link' }
+          : undefined
       }
     />
   )

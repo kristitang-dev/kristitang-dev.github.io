@@ -31,8 +31,9 @@ export const researchItems: ResearchItem[] = [
     status: 'ready',
     image: '/images/actwear.jpg',
     body: [
-      'I was responsible for designing and implementing the virtual simulation and interaction pipeline within ActWear.\nMy work focused on how human activity level (Met) and clothing insulation (Clo) are represented, coupled, and explored within a real-time virtual environment.',
-      'So I developed the overall Unreal Engine-based pipeline, enabling a virtual-to-data workflow for studying how activity and clothing jointly shape indoor thermal comfort and building energy control',
+      'Indoor thermal comfort depends not only on air temperature, but also on human activity (Met) and clothing insulation (Clo).',
+      'However, collecting large-scale, well-annotated data that jointly captures motion, clothing, and environmental conditions is expensive and difficult in real buildings.',
+      'In this project, we employed the Unreal Engines platform to simulate a virtual office environment. And our research is focused on how human activity level (Met) and clothing insulation (Clo) are represented, coupled, and explored within a real-time virtual environment. So I developed the overall Unreal Engine-based pipeline, enabling a virtual-to-data workflow for studying how activity and clothing jointly shape indoor thermal comfort and building energy control.'
     ],
     gallery: ['/images/actwear_pipeline.jpg'],
   },
