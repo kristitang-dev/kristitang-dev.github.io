@@ -166,7 +166,7 @@ export function DetailPage({
   timeline,
   timelineTitle = 'Flow',
   gallery,
-  galleryTitle = 'Screenshots',
+  galleryTitle = 'Gallery',
   epilogue,
   tags,
   externalLink,

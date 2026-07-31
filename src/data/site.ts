@@ -9,8 +9,7 @@ export const site = {
   about: {
     lead: 'Making—no matter the medium—has always been how I think, question, and express.',
     body: [
-      'I move between systems, images, spaces, and materials, not to do more, but to search for forms that feel most capable of holding what I’m trying to say.',
-      'Each medium holds its own structure and sensitivity. I make to feel through them all.',
+      'Each medium holds its own structure and sensitivity. I move between images, spaces, materials and systems, not to do more, but to search for forms that feel most capable of holding what I’m trying to say.',
     ],
     skills: [
       'Interaction Design',
