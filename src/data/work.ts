@@ -127,6 +127,8 @@ export const workItems: WorkItem[] = [
     tags: ['VR Narrative', 'Social Bias Research', 'Photography Technology'],
     tools: ['Unreal Engine', 'Blender', 'Meta'],
     image: '/images/lens-of-bias.jpg',
+    link: 'https://vimeo.com/1106333943?share=copy',
+    linkLabel: 'Watch Playthrough Video',
     featured: true,
     body: [
       'This is a VR experience where players step into three roles across time — a 1950s Kodak lab worker, a 1970s studio photographer, and the grown-up daughter from Act 2, now a face-recognition software developer. As they uncover how photography was calibrated for white skin, players witness how those biases echo into today’s AI systems, shaping who is seen, and who is not.',
