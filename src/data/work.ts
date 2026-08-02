@@ -1,3 +1,5 @@
+import type { HistoryEra } from '../components/DetailPage/HistoryTimeline'
+
 export type WorkCategory = 'critical' | 'vr-mr' | 'assistive' | 'all'
 
 export type WorkCategoryId = Exclude<WorkCategory, 'all'>
@@ -16,6 +18,11 @@ export type WorkSectionBlock =
       type: 'imageGrid'
       images: { src: string; caption?: string }[]
     }
+  | {
+      type: 'historyTimeline'
+      eras: HistoryEra[]
+      hint?: string
+    }
 
 export interface WorkSection {
   heading: string
@@ -25,6 +32,7 @@ export interface WorkSection {
   caption?: string
   images?: { src: string; caption?: string }[]
   blocks?: WorkSectionBlock[]
+  timelineSteps?: WorkTimelineStep[]
 }
 
 export interface WorkTimelineStep {
@@ -112,9 +120,239 @@ export const workItems: WorkItem[] = [
     image: '/images/lens-of-bias.jpg',
     featured: true,
     body: [
-      'Placeholder — detail page for Through the Lens of Bias. Add research background, narrative structure, and VR interaction design here.',
-      'Expand with Shirley Card history, playthrough notes, and technical pipeline (Unreal / Meta).',
+      'This is a VR experience where players step into three roles across time — a 1950s Kodak lab worker, a 1970s studio photographer, and the grown-up daughter from Act 2, now a face-recognition software developer. As they uncover how photography was calibrated for white skin, players witness how those biases echo into today’s AI systems, shaping who is seen, and who is not.',
     ],
+    sections: [
+      {
+        heading: 'Do you know Shirley cards?',
+        blocks: [
+          {
+            type: 'text',
+            text: 'A standard once set history…and excluded many.',
+          },
+          {
+            type: 'historyTimeline',
+            hint: 'Select an era to see what happened/happens',
+            eras: [
+              {
+                era: '1950s',
+                title: 'The First Shirley Card',
+                summary:
+                  'To streamline color processing in the rise of one-hour photo labs, Kodak’s Shirley Cards became a widely adopted calibration standard.',
+                details: [
+                  {
+                    text: 'Featuring a rotating cast of white female models all called “Shirley,” the cards helped define “normal” skin tone as light and white.',
+                    image: '/images/lens-bias-shirley-1950s.jpg',
+                    caption:
+                      'Shirley Card examples — “normal” calibration centered on light skin.',
+                  },
+                  {
+                    text: 'As Prof. Lorna Roth notes, buyers of cameras in the ’50s were mostly Caucasian — so the market rarely saw a need to expand across a broader range of skin tones.',
+                    citation: {
+                      href: 'https://www.researchgate.net/publication/279499369_Looking_at_Shirley_the_Ultimate_Norm_Colour_Balance_Image_Technologies_and_Cognitive_Equity',
+                      label: 'Roth, Looking at Shirley →',
+                    },
+                  },
+                ],
+              },
+              {
+                era: '1970s',
+                title: 'Commercial pressure emerges',
+                summary:
+                  'Kodak was called out by furniture and chocolate companies for film that failed to capture accurate colors and details in dark tones — “milk chocolate vs. dark chocolate,” “where are the wood grains?”',
+                details: [
+                  {
+                    text: 'Market pressure pushed Kodak to start reformulating film. Improvements arrived, but they were still incomplete for the full range of skin tones people needed to see.',
+                    image: '/images/details/through/1970s.png',
+                  },
+                ],
+              },
+              {
+                era: '1990s',
+                title: 'Multiracial Shirley Cards',
+                summary:
+                  'Kodak introduced new calibration cards featuring three women — Caucasian, Asian, and African — forming the first official multiracial Shirley Card.',
+                details: [
+                  {
+                    text:'',
+                    image:'/images/details/through/1990s.png',
+                  },
+                ],
+              },
+              {
+                era: '2000s',
+                title: 'Inherited defaults',
+                summary:
+                  'Digital auto-calibrations inherit legacy biases from film-era color systems. Moving off film did not erase the assumptions baked into “correct” exposure and color balance.',
+                details: [
+                  {
+                    text:'',
+                    image:'/images/details/through/digital.png',
+                  },
+                ],              
+              },
+              {
+                era: 'Today',
+                title: 'Enduring legacy in digital & AI',
+                highlight: true,
+                summary:
+                  'Face-tracking, recognition, and generative systems still show higher error rates for darker-skinned people — or overcorrect into a sanitized “safe” default that flattens individuality.',
+                details: [
+                  'To avoid risk and controversy, some AI systems ignore user instructions and overly sanitize outputs. Even when asked to replicate an image exactly, a model may gradually alter it — prioritizing “neutral” safety over accuracy and diversity.',
+                ],
+                cases: [
+                  {
+                    title: 'HP face-tracking webcams',
+                    text: 'Viral demos showed webcams tracking lighter faces while failing to lock onto darker-skinned people beside them.',
+                    image: '/images/details/through/HPcam.png',
+                    caption:
+                      'Virtual background / face tools failing on darker skin while tracking lighter faces.',
+                    citation: {
+                      href: 'https://gizmodo.com/hp-face-tracking-webcams-dont-recognize-black-people-5431190',
+                      label: 'Gizmodo →',
+                    },
+                  },
+                  {
+                    title: '“White default” generative bias',
+                    text: 'Image systems have defaulted toward lighter-skinned outputs and mishandled prompts involving darker skin.',
+                    image: '/images/details/through/blackwoman.png',
+                  },
+                  {
+                    title:'AI Overcorrection',
+                    text: 'To avoid risk and controversy, nowadays AI systems often overcorrect—ignoring user instructions and overly sanitizing outputs. Even when asked to replicate an image exactly, the model may gradually alter it, prioritizing safety over accuracy. This leads to a loss of individuality and diversity, as AI defaults to what it sees as “neutral” or “safe.”',
+                    image: '/images/details/through/overcorrection.png',
+                    citation: {
+                      href: 'https://www.youtube.com/watch?v=Hx8N8y_wJds&t=12s',
+                      label: 'Youtube →',
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'text',
+            text: 'From Shirley Cards that defined “normal” skin as white to datasets built on those same assumptions, the way we capture and process faces has never been neutral. As technology tries to “fix” the past, it sometimes introduces new discomfort. Is that progress — or another kind of bias?',
+          },
+        ],
+      },
+      {
+        heading: 'Ideation',
+        text: 'The experience is designed as VR first-person with hands interaction and narrative storytelling — avoiding HUD overlays where possible so attention stays in the camera and the scene. Themes span racial bias in analog and digital systems, visibility and invisibility, technological inheritance, memory and loss, and design as a form of power. Three acts carry the player from a 1950s Kodak lab, through a 1970s photo studio, into today’s AI training lab.',
+        image: '/images/lens-bias-ideation.png',
+        caption:
+          'Concept board: three acts, camera mechanics, and player roles across time.',
+      },
+      {
+        heading: 'Narrative & storyboard',
+        text: 'Act 1 places you as a Kodak lab technician with a twin-lens reflex camera — Shirley looks “perfect.” Act 2 puts a Polaroid OneStep in your hands at a family studio session; something feels off when darker skin fails to render. Act 3 returns years later as the daughter, now an AI engineer, confronting recognition systems that still struggle — and asking what repair means inside biased infrastructure.',
+        image: '/images/lens-bias-storyboard.png',
+        caption:
+          'Storyboard beats from film calibration and Polaroid failure to recognition bias and hard-won visibility.',
+      },
+      {
+        heading: 'Three acts',
+        timelineSteps: [
+          {
+            title: 'Act 1 — 1950s Kodak Lab',
+            text: 'Play as a lab technician. Load film, adjust the TLR, photograph Shirley, hand in the camera. The system rewards a “correct” exposure calibrated to white skin.',
+            image: '/images/details/through/act1.png',
+          },
+          {
+            title: 'Act 2 — 1970s Photo Studio',
+            text: 'Play as a studio photographer with a Polaroid OneStep. Instant feedback makes the emotional break immediate when a family portrait fails darker skin.',
+            image: '/images/details/through/act2.png',
+          },
+          {
+            title: 'Act 3 — Today · Training AI',
+            text: 'Play as the grown-up daughter — now an AI engineer. Test, classify, re-test. Restoration tools cannot access a neutral truth; every “fix” carries assumptions.',
+            image: '/images/details/through/act3.png',
+          },
+        ],
+      },
+      {
+        heading: 'Emotional journey',
+        text: 'Each act pairs operations with emotion: curiosity and satisfaction in the Kodak lab; frustration when Polaroids feel wrong; confusion, worry, and finally being moved as classification and re-testing surface the cost of “defaults.”',
+        image: '/images/lens-bias-emotion-map.png',
+        caption:
+          'Operation vs. emotion across the three acts — from engaged lab work to the sting of bias and reflective repair.',
+      },
+      {
+        heading: 'Environment & sound',
+        blocks: [
+          {
+            type: 'text',
+            text: 'Warm, low lighting in the first two acts evokes nostalgia; cold, sterile light in the final act marks emotional distance.',
+          },
+          {
+            type: 'imageGrid',
+            images: [
+              {
+                src: '/images/details/through/scene1.png',
+                caption: 'Act 1 — warm Kodak lab light',
+              },
+              {
+                src: '/images/details/through/scene2.png',
+                caption: 'Act 2 — studio nostalgia',
+              },
+              {
+                src: '/images/details/through/scene3.png',
+                caption: 'Act 3 — cold AI lab light',
+              },
+            ],
+          },
+          {
+            type: 'text',
+            text: 'Classical music in the 1950s lab, radio pop in the 1970s studio, and minimal electronics in the AI lab track shifts in mood and time. Subtle film reels, shutter clicks, and digital tones deepen immersion.',
+          },
+          {
+            type: 'imageGrid',
+            images: [
+              {
+                src: '/images/details/through/music1.png',
+              },
+              {
+                src: '/images/details/through/music2.png',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'Innovative interaction',
+        paragraphs: [
+          'Twin-Lens Reflex (TLR): designed for waist-level use, so players look into the viewfinder without HUD interference — an uninterrupted, analog framing practice.',
+          'Polaroid OneStep: marketed as “the world’s simplest camera.” Pick it up, press the right trigger, and the photo prints automatically — built for spontaneous emotional response at the peak of Act 2.',
+          'In Unreal, a SceneCaptureComponent2D acts as a virtual camera for the live viewfinder and still capture. Joystick rotation is converted to degrees and passed as delta values into camera adjustment events, so exposure and framing feel physical rather than menu-driven.',
+        ],
+      },
+    ],
+    galleryTitle: 'Screenshots',
+    gallery: [
+      {
+        src: '/images/details/through/shirly.png',
+      },
+      {
+        src: '/images/details/through/act2result.png',
+      },
+      {
+        src: '/images/details/through/darkroom.png',
+      },
+      {
+        src: '/images/details/through/studio.png',
+      },
+      {
+        src: '/images/details/through/office.png',
+      },
+    ],
+    epilogue: {
+      heading: 'Game philosophy',
+      paragraphs: [
+        'Exposure serves as a metaphor for whose realities systems center. In Act I, adjusting exposure feels like technical optimization. In Act II, the same parameters reveal privilege — achieving visibility for one body can render another illegible. “Correct” exposure is always calibrated to someone, and that calibration determines who disappears.',
+        'Focus works the same way. Compositional emphasis becomes structural attention: what do systems center, and what do they push into blur? Focus is not neutral framing — it is an epistemological decision about whose presence matters.',
+        'Restoration in Act III literalizes repair inside biased systems. Computational tools cannot retrieve a neutral truth; every restoration choice perpetuates particular assumptions. Fixing discriminatory outcomes takes more than technical adjustment — it demands interrogating the infrastructures that produced them.',
+      ],
+    },
   },
   {
     id: 'somo',

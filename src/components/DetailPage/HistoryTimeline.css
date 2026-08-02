@@ -1,0 +1,224 @@
+.history-timeline {
+  margin: 0 0 1.25rem;
+}
+
+.history-timeline__hint {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+  margin-bottom: 0.85rem;
+}
+
+.history-timeline__list {
+  list-style: none;
+  border-left: 1px solid var(--grey-300);
+  margin-left: 0.55rem;
+}
+
+.history-timeline__item {
+  position: relative;
+  padding-left: 1.25rem;
+  padding-bottom: 0.35rem;
+}
+
+.history-timeline__item:last-child {
+  padding-bottom: 0;
+}
+
+.history-timeline__trigger {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'era chevron'
+    'title chevron';
+  gap: 0.15rem 0.75rem;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0.85rem 0.5rem 0.85rem 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+.history-timeline__trigger:hover .history-timeline__title {
+  color: var(--red-500);
+}
+
+.history-timeline__trigger--open .history-timeline__title {
+  color: var(--grey-900);
+}
+
+.history-timeline__dot {
+  position: absolute;
+  left: -0.3rem;
+  top: 1.15rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--red-500);
+  box-shadow: 0 0 0 3px white;
+}
+
+.history-timeline__item--highlight .history-timeline__dot {
+  background: var(--red-500);
+  box-shadow: 0 0 0 3px white, 0 0 0 5px rgba(214, 59, 59, 0.25);
+}
+
+.history-timeline__era {
+  grid-area: era;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--red-500);
+}
+
+.history-timeline__title {
+  grid-area: title;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--grey-700);
+  transition: color 0.15s ease;
+}
+
+.history-timeline__chevron {
+  grid-area: chevron;
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--grey-500);
+}
+
+.history-timeline__panel {
+  padding: 0 0.5rem 1.15rem 0;
+  animation: history-panel-in 0.2s ease;
+}
+
+.history-timeline__item--highlight .history-timeline__panel {
+  border: 1px solid rgba(214, 59, 59, 0.35);
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background: rgba(214, 59, 59, 0.03);
+}
+
+.history-timeline__summary {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--grey-700);
+  margin-bottom: 0.75rem;
+}
+
+.history-timeline__details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.history-timeline__detail p {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--grey-700);
+}
+
+.history-timeline__cite {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--red-500);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(214, 59, 59, 0.35);
+  white-space: nowrap;
+}
+
+.history-timeline__cite:hover {
+  color: var(--red-700);
+}
+
+.history-timeline__figure {
+  margin: 0.75rem 0 0;
+}
+
+.history-timeline__image {
+  display: block;
+  width: 250px;
+  max-width: 100%;
+  height: auto;
+  background: transparent;
+}
+
+.history-timeline__image--wide {
+  width: min(420px, 100%);
+}
+
+.history-timeline__caption {
+  margin-top: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--grey-500);
+  line-height: 1.45;
+}
+
+.history-timeline__cases {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.history-timeline__case {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  gap: 0.65rem;
+  align-items: start;
+}
+
+.history-timeline__case-index {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--red-500);
+  border: 1px solid rgba(214, 59, 59, 0.45);
+  width: 1.35rem;
+  height: 1.35rem;
+  display: grid;
+  place-items: center;
+  margin-top: 0.1rem;
+}
+
+.history-timeline__case-title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--grey-900);
+  margin-bottom: 0.25rem;
+}
+
+.history-timeline__case-text {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--grey-700);
+}
+
+@keyframes history-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .history-timeline__title {
+    font-size: 1.1rem;
+  }
+}

@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  HistoryTimeline,
+  type HistoryEra,
+} from './HistoryTimeline'
 import './DetailPage.css'
 
 export type DetailSectionBlock =
@@ -9,6 +13,11 @@ export type DetailSectionBlock =
   | {
       type: 'imageGrid'
       images: { src: string; caption?: string }[]
+    }
+  | {
+      type: 'historyTimeline'
+      eras: HistoryEra[]
+      hint?: string
     }
 
 export interface DetailSection {
@@ -20,6 +29,8 @@ export interface DetailSection {
   images?: { src: string; caption?: string }[]
   /** Ordered mix of text, images, and code — preferred when interleaving is needed */
   blocks?: DetailSectionBlock[]
+  /** Inline act / step timeline rendered inside this section */
+  timelineSteps?: DetailTimelineStep[]
 }
 
 export interface DetailTimelineStep {
@@ -291,10 +302,11 @@ export function DetailPage({
                     }
 
                     if (block.type === 'imageGrid') {
+                      const count = Math.min(Math.max(block.images.length, 1), 3)
                       return (
                         <div
                           key={`grid-${index}`}
-                          className="detail-section__grid"
+                          className={`detail-section__grid detail-section__grid--${count}`}
                         >
                           {block.images.map((figure) => (
                             <figure
@@ -317,6 +329,16 @@ export function DetailPage({
                       )
                     }
 
+                    if (block.type === 'historyTimeline') {
+                      return (
+                        <HistoryTimeline
+                          key={`history-${index}`}
+                          eras={block.eras}
+                          hint={block.hint}
+                        />
+                      )
+                    }
+
                     return (
                       <figure
                         key={block.src}
@@ -335,6 +357,19 @@ export function DetailPage({
                       </figure>
                     )
                   })}
+                  {section.timelineSteps && section.timelineSteps.length > 0 && (
+                    <div className="detail-timeline detail-timeline--inline">
+                      <ol className="detail-timeline__list">
+                        {section.timelineSteps.map((step, stepIndex) => (
+                          <TimelineStepRow
+                            key={step.title}
+                            step={step}
+                            index={stepIndex}
+                          />
+                        ))}
+                      </ol>
+                    </div>
+                  )}
                 </section>
               )
             })}

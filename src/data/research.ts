@@ -32,7 +32,7 @@ export const researchItems: ResearchItem[] = [
     description: 'Li, R., Tang, L., & Feng, H. (2026). Energy and Buildings, 117785.',
     doi: 'https://doi.org/10.1016/j.enbuild.2026.117785',
     contribution:
-      'Co-author — Unreal Engine 5 platform and video rendering pipelines for generative occupant data.',
+      'Developed a custom Unreal Engine pipeline generating indoor environmental and thermal datasets for HVAC and building performance research.',
     lead:
       'A Vision-to-Physics generative framework that synthesizes digital occupants with 3D spatial thermal data for indoor environments.',
     tags: ['Energy and Buildings', 'HVAC', 'Unreal Engine'],
