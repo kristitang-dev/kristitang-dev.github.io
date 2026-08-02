@@ -79,7 +79,15 @@ interface DetailPageProps {
   image?: string
   imageAlt?: string
   body?: Array<
-    string | { type: 'image'; src: string; caption?: string }
+    | string
+    | { type: 'image'; src: string; caption?: string }
+    | {
+        type: 'split'
+        text: string
+        image: string
+        caption?: string
+        layout?: 'text-image' | 'image-text'
+      }
   >
   sections?: DetailSection[]
   timeline?: DetailTimelineStep[]
@@ -343,15 +351,41 @@ export function DetailPage({
 
         {body.length > 0 && (
           <div className="detail__body">
-            {body.map((block, index) =>
-              typeof block === 'string' ? (
-                <p key={`body-text-${index}`}>{block}</p>
-              ) : (
-                <figure key={`body-image-${index}`} className="detail__body-figure">
+            {body.map((block, index) => {
+              if (typeof block === 'string') {
+                return <p key={`body-text-${index}`}>{block}</p>
+              }
+
+              if (block.type === 'image') {
+                return (
+                  <figure
+                    key={`body-image-${index}`}
+                    className="detail__body-figure"
+                  >
+                    <img
+                      src={block.src}
+                      alt={block.caption ?? ''}
+                      className="detail__body-image"
+                    />
+                    {block.caption && (
+                      <figcaption className="detail-section__caption">
+                        {block.caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                )
+              }
+
+              const layout = block.layout ?? 'text-image'
+              const textEl = (
+                <p className="detail-section__split-text">{block.text}</p>
+              )
+              const imageEl = (
+                <figure className="detail-section__split-figure">
                   <img
-                    src={block.src}
+                    src={block.image}
                     alt={block.caption ?? ''}
-                    className="detail__body-image"
+                    className="detail-section__split-image"
                   />
                   {block.caption && (
                     <figcaption className="detail-section__caption">
@@ -359,8 +393,27 @@ export function DetailPage({
                     </figcaption>
                   )}
                 </figure>
-              ),
-            )}
+              )
+
+              return (
+                <div
+                  key={`body-split-${index}`}
+                  className={`detail-section__split detail-section__split--${layout}`}
+                >
+                  {layout === 'image-text' ? (
+                    <>
+                      {imageEl}
+                      {textEl}
+                    </>
+                  ) : (
+                    <>
+                      {textEl}
+                      {imageEl}
+                    </>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
 

@@ -12,7 +12,17 @@ export interface GardenEntry {
   link?: string
   linkLabel?: string
   /** Longer detail-page copy — expand over time */
-  body: Array<string | { type: 'image'; src: string; caption?: string }>
+  body: Array<
+    | string
+    | { type: 'image'; src: string; caption?: string }
+    | {
+        type: 'split'
+        text: string
+        image: string
+        caption?: string
+        layout?: 'text-image' | 'image-text'
+      }
+  >
   /** Simple single gallery (games scroll strip, etc.) */
   gallery?: string[]
   galleryTitle?: string
@@ -56,7 +66,40 @@ export const gardenEntries: GardenEntry[] = [
       'When the word ‘city’ was first imagined, no one pictured chaos — the neon lights, the noise, the haze of light and air pollution. Yet that is what a city becomes.',
     image: '/images/citylife.jpg',
     body: [
-      'City life is a constant pulse of vitality — full of new opportunities, triumphs, failures, regrets, and that lingering restlessness that keeps us moving. Everyone rushes through their days, chasing moments of pride and disappointment, gain and loss — the endless rhythm of being alive in a place that never truly sleeps.',
+      {
+        type: 'split',
+        layout: 'text-image',
+        text: 'City life is a constant pulse of vitality — full of new opportunities, triumphs, failures, regrets, and that lingering restlessness that keeps us moving. Everyone rushes through their days, chasing moments of pride and disappointment, gain and loss — the endless rhythm of being alive in a place that never truly sleeps.',
+        image: '/images/garden/city/neon.jpg',
+      },
+    ],
+    galleryBlocks: [
+      {
+        layout: '3x1',
+        images: [
+          '/images/garden/city/slow.png',
+          '/images/garden/city/red.jpg',
+
+        ],
+      },
+      {
+        layout: '1x1',
+        images: [
+          '/images/garden/city/walk.jpg',
+        ],
+      },
+      {
+        layout: '3x1',
+        images: [
+          '',
+          '/images/garden/city/jellyfish.png',
+          '/images/garden/city/jellyfish2.jpg',
+        ],
+      },
+      {
+        layout:'1x1',
+        images:['/images/garden/city/hongkong.jpg',]
+      }
     ],
   },
   {
@@ -80,7 +123,9 @@ export const gardenEntries: GardenEntry[] = [
       },
       {
         layout: '1x1',
-        images: ['/images/garden/gaze/fire.jpg'],
+        images: [
+          '/images/garden/gaze/fire.jpg',
+      ],
       },
       {
         layout: '2x1',
@@ -91,7 +136,9 @@ export const gardenEntries: GardenEntry[] = [
       },
       {
         layout: '1x1',
-        images: ['/images/mother.jpg'],
+        images: [
+          '/images/mother.jpg',
+        ],
       },
     ],
   },
@@ -102,7 +149,49 @@ export const gardenEntries: GardenEntry[] = [
     description: '...Even in some shared moments, that feeling still lingers...',
     image: '/images/breath.jpg',
     body: [
-      'These photos were mainly taken in rural China. To me, the countryside always carries a quiet loneliness, a sense of being left behind by time, by progress. Even in some shared moments, that feeling still lingers. Yet within that stillness, I found something pure, a kind of joy that costs nothing and needs nothing beyond the moment itself.',
+      'These photos were mainly taken in rural China.',
+      'To me, the countryside always carries a quiet loneliness, a sense of being left behind by time, by progress.',
+      'Even in some shared moments, that feeling still lingers. Yet within that stillness, I found something pure, a kind of joy that costs nothing and needs nothing beyond the moment itself.',
+    ],
+    galleryBlocks: [
+      {
+        layout: '3x1',
+        images: [
+          '/images/garden/breath/cow.jpg',
+          '/images/garden/breath/chicken.jpg',
+          '/images/garden/breath/field.png',
+        ],
+      },
+      {
+        layout: '3x1',
+        images: [
+          '/images/garden/breath/running.png',
+          '/images/garden/breath/zhi.png',
+          '',
+        ],
+      },
+      {
+        layout: '3x1',
+        images: [
+          '/images/garden/breath/laugh.jpg',
+          '/images/garden/breath/watermelon.png',
+          '/images/garden/breath/TVwatch.jpg',
+        ],
+      },
+      {
+        layout: '3x1',
+        images: [
+          '',
+          '/images/garden/breath/fog.jpg',
+          '/images/garden/breath/beers.jpg',
+        ],
+      },
+      {
+        layout: '1x1',
+        images: [
+          '/images/garden/breath/melody.jpg',
+        ],
+      },
     ],
   },
 ]
