@@ -27,6 +27,9 @@ export function GardenDetail() {
       imageAlt={item.title}
       body={item.body}
       gallery={item.gallery}
+      galleryTitle={item.galleryTitle}
+      galleryLayout={item.galleryLayout ?? 'scroll'}
+      galleryBlocks={item.galleryBlocks}
       externalLink={
         item.link
           ? { href: item.link, label: item.linkLabel ?? 'Open link' }

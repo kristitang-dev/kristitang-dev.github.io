@@ -57,6 +57,16 @@ export interface DetailGalleryItem {
   caption?: string
 }
 
+/** scroll = strip; 1x1 = one full-width image; 2x1/3x1/4x1 = column grids */
+export type DetailGalleryLayout = 'scroll' | '1x1' | '2x1' | '3x1' | '4x1'
+
+/** One gallery band on a detail page — mix several with different layouts */
+export interface DetailGalleryBlock {
+  layout: DetailGalleryLayout
+  title?: string
+  images: DetailGalleryItem[] | string[]
+}
+
 interface DetailPageProps {
   backTo: string
   backLabel: string
@@ -68,12 +78,18 @@ interface DetailPageProps {
   meta?: string[]
   image?: string
   imageAlt?: string
-  body?: string[]
+  body?: Array<
+    string | { type: 'image'; src: string; caption?: string }
+  >
   sections?: DetailSection[]
   timeline?: DetailTimelineStep[]
   timelineTitle?: string
+  /** Simple single gallery (still supported) */
   gallery?: DetailGalleryItem[] | string[]
   galleryTitle?: string
+  galleryLayout?: DetailGalleryLayout
+  /** Preferred: stack multiple layouts (2x1 + 1x1 + 3x1, etc.) */
+  galleryBlocks?: DetailGalleryBlock[]
   epilogue?: {
     heading: string
     paragraphs: string[]
@@ -110,6 +126,91 @@ function normalizeGallery(
   if (!gallery) return []
   return gallery.map((item) =>
     typeof item === 'string' ? { src: item } : item,
+  )
+}
+
+function isPhotoGridLayout(layout: DetailGalleryLayout) {
+  return (
+    layout === '1x1' ||
+    layout === '2x1' ||
+    layout === '3x1' ||
+    layout === '4x1'
+  )
+}
+
+function resolveGalleryBlocks(
+  galleryBlocks: DetailGalleryBlock[] | undefined,
+  gallery: DetailGalleryItem[] | string[] | undefined,
+  galleryTitle: string | undefined,
+  galleryLayout: DetailGalleryLayout,
+): { layout: DetailGalleryLayout; title?: string; images: DetailGalleryItem[] }[] {
+  if (galleryBlocks && galleryBlocks.length > 0) {
+    return galleryBlocks.map((block) => ({
+      layout: block.layout,
+      title: block.title,
+      images: normalizeGallery(block.images),
+    }))
+  }
+
+  const images = normalizeGallery(gallery)
+  if (images.length === 0) return []
+
+  return [
+    {
+      layout: galleryLayout,
+      title: galleryTitle,
+      images,
+    },
+  ]
+}
+
+function GalleryBlockView({
+  layout,
+  title,
+  images,
+  blockIndex,
+}: {
+  layout: DetailGalleryLayout
+  title?: string
+  images: DetailGalleryItem[]
+  blockIndex: number
+}) {
+  if (images.length === 0) return null
+
+  const isGrid = isPhotoGridLayout(layout)
+
+  return (
+    <section
+      className={`detail__gallery-wrap${isGrid ? ' detail__gallery-wrap--grid' : ''}`}
+    >
+      {title ? <h2 className="detail__gallery-title">{title}</h2> : null}
+      <div
+        className={
+          isGrid
+            ? `detail__gallery detail__gallery--${layout}`
+            : 'detail__gallery'
+        }
+        tabIndex={isGrid ? undefined : 0}
+      >
+        {images.map((item, itemIndex) => (
+          <figure
+            key={`${blockIndex}-${item.src}-${itemIndex}`}
+            className="detail__gallery-item"
+          >
+            <img
+              src={item.src}
+              alt={item.caption ?? ''}
+              className="detail__gallery-image"
+            />
+            {item.caption && (
+              <figcaption className="detail__gallery-caption">
+                {item.caption}
+              </figcaption>
+            )}
+          </figure>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -188,16 +289,24 @@ export function DetailPage({
   timelineTitle = 'Flow',
   gallery,
   galleryTitle = 'Gallery',
+  galleryLayout = 'scroll',
+  galleryBlocks,
   epilogue,
   tags,
   externalLink,
   children,
 }: DetailPageProps) {
-  const galleryItems = normalizeGallery(gallery)
+  const blocks = resolveGalleryBlocks(
+    galleryBlocks,
+    gallery,
+    galleryTitle,
+    galleryLayout,
+  )
   const timelineBlocks = timeline ? groupTimeline(timeline) : []
+  const usesPhotoGrid = blocks.some((block) => isPhotoGridLayout(block.layout))
 
   return (
-    <article className="detail">
+    <article className={`detail${usesPhotoGrid ? ' detail--photo-grid' : ''}`}>
       <div className="detail__inner">
         <Link to={backTo} state={backState} className="detail__back">
           ← {backLabel}
@@ -234,9 +343,24 @@ export function DetailPage({
 
         {body.length > 0 && (
           <div className="detail__body">
-            {body.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+            {body.map((block, index) =>
+              typeof block === 'string' ? (
+                <p key={`body-text-${index}`}>{block}</p>
+              ) : (
+                <figure key={`body-image-${index}`} className="detail__body-figure">
+                  <img
+                    src={block.src}
+                    alt={block.caption ?? ''}
+                    className="detail__body-image"
+                  />
+                  {block.caption && (
+                    <figcaption className="detail-section__caption">
+                      {block.caption}
+                    </figcaption>
+                  )}
+                </figure>
+              ),
+            )}
           </div>
         )}
 
@@ -474,27 +598,15 @@ export function DetailPage({
 
         {children}
 
-        {galleryItems.length > 0 && (
-          <section className="detail__gallery-wrap">
-            <h2 className="detail__gallery-title">{galleryTitle}</h2>
-            <div className="detail__gallery" tabIndex={0}>
-              {galleryItems.map((item) => (
-                <figure key={item.src} className="detail__gallery-item">
-                  <img
-                    src={item.src}
-                    alt={item.caption ?? ''}
-                    className="detail__gallery-image"
-                  />
-                  {item.caption && (
-                    <figcaption className="detail__gallery-caption">
-                      {item.caption}
-                    </figcaption>
-                  )}
-                </figure>
-              ))}
-            </div>
-          </section>
-        )}
+        {blocks.map((block, blockIndex) => (
+          <GalleryBlockView
+            key={`gallery-block-${blockIndex}`}
+            layout={block.layout}
+            title={block.title}
+            images={block.images}
+            blockIndex={blockIndex}
+          />
+        ))}
 
         {epilogue && (
           <section className="detail-epilogue">
