@@ -13,11 +13,21 @@ export type DetailSectionBlock =
   | {
       type: 'imageGrid'
       images: { src: string; caption?: string }[]
+      /** height = equal crop height; width = full image, equal column width */
+      fit?: 'height' | 'width'
     }
   | {
       type: 'historyTimeline'
       eras: HistoryEra[]
       hint?: string
+    }
+  | {
+      type: 'split'
+      text: string
+      image: string
+      caption?: string
+      /** text-image = words left; image-text = picture left */
+      layout?: 'text-image' | 'image-text'
     }
 
 export interface DetailSection {
@@ -303,10 +313,11 @@ export function DetailPage({
 
                     if (block.type === 'imageGrid') {
                       const count = Math.min(Math.max(block.images.length, 1), 3)
+                      const fit = block.fit ?? 'height'
                       return (
                         <div
                           key={`grid-${index}`}
-                          className={`detail-section__grid detail-section__grid--${count}`}
+                          className={`detail-section__grid detail-section__grid--${count} detail-section__grid--fit-${fit}`}
                         >
                           {block.images.map((figure) => (
                             <figure
@@ -336,6 +347,46 @@ export function DetailPage({
                           eras={block.eras}
                           hint={block.hint}
                         />
+                      )
+                    }
+
+                    if (block.type === 'split') {
+                      const layout = block.layout ?? 'text-image'
+                      const textEl = (
+                        <p className="detail-section__split-text">{block.text}</p>
+                      )
+                      const imageEl = (
+                        <figure className="detail-section__split-figure">
+                          <img
+                            src={block.image}
+                            alt={block.caption ?? ''}
+                            className="detail-section__split-image"
+                          />
+                          {block.caption && (
+                            <figcaption className="detail-section__caption">
+                              {block.caption}
+                            </figcaption>
+                          )}
+                        </figure>
+                      )
+
+                      return (
+                        <div
+                          key={`split-${index}`}
+                          className={`detail-section__split detail-section__split--${layout}`}
+                        >
+                          {layout === 'image-text' ? (
+                            <>
+                              {imageEl}
+                              {textEl}
+                            </>
+                          ) : (
+                            <>
+                              {textEl}
+                              {imageEl}
+                            </>
+                          )}
+                        </div>
                       )
                     }
 

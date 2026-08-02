@@ -17,11 +17,20 @@ export type WorkSectionBlock =
   | {
       type: 'imageGrid'
       images: { src: string; caption?: string }[]
+      /** height = equal crop height; width = full image, equal column width */
+      fit?: 'height' | 'width'
     }
   | {
       type: 'historyTimeline'
       eras: HistoryEra[]
       hint?: string
+    }
+  | {
+      type: 'split'
+      text: string
+      image: string
+      caption?: string
+      layout?: 'text-image' | 'image-text'
     }
 
 export interface WorkSection {
@@ -320,10 +329,115 @@ export const workItems: WorkItem[] = [
       },
       {
         heading: 'Innovative interaction',
-        paragraphs: [
-          'Twin-Lens Reflex (TLR): designed for waist-level use, so players look into the viewfinder without HUD interference — an uninterrupted, analog framing practice.',
-          'Polaroid OneStep: marketed as “the world’s simplest camera.” Pick it up, press the right trigger, and the photo prints automatically — built for spontaneous emotional response at the peak of Act 2.',
-          'In Unreal, a SceneCaptureComponent2D acts as a virtual camera for the live viewfinder and still capture. Joystick rotation is converted to degrees and passed as delta values into camera adjustment events, so exposure and framing feel physical rather than menu-driven.',
+        blocks: [
+          {
+            type: 'text',
+            text: 'Built as a Meta VR experience: first-person hands, physical cameras, and as little HUD as possible.', 
+          },
+          {
+            type: 'text',
+            text: 'The core concept of this system is to replicate the experience of using a real camera in VR. To begin, the player must pick up the camera using the Grip button on the right controller. Only while holding the camera can the right Trigger be used to take a photo. The right thumbstick controls the camera’s position, allowing the player to move and aim it freely, as if physically holding a real device.',
+          },
+          {
+            type: 'split',
+            layout: 'text-image',
+            text: 'Twin-Lens Reflex (TLR) — Designed for waist-level use. Look down into the viewfinder for uninterrupted framing. Grip picks up the camera; the right thumbstick aims and turns dials; X enters or exits adjust mode; Y switches among Exposure, Focus, and Field of View; the right trigger shoots.',
+            image: '/images/details/through/TLR.png',
+          },
+          {
+            type: 'split',
+            layout: 'image-text',
+            text: 'Polaroid OneStep — The contrast to the TLR: marketed as “the world’s simplest camera.” Point, press the trigger, and the photo prints for an immediate emotional beat in Act 2. FOV can still be nudged when you need a tighter or wider frame without breaking the point-and-shoot fantasy.',
+            image: '/images/details/through/polaroid.png',
+          },
+          {
+            type: 'text',
+            text: 'Controller as camera dial — Joystick rotation is converted to degrees and passed as delta values into camera adjustment events, so aperture, focus, and shutter changes feel like turning a physical dial rather than scrubbing a UI slider.',
+          },
+          {
+            type: 'image',
+            src: '/images/details/through/interaction_logic.png',
+            caption:
+              'TLR + Polaroid interaction board with Meta controller mapping',
+          },
+          {
+            type: 'text',
+            text: 'Pressing the X button on the left controller activates a custom adjustment mode, allowing players to fine-tune camera settings such as exposure, focus, and field of view. In this mode, the left thumbstick functions as a virtual dial, simulating the act of turning the physical knobs commonly found on vintage twin-lens reflex (TLR) cameras. The Y button is used to switch between parameters. ',
+          },
+          {
+            type: 'imageGrid',
+            fit: 'width',
+            images: [
+              {
+                src: '/images/details/through/FOV.png',
+                caption: 'FOV adjustment',
+              },
+              {
+                src: '/images/details/through/Aperture.png',
+                caption: 'Aperture adjustment',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'How to get the pictures?',
+        blocks: [
+          {
+            type: 'text',
+            text: 'In Unreal, a SceneCaptureComponent2D drives the live viewfinder and still capture, so what you see through the lens is what gets printed into the scene.',
+          },
+          {
+            type: 'split',
+            layout: 'text-image',
+            text: 'Components:\n- SceneCaptureComponent2D\n- Render Target Texture(RT)\n- Material created by RT',
+            image: '/images/details/through/Scene2D.png',
+          },
+          {
+            type: 'text',
+            text: 'A SceneCaptureComponent2D in UE acts as a virtual camera that captures the scene from its own perspective every frame. It renders everything within its view frustum to a render target, which can then be used in a material. In this system, it is used to create the live viewfinder display and to capture the photo',
+          },
+          {
+            type: 'image',
+            src: '/images/details/through/make_sure_camera.png',
+            caption:
+              '1. Make sure the camera is on hand',
+          },
+          {
+            type: 'image',
+            src: '/images/details/through/capture_scene.png',
+            caption:
+              '2. Capture the scene and generate the polaroid',
+          },
+          {
+            type: 'image',
+            src: '/images/details/through/CountingShotLeft.png',
+            caption:
+              '3. Counting the left exposure and passing it to Game Mode',
+          },
+        ],
+      },
+      {
+        heading: 'Animation & Level Sequencer',
+        blocks: [
+          {
+            type: 'text',
+            text: 'Animation and Level Sequencer are used to stage key narrative moments, trigger emotional scenes, and transition smoothly between levels or acts.',
+          },
+          {
+            type: 'split',
+            layout: 'text-image',
+            text: 'NPCs are built as MetaHumans. I used MetaHuman Performance’s Audio to Face Animation to drive facial performance from dialogue audio, so characters feel present and reactive in the scene.',
+            image: '/images/details/through/meta1.png',
+          },
+          {
+            type: 'image',
+            src: '/images/details/through/meta2.png',
+          },
+          {
+            type: 'image',
+            src: '/images/details/through/levelsequencer.png',
+          },
         ],
       },
     ],
