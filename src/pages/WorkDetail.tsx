@@ -33,6 +33,7 @@ export function WorkDetail() {
       timelineTitle={item.timelineTitle}
       gallery={item.gallery}
       galleryTitle={item.galleryTitle}
+      darkBandFrom={item.darkBandFrom}
       epilogue={item.epilogue}
       tags={item.tags}
       externalLink={

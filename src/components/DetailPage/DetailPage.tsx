@@ -8,7 +8,7 @@ import './DetailPage.css'
 
 export type DetailSectionBlock =
   | { type: 'text'; text: string }
-  | { type: 'image'; src: string; caption?: string }
+  | { type: 'image'; src: string; caption?: string; fullBleed?: boolean }
   | { type: 'code'; code: string; label?: string }
   | {
       type: 'imageGrid'
@@ -41,6 +41,8 @@ export interface DetailSection {
   blocks?: DetailSectionBlock[]
   /** Inline act / step timeline rendered inside this section */
   timelineSteps?: DetailTimelineStep[]
+  /** dark = black band (e.g. SoMo from Solution onward) */
+  theme?: 'light' | 'dark'
 }
 
 export interface DetailTimelineStep {
@@ -50,6 +52,8 @@ export interface DetailTimelineStep {
   caption?: string
   /** Marks steps that belong to the repeating core loop */
   loop?: boolean
+  /** side = thumbnail beside copy (default); below = full-width under copy */
+  imagePlacement?: 'side' | 'below'
 }
 
 export interface DetailGalleryItem {
@@ -98,6 +102,8 @@ interface DetailPageProps {
   galleryLayout?: DetailGalleryLayout
   /** Preferred: stack multiple layouts (2x1 + 1x1 + 3x1, etc.) */
   galleryBlocks?: DetailGalleryBlock[]
+  /** From this section heading to the end of the page, use a black band */
+  darkBandFrom?: string
   epilogue?: {
     heading: string
     paragraphs: string[]
@@ -251,12 +257,16 @@ function TimelineStepRow({
   step: DetailTimelineStep
   index: number
 }) {
+  const placement = step.imagePlacement ?? 'side'
+
   return (
     <li className="detail-timeline__item">
       <span className="detail-timeline__index" aria-hidden="true">
         {String(index + 1).padStart(2, '0')}
       </span>
-      <div className="detail-timeline__content">
+      <div
+        className={`detail-timeline__content detail-timeline__content--${placement}`}
+      >
         <div className="detail-timeline__copy">
           <h3 className="detail-timeline__step">{step.title}</h3>
           <p className="detail-timeline__text">{step.text}</p>
@@ -280,6 +290,177 @@ function TimelineStepRow({
   )
 }
 
+function DetailSectionView({ section }: { section: DetailSection }) {
+  const blocks =
+    section.blocks && section.blocks.length > 0
+      ? section.blocks
+      : [
+          ...(
+            section.paragraphs && section.paragraphs.length > 0
+              ? section.paragraphs
+              : section.text
+                ? [section.text]
+                : []
+          ).map((text) => ({ type: 'text', text }) as const),
+          ...(
+            section.images && section.images.length > 0
+              ? section.images
+              : section.image
+                ? [{ src: section.image, caption: section.caption }]
+                : []
+          ).map(
+            (figure) =>
+              ({
+                type: 'image',
+                src: figure.src,
+                caption: figure.caption,
+              }) as const,
+          ),
+        ]
+
+  return (
+    <section
+      className={`detail-section${section.theme === 'dark' ? ' detail-section--dark' : ''}`}
+    >
+      <h2 className="detail-section__heading">{section.heading}</h2>
+      {blocks.map((block, index) => {
+        if (block.type === 'text') {
+          return (
+            <p
+              key={`text-${index}-${block.text.slice(0, 24)}`}
+              className="detail-section__text"
+            >
+              {block.text}
+            </p>
+          )
+        }
+
+        if (block.type === 'code') {
+          return (
+            <figure key={`code-${index}`} className="detail-section__code">
+              {block.label && (
+                <figcaption className="detail-section__code-label">
+                  {block.label}
+                </figcaption>
+              )}
+              <pre className="detail-section__pre">
+                <code>{highlightCodePlaceholders(block.code)}</code>
+              </pre>
+            </figure>
+          )
+        }
+
+        if (block.type === 'imageGrid') {
+          const count = Math.min(Math.max(block.images.length, 1), 3)
+          const fit = block.fit ?? 'height'
+          return (
+            <div
+              key={`grid-${index}`}
+              className={`detail-section__grid detail-section__grid--${count} detail-section__grid--fit-${fit}`}
+            >
+              {block.images.map((figure) => (
+                <figure key={figure.src} className="detail-section__grid-item">
+                  <img
+                    src={figure.src}
+                    alt={figure.caption ?? ''}
+                    className="detail-section__grid-image"
+                  />
+                  {figure.caption && (
+                    <figcaption className="detail-section__caption">
+                      {figure.caption}
+                    </figcaption>
+                  )}
+                </figure>
+              ))}
+            </div>
+          )
+        }
+
+        if (block.type === 'historyTimeline') {
+          return (
+            <HistoryTimeline
+              key={`history-${index}`}
+              eras={block.eras}
+              hint={block.hint}
+            />
+          )
+        }
+
+        if (block.type === 'split') {
+          const layout = block.layout ?? 'text-image'
+          const textEl = (
+            <p className="detail-section__split-text">{block.text}</p>
+          )
+          const imageEl = (
+            <figure className="detail-section__split-figure">
+              <img
+                src={block.image}
+                alt={block.caption ?? ''}
+                className="detail-section__split-image"
+              />
+              {block.caption && (
+                <figcaption className="detail-section__caption">
+                  {block.caption}
+                </figcaption>
+              )}
+            </figure>
+          )
+
+          return (
+            <div
+              key={`split-${index}`}
+              className={`detail-section__split detail-section__split--${layout}`}
+            >
+              {layout === 'image-text' ? (
+                <>
+                  {imageEl}
+                  {textEl}
+                </>
+              ) : (
+                <>
+                  {textEl}
+                  {imageEl}
+                </>
+              )}
+            </div>
+          )
+        }
+
+        return (
+          <figure
+            key={block.src}
+            className={`detail-section__figure${block.fullBleed ? ' detail-section__figure--full-bleed' : ''}`}
+          >
+            <img
+              src={block.src}
+              alt={block.caption ?? ''}
+              className="detail-section__image"
+            />
+            {block.caption && (
+              <figcaption className="detail-section__caption">
+                {block.caption}
+              </figcaption>
+            )}
+          </figure>
+        )
+      })}
+      {section.timelineSteps && section.timelineSteps.length > 0 && (
+        <div className="detail-timeline detail-timeline--inline">
+          <ol className="detail-timeline__list">
+            {section.timelineSteps.map((step, stepIndex) => (
+              <TimelineStepRow
+                key={step.title}
+                step={step}
+                index={stepIndex}
+              />
+            ))}
+          </ol>
+        </div>
+      )}
+    </section>
+  )
+}
+
 export function DetailPage({
   backTo,
   backLabel,
@@ -299,6 +480,7 @@ export function DetailPage({
   galleryTitle = 'Gallery',
   galleryLayout = 'scroll',
   galleryBlocks,
+  darkBandFrom,
   epilogue,
   tags,
   externalLink,
@@ -312,6 +494,100 @@ export function DetailPage({
   )
   const timelineBlocks = timeline ? groupTimeline(timeline) : []
   const usesPhotoGrid = blocks.some((block) => isPhotoGridLayout(block.layout))
+
+  const darkIndex =
+    darkBandFrom && sections
+      ? sections.findIndex((section) => section.heading === darkBandFrom)
+      : -1
+  const hasDarkBand = darkIndex >= 0
+  const lightSections =
+    hasDarkBand && sections ? sections.slice(0, darkIndex) : sections
+  const darkSections =
+    hasDarkBand && sections ? sections.slice(darkIndex) : []
+
+  const pageTimeline =
+    timelineBlocks.length > 0 ? (
+      <section className="detail-timeline">
+        <h2 className="detail-timeline__title">{timelineTitle}</h2>
+        <div className="detail-timeline__blocks">
+          {timelineBlocks.map((block) => {
+            if (block.type === 'loop') {
+              return (
+                <div
+                  key={`loop-${block.steps[0].index}`}
+                  className="detail-timeline__loop"
+                >
+                  <div className="detail-timeline__loop-header">
+                    <span className="detail-timeline__loop-label">
+                      Core loop
+                    </span>
+                    <span className="detail-timeline__loop-hint">
+                      Repeats for each customer · 02–05
+                    </span>
+                  </div>
+                  <ol className="detail-timeline__list detail-timeline__list--loop">
+                    {block.steps.map(({ step, index }) => (
+                      <TimelineStepRow
+                        key={step.title}
+                        step={step}
+                        index={index}
+                      />
+                    ))}
+                  </ol>
+                </div>
+              )
+            }
+
+            return (
+              <ol key={block.step.title} className="detail-timeline__list">
+                <TimelineStepRow step={block.step} index={block.index} />
+              </ol>
+            )
+          })}
+        </div>
+      </section>
+    ) : null
+
+  const pageGallery = blocks.map((block, blockIndex) => (
+    <GalleryBlockView
+      key={`gallery-block-${blockIndex}`}
+      layout={block.layout}
+      title={block.title}
+      images={block.images}
+      blockIndex={blockIndex}
+    />
+  ))
+
+  const pageEpilogue = epilogue ? (
+    <section className="detail-epilogue">
+      <h2 className="detail-epilogue__heading">{epilogue.heading}</h2>
+      <div className="detail-epilogue__body">
+        {epilogue.paragraphs.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+      </div>
+      {epilogue.image && (
+        <figure className="detail-epilogue__figure">
+          <img
+            src={epilogue.image}
+            alt={epilogue.heading}
+            className="detail-epilogue__image"
+          />
+        </figure>
+      )}
+    </section>
+  ) : null
+
+  const pageTags =
+    tags && tags.length > 0 ? (
+      <div className="detail__tags">
+        {tags.map((tag) => (
+          <span key={tag} className="detail__tag">
+            {tag}
+          </span>
+        ))}
+      </div>
+    ) : null
 
   return (
     <article className={`detail${usesPhotoGrid ? ' detail--photo-grid' : ''}`}>
@@ -417,280 +693,46 @@ export function DetailPage({
           </div>
         )}
 
-        {sections && sections.length > 0 && (
+        {lightSections && lightSections.length > 0 && (
           <div className="detail__sections">
-            {sections.map((section) => {
-              const blocks =
-                section.blocks && section.blocks.length > 0
-                  ? section.blocks
-                  : [
-                      ...(
-                        section.paragraphs && section.paragraphs.length > 0
-                          ? section.paragraphs
-                          : section.text
-                            ? [section.text]
-                            : []
-                      ).map(
-                        (text) =>
-                          ({ type: 'text', text }) as const,
-                      ),
-                      ...(
-                        section.images && section.images.length > 0
-                          ? section.images
-                          : section.image
-                            ? [
-                                {
-                                  src: section.image,
-                                  caption: section.caption,
-                                },
-                              ]
-                            : []
-                      ).map(
-                        (figure) =>
-                          ({
-                            type: 'image',
-                            src: figure.src,
-                            caption: figure.caption,
-                          }) as const,
-                      ),
-                    ]
-
-              return (
-                <section key={section.heading} className="detail-section">
-                  <h2 className="detail-section__heading">{section.heading}</h2>
-                  {blocks.map((block, index) => {
-                    if (block.type === 'text') {
-                      return (
-                        <p
-                          key={`text-${index}-${block.text.slice(0, 24)}`}
-                          className="detail-section__text"
-                        >
-                          {block.text}
-                        </p>
-                      )
-                    }
-
-                    if (block.type === 'code') {
-                      return (
-                        <figure
-                          key={`code-${index}`}
-                          className="detail-section__code"
-                        >
-                          {block.label && (
-                            <figcaption className="detail-section__code-label">
-                              {block.label}
-                            </figcaption>
-                          )}
-                          <pre className="detail-section__pre">
-                            <code>{highlightCodePlaceholders(block.code)}</code>
-                          </pre>
-                        </figure>
-                      )
-                    }
-
-                    if (block.type === 'imageGrid') {
-                      const count = Math.min(Math.max(block.images.length, 1), 3)
-                      const fit = block.fit ?? 'height'
-                      return (
-                        <div
-                          key={`grid-${index}`}
-                          className={`detail-section__grid detail-section__grid--${count} detail-section__grid--fit-${fit}`}
-                        >
-                          {block.images.map((figure) => (
-                            <figure
-                              key={figure.src}
-                              className="detail-section__grid-item"
-                            >
-                              <img
-                                src={figure.src}
-                                alt={figure.caption ?? ''}
-                                className="detail-section__grid-image"
-                              />
-                              {figure.caption && (
-                                <figcaption className="detail-section__caption">
-                                  {figure.caption}
-                                </figcaption>
-                              )}
-                            </figure>
-                          ))}
-                        </div>
-                      )
-                    }
-
-                    if (block.type === 'historyTimeline') {
-                      return (
-                        <HistoryTimeline
-                          key={`history-${index}`}
-                          eras={block.eras}
-                          hint={block.hint}
-                        />
-                      )
-                    }
-
-                    if (block.type === 'split') {
-                      const layout = block.layout ?? 'text-image'
-                      const textEl = (
-                        <p className="detail-section__split-text">{block.text}</p>
-                      )
-                      const imageEl = (
-                        <figure className="detail-section__split-figure">
-                          <img
-                            src={block.image}
-                            alt={block.caption ?? ''}
-                            className="detail-section__split-image"
-                          />
-                          {block.caption && (
-                            <figcaption className="detail-section__caption">
-                              {block.caption}
-                            </figcaption>
-                          )}
-                        </figure>
-                      )
-
-                      return (
-                        <div
-                          key={`split-${index}`}
-                          className={`detail-section__split detail-section__split--${layout}`}
-                        >
-                          {layout === 'image-text' ? (
-                            <>
-                              {imageEl}
-                              {textEl}
-                            </>
-                          ) : (
-                            <>
-                              {textEl}
-                              {imageEl}
-                            </>
-                          )}
-                        </div>
-                      )
-                    }
-
-                    return (
-                      <figure
-                        key={block.src}
-                        className="detail-section__figure"
-                      >
-                        <img
-                          src={block.src}
-                          alt={block.caption ?? ''}
-                          className="detail-section__image"
-                        />
-                        {block.caption && (
-                          <figcaption className="detail-section__caption">
-                            {block.caption}
-                          </figcaption>
-                        )}
-                      </figure>
-                    )
-                  })}
-                  {section.timelineSteps && section.timelineSteps.length > 0 && (
-                    <div className="detail-timeline detail-timeline--inline">
-                      <ol className="detail-timeline__list">
-                        {section.timelineSteps.map((step, stepIndex) => (
-                          <TimelineStepRow
-                            key={step.title}
-                            step={step}
-                            index={stepIndex}
-                          />
-                        ))}
-                      </ol>
-                    </div>
-                  )}
-                </section>
-              )
-            })}
-          </div>
-        )}
-
-        {timelineBlocks.length > 0 && (
-          <section className="detail-timeline">
-            <h2 className="detail-timeline__title">{timelineTitle}</h2>
-            <div className="detail-timeline__blocks">
-              {timelineBlocks.map((block) => {
-                if (block.type === 'loop') {
-                  return (
-                    <div
-                      key={`loop-${block.steps[0].index}`}
-                      className="detail-timeline__loop"
-                    >
-                      <div className="detail-timeline__loop-header">
-                        <span className="detail-timeline__loop-label">
-                          Core loop
-                        </span>
-                        <span className="detail-timeline__loop-hint">
-                          Repeats for each customer · 02–05
-                        </span>
-                      </div>
-                      <ol className="detail-timeline__list detail-timeline__list--loop">
-                        {block.steps.map(({ step, index }) => (
-                          <TimelineStepRow
-                            key={step.title}
-                            step={step}
-                            index={index}
-                          />
-                        ))}
-                      </ol>
-                    </div>
-                  )
-                }
-
-                return (
-                  <ol
-                    key={block.step.title}
-                    className="detail-timeline__list"
-                  >
-                    <TimelineStepRow step={block.step} index={block.index} />
-                  </ol>
-                )
-              })}
-            </div>
-          </section>
-        )}
-
-        {children}
-
-        {blocks.map((block, blockIndex) => (
-          <GalleryBlockView
-            key={`gallery-block-${blockIndex}`}
-            layout={block.layout}
-            title={block.title}
-            images={block.images}
-            blockIndex={blockIndex}
-          />
-        ))}
-
-        {epilogue && (
-          <section className="detail-epilogue">
-            <h2 className="detail-epilogue__heading">{epilogue.heading}</h2>
-            <div className="detail-epilogue__body">
-              {epilogue.paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-            {epilogue.image && (
-              <figure className="detail-epilogue__figure">
-                <img
-                  src={epilogue.image}
-                  alt={epilogue.heading}
-                  className="detail-epilogue__image"
-                />
-              </figure>
-            )}
-          </section>
-        )}
-
-        {tags && tags.length > 0 && (
-          <div className="detail__tags">
-            {tags.map((tag) => (
-              <span key={tag} className="detail__tag">
-                {tag}
-              </span>
+            {lightSections.map((section) => (
+              <DetailSectionView key={section.heading} section={section} />
             ))}
           </div>
         )}
+
+        {!hasDarkBand && (
+          <>
+            {pageTimeline}
+            {children}
+            {pageGallery}
+            {pageEpilogue}
+            {pageTags}
+          </>
+        )}
       </div>
+
+      {hasDarkBand && (
+        <div className="detail__dark-band">
+          <div className="detail__dark-band-inner">
+            {darkSections.length > 0 && (
+              <div className="detail__sections">
+                {darkSections.map((section) => (
+                  <DetailSectionView
+                    key={section.heading}
+                    section={{ ...section, theme: 'dark' }}
+                  />
+                ))}
+              </div>
+            )}
+            {pageTimeline}
+            {children}
+            {pageGallery}
+            {pageEpilogue}
+            {pageTags}
+          </div>
+        </div>
+      )}
     </article>
   )
 }

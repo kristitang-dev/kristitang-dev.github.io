@@ -12,7 +12,7 @@ export const workCategoryLabels: Record<WorkCategoryId, string> = {
 
 export type WorkSectionBlock =
   | { type: 'text'; text: string }
-  | { type: 'image'; src: string; caption?: string }
+  | { type: 'image'; src: string; caption?: string; fullBleed?: boolean }
   | { type: 'code'; code: string; label?: string }
   | {
       type: 'imageGrid'
@@ -42,6 +42,7 @@ export interface WorkSection {
   images?: { src: string; caption?: string }[]
   blocks?: WorkSectionBlock[]
   timelineSteps?: WorkTimelineStep[]
+  theme?: 'light' | 'dark'
 }
 
 export interface WorkTimelineStep {
@@ -50,6 +51,7 @@ export interface WorkTimelineStep {
   image?: string
   caption?: string
   loop?: boolean
+  imagePlacement?: 'side' | 'below'
 }
 
 export interface WorkGalleryItem {
@@ -82,6 +84,8 @@ export interface WorkItem {
   timelineTitle?: string
   gallery?: WorkGalleryItem[] | string[]
   galleryTitle?: string
+  /** From this section heading through gallery/epilogue, render on a black band */
+  darkBandFrom?: string
   /** Closing note at the end of the detail page */
   epilogue?: {
     heading: string
@@ -481,13 +485,218 @@ export const workItems: WorkItem[] = [
     description:
       'Social + Emotion = SoMo. A wearable ear clip and companion app that provides real-time social-emotional feedback for people who struggle to “read the air” — subtle, smart, and supportive.',
     tags: ['Affective Computing', 'Emotional Intelligence', 'Wearable'],
-    tools: ['Figma', 'Arduino', 'Fusion 360', 'Python'],
+    tools: ['Figma', 'Arduino', 'Fusion 360', 'Python', 'Flask'],
     image: '/images/somo.jpg',
     featured: true,
+    darkBandFrom: 'Solution',
     body: [
-      'Placeholder — detail page for SoMo. Add problem framing, hardware design, app flows, and testing notes here.',
-      'Expand with form studies, sensor logic, and companion-app UI.',
+      'Social + Emotion = SoMo — subtle, smart, and supportive.',
+      'SoMo is a wearable ear-clip device and companion app that supports social-emotional understanding for individuals with Asperger’s. It combines real-time multimodal feedback with quiet space for personal growth — helping turn ambiguous social signals into something more visible, learnable, and operational.',
     ],
+    sections: [
+      {
+        heading: 'Background',
+        blocks: [
+          {
+            type: 'text',
+            text: 'In the United States, the CDC reported in 2021 that approximately 1 in 36 children had been identified with ASD. A study in JAMA Network Open found that diagnoses among children and adults rose 175% over a decade — prevalence across the lifespan climbing from 2.3 to 6.3 per 1,000 people between 2011 and 2022, based on data from over 12.2 million people.',
+          },
+          {
+            type: 'text',
+            text: 'At the same time, AI is becoming a companion in daily life — not only for tasks, but for emotional and social situations. Affective Computing and Emotion AI mean robots, wearables, and virtual agents can increasingly detect emotion. SoMo asks how that capability might support people who want to participate more fully in social life, not just regulate their own feelings in isolation.',
+          },
+        ],
+      },
+      {
+        heading: 'Listening first',
+        blocks: [
+          {
+            type: 'text',
+            text: 'I posted Asperger-related questions on Quora and ran a survey via SurveyMonkey. Three responses offered strong, representative insight — and every participant showed interest in an AI-assisted device for social or emotional support.',
+          },
+          {
+            type: 'image',
+            src: '/images/details/somo/interview-1.png',
+          },
+          {
+            type: 'image',
+            src: '/images/details/somo/interview-3.png',
+          },
+          {
+            type: 'image',
+            src: '/images/details/somo/interview-2.png',
+          },
+        ],
+      },
+      {
+        heading: 'Journey maps',
+        blocks: [
+          {
+            type: 'text',
+            text: 'Two journey maps surfaced recurring pain points and design opportunities — from misread cues and literal language to the quieter wish for pacing support and post-interaction reflection.',
+          },
+          {
+            type: 'image',
+            src: '/images/details/somo/journey-map-1.png',
+            caption:
+              'Alex at a casual team get-together — misreads social cues, struggles with small talk and timing, and withdraws after rejection. Opportunities: real-time emotional cue feedback, subtle conversational pacing, and post-interaction reflection.',
+          },
+          {
+            type: 'image',
+            src: '/images/details/somo/journey-map-2.png',
+            caption:
+              'Taylor’s interview journey — figurative language taken literally, difficulty adapting mid-conversation, leaving confused and discouraged. Opportunities: pre-interview metaphor support, real-time emotion/tone recognition, and AI-powered practice.',
+          },
+        ],
+      },
+      {
+        heading: 'HMW',
+        blocks: [
+          {
+            type: 'text',
+            text: 'How might we help individuals with Asperger’s better recognize and respond to emotional and social cues in real time — so they feel more confident in conversations, relationships, and opportunities?',
+          },
+          {
+            type: 'image',
+            src: '/images/details/somo/hmw.png',
+          },
+        ],
+      },
+      {
+        heading: 'Solution',
+        blocks: [
+          {
+            type: 'text',
+            text: 'A wearable ear clip paired with a companion app. On-device sensing captures face and voice; fusion logic returns a simple emotional readout; BLE/Wi-Fi carries insights to an app built for real-time awareness, journaling, and growth over time.',
+          },
+          {
+            type: 'split',
+            layout: 'image-text',
+            text: 'Hardware anatomy — camera and speaker on the core band, with a modular clip that carries a small display for waveform-style feedback. The form is meant to be worn at the ear: present enough to feel intentional, quiet enough to stay supportive rather than theatrical.',
+            image: '/images/details/somo/illustration.png',
+          },
+          {
+            type: 'image',
+            src: '/images/details/somo/information-flow.png',
+            caption:
+              'Information flow: facial + voice recognition on device → fusion decisions → BLE/Wi-Fi → app (Home, Journal, Growth, Settings).',
+          },
+        ],
+      },
+      {
+        heading: 'Technology',
+        blocks: [
+          {
+            type: 'text',
+            text: 'The prototype stack pairs an ESP32-CAM and HM-10 BLE module for facial capture and wireless handoff with an LD3320 speech recognizer for voice. Local processing produces expression labels and tone tags before the companion app takes over for timeline, reflection, and settings.',
+          },
+          {
+            type: 'split',
+            layout: 'text-image',
+            text: 'It is a versatile, low-cost development board featuring a Wi-Fi + Bluetooth dual-mode with an integrated camera. Designed as a compact minimum system, it combines on-device processing with wireless connectivity.',
+            image: '/images/details/somo/esp32-cam.png',
+          },
+          {
+            type: 'split',
+            layout: 'image-text',
+            text: 'HM-10 BLE module enables wireless link to the app.',
+            image: '/images/details/somo/ble-module.png',
+          },
+          {
+            type: 'split',
+            layout: 'text-image',
+            text: 'Early voice prototyping ran on Arduino with the speech recognizer in button-trigger mode — confirming initialization, keyword setup, and a waiting-for-trigger event loop before folding the channel into the fuller multimodal pipeline.',
+            image: '/images/details/somo/speech-recognizer.png',
+          },
+          {
+            type: 'split',
+            layout: 'text-image',
+            text: 'Voice recognition bench test with Arduino serial monitor.',
+            image: '/images/details/somo/voice-recognizing.png',
+          },
+        ],
+      },
+      {
+        heading: 'Multimodal pipeline',
+        blocks: [
+          {
+            type: 'text',
+            text: 'Face + Voice → Doodle: a real-time multimodal pipeline that turns expressions and tones into simple visual emotions.',
+          },
+          {
+            type: 'text',
+            text: 'Why multimodal? Single channels are often unreliable — some people show little facial expression but strong vocal cues; others speak flatly while the face carries the feeling. Combining both makes the system more robust and closer to real social interaction.',
+          },
+          {
+            type: 'text',
+            text: 'Why doodle-style output? For individuals with Asperger’s, subtle cues can be hard to read. Instead of abstract labels alone (“angry,” “happy”), simple hand-drawn doodles make emotions more immediate, accessible, and learnable — turning technology into a supportive social tool.',
+          },
+          {
+            type: 'text',
+            text: 'Fusion rule: when face and voice agree, return that label; if one is neutral, prefer the non-neutral channel; if both disagree with non-neutral labels, apply a 70/30 weighted blend (face 70%, voice 30%).',
+          },
+          {
+            type: 'text',
+            text: 'A browser demo path explored the same idea in software: face-api.js for live expression on webcam video, MediaRecorder for audio, and a Flask + Hugging Face Wav2Vec2 backend for speech emotion via a CORS-enabled /analyze-audio API — with canvas doodles as the shared visual language.',
+          },
+        ],
+      },
+      {
+        heading: 'From sketch to form',
+        text: 'Form studies began with ear mapping and clip geometries, moved through CMF references that mix jewelry-like presence with soft tactile interfaces, and landed on a family of final colorways for the wearable band.',
+        timelineSteps: [
+          {
+            title: 'Sketches & ear mapping',
+            text: 'Placement zones on the ear and a spread of clip, hook, and modular forms — with a few geometries highlighted for further development.',
+            image: '/images/details/somo/sketches.png',
+          },
+          {
+            title: 'CMF exploration',
+            text: 'Material and finish references spanning open-ring earbuds, ear cuffs, soft interfaces, and textured bands — balancing visibility, comfort, and a product language that feels intentional rather than clinical.',
+            image: '/images/details/somo/cmf.png',
+            imagePlacement: 'below',
+          },
+          {
+            title: 'Final 3D model',
+            text: 'Three colorways of the ear-clip form — navy, cream, and gold outer shells with contrasting textured inner bands — rendered as the resolved product family.',
+            image: '/images/details/somo/final-model.png',
+            imagePlacement: 'below',
+          },
+        ],
+      },
+
+      {
+        heading: 'Companion App',
+        blocks: [
+          {
+            type: 'image',
+            src: '/images/details/somo/UI1.png',
+            fullBleed: true,
+          },
+          {
+            type: 'image',
+            src: '/images/details/somo/UI2.png',
+            fullBleed: true,
+          },
+          {
+            type: 'image',
+            src: '/images/details/somo/UI3.png',
+            fullBleed: true,
+          },
+        ],
+      },
+
+    ],
+   
+    epilogue: {
+      heading: 'So More…',
+      paragraphs: [
+        '“So More” carries a double meaning. It continues the SoMo ear-clip device, and it invites a reminder: in every human interaction, there is always more depth than what can be immediately seen or understood.',
+        'Many existing tools rightly focus on individual emotion regulation. Research here pointed to a quieter, often overlooked desire — for social connection and competence. People expressed a genuine wish to decipher the emotions and intentions of others so they could participate more effectively. That insight positioned SoMo not as a tool for self-management alone, but as a bridge dedicated to identifying and translating external social signals.',
+        'For those with Asperger’s, the social world presents pervasive ambiguity — fragmented body language, ambiguous tone, and words obscured by codes and jargon. SoMo aims to make those invisible signals more visible, learnable, and operational. Looking ahead, deeper AI analysis is envisioned as a next step for parsing layered social context.',
+        'The visibility of the ear clip is intentional. Inspired by a friend who described diagnosis as relief and validation — “I am not broken; I simply process and recognize emotions differently” — the form is meant as a quiet acknowledgment. There is nothing here to hide. In embracing that transparency, the social world might reveal so much more.',
+      ],
+    },
   },
   {
     id: 'nutrisynth',
