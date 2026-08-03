@@ -12,7 +12,7 @@ export const workCategoryLabels: Record<WorkCategoryId, string> = {
 
 export type WorkSectionBlock =
   | { type: 'text'; text: string }
-  | { type: 'image'; src: string; caption?: string; fullBleed?: boolean }
+  | { type: 'image'; src: string; caption?: string; fullBleed?: boolean; scale?: number }
   | { type: 'code'; code: string; label?: string }
   | {
       type: 'imageGrid'
@@ -103,7 +103,7 @@ export const workItems: WorkItem[] = [
     id: 'graintwin',
     title: 'GrainTwin',
     subtitle: 'MR Platform with Smart PPE for Collaborative Woodworking',
-    categories: ['vr-mr','assistive'],
+    categories: ['vr-mr', 'assistive'],
     period: 'Jul 2025 – Oct 2025',
     sortDate: '2025-10',
     type: 'Group Project · Role: Concept & Interface Design, User Testing',
@@ -114,9 +114,143 @@ export const workItems: WorkItem[] = [
     image: '/images/graintwin.jpg',
     featured: true,
     body: [
-      'Placeholder — detail page for GrainTwin. Add process, role breakdown, system diagrams, and outcomes here.',
-      'This page will eventually cover research motivation, MR interface design, usability testing, and collaboration with the team.',
+      'During a co-op at a furniture company, I watched SMEs struggle with manual workflows, safety risks, and inefficient material use — often ending in costly waste. Traditional woodworking shops urgently need digital transformation.',
+      'I teamed up with Yulu (Industrial Design) and Tianye (Digital Media). Our cross-disciplinary team explored how Mixed Reality and Smart PPE could empower SMEs: safer production through real-time awareness, collaborative decisions among customers, designers, and makers, and more efficient workflows through Digital Twin and AI. GrainTwin is both a design experiment and a vision for how craft-based industries may evolve in the era of Industry 4.0.',
     ],
+    sections: [
+      {
+        heading: 'Background',
+        blocks: [
+          {
+            type: 'text',
+            text: 'Woodworking spans furniture, construction, and beyond — a large and growing market. As a renewable material, wood is valued for sustainability, natural aesthetics, and durability, and remains central to furniture production.',
+          },
+          {
+            type: 'text',
+            text: 'Typical SMEs — custom cabinet shops, furniture makers, millwork firms — balance craftsmanship with limited automation. Small-batch cabinet companies and school-based woodworking labs behave like compact, high-risk micro-factories: raw panels become custom cabinetry through creativity and flexibility, but also through heavy manual work that exposes people to blade contact, kickback, and dust inhalation.',
+          },
+          {
+            type: 'text',
+            text: 'Machine-side challenges include dust that often exceeds safe limits, outdated tools, and low automation that caps efficiency. Human-side challenges include forgettable training, expert knowledge that is hard to share, injuries from unsafe tool use, and roughly 5–15% rework from misalignment and defects.',
+          },
+        ],
+      },
+      {
+        heading: 'Customer journey',
+        blocks: [
+          {
+            type: 'text',
+            text: 'We mapped a panel workflow from identify-and-label through stacking, edge banding, recovery decisions, and handoff to assembly — surfacing pain points and MR/AI opportunities at each step.',
+          },
+          {
+            type: 'image',
+            src: '/images/details/graintwin/journey-map.png',
+            caption:
+              'Before / During / After journey — actions, tools, pain points, and AR/AI opportunities across five process stages.',
+          },
+        ],
+      },
+      {
+        heading: 'Ideation',
+        blocks: [
+          {
+            type: 'text',
+            text: 'How might we integrate immersion, accuracy, and real-time awareness into a unified system for smart manufacturing in woodworking SMEs?',
+          },
+          {
+            type: 'image',
+            src: '/images/details/graintwin/ideation.png',
+            caption:
+              'Concept map linking digital twin, efficiency, safety, and existing MR interaction patterns.',
+            scale: 0.75,
+          },
+          {
+            type: 'text',
+            text: 'Compared with VR, AR, or AI alone, Mixed Reality balances immersion, accuracy, real-world interaction, and data-driven insight — the most practical fit for a shop floor where people still need their hands on the work.',
+          },
+          {
+            type: 'image',
+            src: '/images/details/graintwin/mr-wins.png',
+            caption:
+              'MR vs VR / AR / AI — why Mixed Reality is the most balanced choice for GrainTwin.',
+            scale: 0.75,
+          },
+        ],
+      },
+      {
+        heading: 'How it works',
+        blocks: [
+          {
+            type: 'text',
+            text: 'GrainTwin connects operators, machines, and workpieces through IoT sensing, cloud intelligence, and MR visualization — so the shop floor and its digital twin stay in sync.',
+          },
+          {
+            type: 'image',
+            src: '/images/details/graintwin/how-it-works.png',
+          },
+          {
+            type: 'text',
+            text: '3 digital twins carry the system:',
+          },
+          {
+            type: 'split',
+            layout: 'text-image',
+            text: 'Operator Twin — Smart PPE (glove & mask) tracks fatigue and attention. Safety reminders appear during risky tasks, keeping awareness close to the body without pulling focus off the cut.',
+            image: '/images/details/graintwin/twin-operator.png',
+          },
+          {
+            type: 'split',
+            layout: 'image-text',
+            text: 'Machine Twin — Real-time status (running / idle / warning), paired with panel and operator twins to suggest better human–machine matches, and predictive maintenance to reduce downtime.',
+            image: '/images/details/graintwin/twin-machine.png',
+          },
+          {
+            type: 'split',
+            layout: 'text-image',
+            text: 'Workpiece Twin — Each panel or offcut carries a unique ID (RFID/QR). Machining status, offcut dimensions, material type, and moisture are recorded so operators can see processing history, next tasks, cutting paths, and utilization in MR.',
+            image: '/images/details/graintwin/twin-workpiece.png',
+          },
+        ],
+      },
+      {
+        heading: '',//Product
+        blocks: [
+          {
+            type: 'image',
+            src: '/images/details/graintwin/product.png',
+          },
+        ],
+      },
+      {
+        heading: 'Prototype',
+        blocks: [
+          {
+            type: 'image',
+            src: '/images/details/graintwin/prototype.png',
+            caption: 
+            'Prototype explorations for the MR interface and Smart PPE concepts.',
+          fullBlend:true,
+          },
+        ],
+      },
+      {
+        heading: '',//storyboard
+        blocks: [
+          {
+            type: 'image',
+            src: '/images/details/graintwin/storyboard.png',
+            fullBleed: true,
+          },
+        ],
+      },
+    ],
+    //epilogue: {
+      //heading: 'Craft meets computation',
+      //paragraphs: [
+        //'GrainTwin grew from watching small shops carry craft knowledge in people’s heads while safety risks and material waste stayed stubbornly physical. Digital twins are not meant to replace that craft — they are meant to make invisible status visible: which panel is which, whether a machine is about to fail, whether an operator is fatigued, whether an offcut still has a second life.',
+        //'By pairing Mixed Reality with Smart PPE, the project asks how Industry 4.0 can meet woodworking SMEs on their own terms — immersion without isolation, accuracy without replacing judgment, and real-time awareness that supports customers, designers, and makers deciding together.',
+      //],
+    //},
   },
   {
     id: 'lens-of-bias',

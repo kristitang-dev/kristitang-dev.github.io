@@ -8,7 +8,7 @@ import './DetailPage.css'
 
 export type DetailSectionBlock =
   | { type: 'text'; text: string }
-  | { type: 'image'; src: string; caption?: string; fullBleed?: boolean }
+  | { type: 'image'; src: string; caption?: string; fullBleed?: boolean; scale?: number }
   | { type: 'code'; code: string; label?: string }
   | {
       type: 'imageGrid'
@@ -430,7 +430,12 @@ function DetailSectionView({ section }: { section: DetailSection }) {
         return (
           <figure
             key={block.src}
-            className={`detail-section__figure${block.fullBleed ? ' detail-section__figure--full-bleed' : ''}`}
+            className={`detail-section__figure${block.fullBleed ? ' detail-section__figure--full-bleed' : ''}${block.scale && block.scale !== 1 ? ' detail-section__figure--scaled' : ''}`}
+            style={
+              block.scale && block.scale !== 1
+                ? { width: `${block.scale * 100}%` }
+                : undefined
+            }
           >
             <img
               src={block.src}
