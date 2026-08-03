@@ -160,8 +160,6 @@ export const workItems: WorkItem[] = [
           {
             type: 'image',
             src: '/images/details/graintwin/ideation.png',
-            caption:
-              'Concept map linking digital twin, efficiency, safety, and existing MR interaction patterns.',
             scale: 0.75,
           },
           {
@@ -171,8 +169,6 @@ export const workItems: WorkItem[] = [
           {
             type: 'image',
             src: '/images/details/graintwin/mr-wins.png',
-            caption:
-              'MR vs VR / AR / AI — why Mixed Reality is the most balanced choice for GrainTwin.',
             scale: 0.75,
           },
         ],
@@ -227,14 +223,14 @@ export const workItems: WorkItem[] = [
           {
             type: 'image',
             src: '/images/details/graintwin/prototype.png',
-            caption: 
-            'Prototype explorations for the MR interface and Smart PPE concepts.',
-          fullBlend:true,
+            caption:
+              'Prototype explorations for the MR interface and Smart PPE concepts.',
+            fullBleed: true,
           },
         ],
       },
       {
-        heading: '',//storyboard
+        heading: '', // storyboard
         blocks: [
           {
             type: 'image',
