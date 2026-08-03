@@ -291,7 +291,7 @@ function TimelineStepRow({
 }
 
 function DetailSectionView({ section }: { section: DetailSection }) {
-  const blocks =
+  const blocks: DetailSectionBlock[] =
     section.blocks && section.blocks.length > 0
       ? section.blocks
       : [
@@ -301,7 +301,9 @@ function DetailSectionView({ section }: { section: DetailSection }) {
               : section.text
                 ? [section.text]
                 : []
-          ).map((text) => ({ type: 'text', text }) as const),
+          ).map(
+            (text): DetailSectionBlock => ({ type: 'text', text }),
+          ),
           ...(
             section.images && section.images.length > 0
               ? section.images
@@ -309,12 +311,11 @@ function DetailSectionView({ section }: { section: DetailSection }) {
                 ? [{ src: section.image, caption: section.caption }]
                 : []
           ).map(
-            (figure) =>
-              ({
-                type: 'image',
-                src: figure.src,
-                caption: figure.caption,
-              }) as const,
+            (figure): DetailSectionBlock => ({
+              type: 'image',
+              src: figure.src,
+              caption: figure.caption,
+            }),
           ),
         ]
 
