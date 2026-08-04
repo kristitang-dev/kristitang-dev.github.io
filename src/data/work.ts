@@ -753,14 +753,14 @@ export const workItems: WorkItem[] = [
             type: 'text',
             text: 'Face + Voice → Doodle: a real-time multimodal pipeline that turns expressions and tones into simple visual emotions.',
           },
-          {
-            type: 'text',
-            text: 'Why multimodal? Single channels are often unreliable — some people show little facial expression but strong vocal cues; others speak flatly while the face carries the feeling. Combining both makes the system more robust and closer to real social interaction.',
-          },
-          {
-            type: 'text',
-            text: 'Why doodle-style output? For individuals with Asperger’s, subtle cues can be hard to read. Instead of abstract labels alone (“angry,” “happy”), simple hand-drawn doodles make emotions more immediate, accessible, and learnable — turning technology into a supportive social tool.',
-          },
+          //{
+          //  type: 'text',
+          //  text: 'Why multimodal? Single channels are often unreliable — some people show little facial expression but strong vocal cues; others speak flatly while the face carries the feeling. Combining both makes the system more robust and closer to real social interaction.',
+          //},
+          //{
+          //  type: 'text',
+          //  text: 'Why doodle-style output? For individuals with Asperger’s, subtle cues can be hard to read. Instead of abstract labels alone (“angry,” “happy”), simple hand-drawn doodles make emotions more immediate, accessible, and learnable — turning technology into a supportive social tool.',
+          //},
           {
             type: 'text',
             text: 'Fusion rule: when face and voice agree, return that label; if one is neutral, prefer the non-neutral channel; if both disagree with non-neutral labels, apply a 70/30 weighted blend (face 70%, voice 30%).',
@@ -768,6 +768,10 @@ export const workItems: WorkItem[] = [
           {
             type: 'text',
             text: 'A browser demo path explored the same idea in software: face-api.js for live expression on webcam video, MediaRecorder for audio, and a Flask + Hugging Face Wav2Vec2 backend for speech emotion via a CORS-enabled /analyze-audio API — with canvas doodles as the shared visual language.',
+          },
+          {
+            type: 'text',
+            text:'Please reach out for more details:)',
           },
         ],
       },
