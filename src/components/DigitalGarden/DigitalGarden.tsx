@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { gardenEntries } from '../../data/garden'
+import { site } from '../../data/site'
 import './DigitalGarden.css'
 
 export function DigitalGarden() {
@@ -54,6 +55,18 @@ export function DigitalGarden() {
             </article>
           ))}
         </div>
+
+        <p className="garden__more">
+          See more unsorted photography works{' '}
+          <a
+            href={site.instagramUrl}
+            className="garden__more-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {site.instagramHandle}
+          </a>
+        </p>
       </div>
     </section>
   )
