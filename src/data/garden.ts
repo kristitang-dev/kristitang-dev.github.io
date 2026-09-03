@@ -143,6 +143,18 @@ export const gardenEntries: GardenEntry[] = [
     ],
   },
   {
+    id: 'chongqing-2023ss',
+    title: 'Chongqing 2023SS',
+    kind: 'video',
+    description: 'Videography practice 01',
+    image: '/images/Chongqing.jpg',
+    link: 'https://www.instagram.com/reel/Dctps1qRFpW/?utm_source=ig_web_copy_link&igsi=MzRlODBiNWFlZA==',
+    linkLabel: 'Watch on Instagram',
+    body: [
+      '',
+    ],
+  },
+  {
     id: 'breath',
     title: 'Breath',
     kind: 'photography',
