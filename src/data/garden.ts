@@ -6,7 +6,7 @@ import type {
 export interface GardenEntry {
   id: string
   title: string
-  kind: 'photography' | 'game' | 'video'
+  kind: 'photography' | 'game' | 'video' | 'code' | 'writing'
   description: string
   image?: string
   link?: string
@@ -35,6 +35,33 @@ export interface GardenEntry {
 }
 
 export const gardenEntries: GardenEntry[] = [
+  {
+    id: 'ideation-prototyping',
+    title: 'Ideation & Prototyping',
+    kind: 'writing',
+    description:
+      'Studio process for my master’s course — documented as I go on WordPress.',
+    image: '/images/Goldfish.jpg',
+    link: 'https://wp.nyu.edu/ideationprototyping_kt/',
+    linkLabel: 'Read on WordPress',
+    body: [
+      'A running log of ideation and prototyping for course of Ideation & Prototyping. The full notes live on the WordPress page.',
+    ],
+  },
+  {
+    id: 'creative-coding',
+    title: 'Creative Coding',
+    kind: 'code',
+    description:
+      'p5.js sketches and experiments, collected on a separate GitHub Pages site.',
+    image: '/images/creative.png',
+    link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/',
+    linkLabel: 'Open sketches',
+    body: [
+      'I am taking the Course called Creative Coding offered by NYU Tandon IDM this fall.',
+      'It is a small creative-coding studies, mostly in p5.js. Sketches live on the GitHub Pages site.',
+    ],
+  },
   {
     id: 'bubblebright',
     title: 'BubbleBright. Co',
