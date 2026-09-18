@@ -44,10 +44,12 @@ export const gardenEntries: GardenEntry[] = [
     title: 'Ideation & Prototyping',
     kinds: ['writing'],
     description:
-      'Studio process for my master’s course of Ideation & Prototyping — documented as I go.',
+      'Studio process for IDM Ideation & Prototyping — documented as I go.',
     image: '/images/Goldfish.jpg',
     blog: true,
-    body: [],
+    body: [
+      'It is always good to document the work :)'
+    ],
   },
   {
     id: 'creative-coding',

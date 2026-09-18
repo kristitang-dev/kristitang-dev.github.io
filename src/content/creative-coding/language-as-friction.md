@@ -1,18 +1,11 @@
 ---
 title: Language as a medium…
 date: 2026-09-18
-excerpt: Among the definitions I curated, the one that best describes creative coding is “Digital Clay.”
+excerpt: How do you break down the language?
 ---
-
-I am taking Creative Coding at NYU Tandon IDM this fall. These are small studies, mostly in p5.js. Sketches live on a [separate GitHub Pages site](https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/).
-
-Among all the definitions I curated, I think the one that best describes creative coding is **“Digital Clay.”**
-
-Maeda argues that treating a computer like a digital canvas or paintbrush is too limiting. Instead, code is an autonomous artistic environment. Just as a sculptor must understand the properties of marble or clay, a digital artist must understand the nature of code, logic, data input, and processing constraints to truly create.
-
 ## The friction of language as a medium
 
-The core inspiration for this exploration comes from the inherent ambiguity of language. In Kevin’s class, we analyzed Sol LeWitt’s *Wall Drawing #154*, which instructs the draftsman to draw a black outlined square with a red horizontal line from the midpoint of the left side “toward the middle of the right side.” The natural human instinct is to assume the line spans all the way across. Instead, LeWitt leaves the stopping point undefined. The art does not exist just in the geometry on the wall, but in the interpreter’s mind filling in the blanks of the instruction.
+The core inspiration for this exploration comes from the inherent ambiguity of language. In Kevin’s class, we analyzed Sol LeWitt’s *Wall Drawing#154, which instructs the draftsman to draw a black outlined square with a red horizontal line from the midpoint of the left side “toward the middle of the right side.” The natural human instinct is to assume the line spans all the way across. Instead, LeWitt leaves the stopping point undefined. The art does not exist just in the geometry on the wall, but in the interpreter’s mind filling in the blanks of the instruction.
 
 ## The historical precedent: Dürer’s rhinoceros
 
