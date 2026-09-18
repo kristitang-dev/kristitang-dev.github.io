@@ -3,10 +3,12 @@ import type {
   DetailGalleryLayout,
 } from '../components/DetailPage/DetailPage'
 
+export type GardenKind = 'photography' | 'game' | 'video' | 'code' | 'writing'
+
 export interface GardenEntry {
   id: string
   title: string
-  kind: 'photography' | 'game' | 'video' | 'code' | 'writing'
+  kinds: GardenKind[]
   description: string
   image?: string
   link?: string
@@ -32,40 +34,39 @@ export interface GardenEntry {
    * Prefer this for photography series.
    */
   galleryBlocks?: DetailGalleryBlock[]
+  /** Dated markdown posts in src/content/<id>/ */
+  blog?: boolean
 }
 
 export const gardenEntries: GardenEntry[] = [
   {
     id: 'ideation-prototyping',
     title: 'Ideation & Prototyping',
-    kind: 'writing',
+    kinds: ['writing'],
     description:
-      'Studio process for my master’s course — documented as I go on WordPress.',
+      'Studio process for my master’s course of Ideation & Prototyping — documented as I go.',
     image: '/images/Goldfish.jpg',
-    link: 'https://wp.nyu.edu/ideationprototyping_kt/',
-    linkLabel: 'Read on WordPress',
-    body: [
-      'A running log of ideation and prototyping for course of Ideation & Prototyping. The full notes live on the WordPress page.',
-    ],
+    blog: true,
+    body: [],
   },
   {
     id: 'creative-coding',
-    title: 'Creative Coding',
-    kind: 'code',
+    title: 'Creative Coding is...',
+    kinds: ['writing', 'code'],
     description:
-      'p5.js sketches and experiments, collected on a separate GitHub Pages site.',
+      'Notes and p5.js experiments from NYU Tandon IDM Creative Coding.',
     image: '/images/creative.png',
     link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/',
-    linkLabel: 'Open sketches',
+    linkLabel: 'Open Digital Sketches',
+    blog: true,
     body: [
-      'I am taking the Course called Creative Coding offered by NYU Tandon IDM this fall.',
-      'It is a small creative-coding studies, mostly in p5.js. Sketches live on the GitHub Pages site.',
+      'I am taking Creative Coding at NYU Tandon IDM this fall. These are small studies, mostly in p5.js. Sketches live on a [separate GitHub Pages site](https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/).',
     ],
   },
   {
     id: 'bubblebright',
     title: 'BubbleBright. Co',
-    kind: 'game',
+    kinds: ['game'],
     description:
       'Global Game Jam 2025 (theme: Bubble) — a 2-day rhythm multitasking game.',
     image: '/images/bubblebright.jpg',
@@ -88,7 +89,7 @@ export const gardenEntries: GardenEntry[] = [
   {
     id: 'city-life',
     title: 'City Life',
-    kind: 'photography',
+    kinds: ['photography'],
     description:
       'When the word ‘city’ was first imagined, no one pictured chaos — the neon lights, the noise, the haze of light and air pollution. Yet that is what a city becomes.',
     image: '/images/citylife.jpg',
@@ -106,14 +107,11 @@ export const gardenEntries: GardenEntry[] = [
         images: [
           '/images/garden/city/slow.png',
           '/images/garden/city/red.jpg',
-
         ],
       },
       {
         layout: '1x1',
-        images: [
-          '/images/garden/city/walk.jpg',
-        ],
+        images: ['/images/garden/city/walk.jpg'],
       },
       {
         layout: '3x1',
@@ -124,22 +122,21 @@ export const gardenEntries: GardenEntry[] = [
         ],
       },
       {
-        layout:'1x1',
-        images:['/images/garden/city/hongkong.jpg',]
-      }
+        layout: '1x1',
+        images: ['/images/garden/city/hongkong.jpg'],
+      },
     ],
   },
   {
     id: 'gaze',
     title: 'Gaze',
-    kind: 'photography',
+    kinds: ['photography'],
     description:
       'A photograph is never just one gaze.\nIt might be the subject looking outward,\nand me looking at them.\nAnd sometimes, we are looking at each other.',
     image: '/images/gaze.jpg',
     body: [
       'The relationship between photographer and subject shapes everything the camera captures.',
     ],
-    // Example: mix a 2-up row, then one large photo alone
     galleryBlocks: [
       {
         layout: '2x1',
@@ -150,9 +147,7 @@ export const gardenEntries: GardenEntry[] = [
       },
       {
         layout: '1x1',
-        images: [
-          '/images/garden/gaze/fire.jpg',
-      ],
+        images: ['/images/garden/gaze/fire.jpg'],
       },
       {
         layout: '2x1',
@@ -163,28 +158,24 @@ export const gardenEntries: GardenEntry[] = [
       },
       {
         layout: '1x1',
-        images: [
-          '/images/mother.jpg',
-        ],
+        images: ['/images/mother.jpg'],
       },
     ],
   },
   {
     id: 'chongqing-2023ss',
     title: 'Chongqing 2023SS',
-    kind: 'video',
+    kinds: ['video'],
     description: 'Videography practice 01',
     image: '/images/Chongqing.jpg',
     link: 'https://www.instagram.com/reel/Dctps1qRFpW/?utm_source=ig_web_copy_link&igsi=MzRlODBiNWFlZA==',
     linkLabel: 'Watch on Instagram',
-    body: [
-      '',
-    ],
+    body: [],
   },
   {
     id: 'breath',
     title: 'Breath',
-    kind: 'photography',
+    kinds: ['photography'],
     description: '...Even in some shared moments, that feeling still lingers...',
     image: '/images/breath.jpg',
     body: [
@@ -227,9 +218,7 @@ export const gardenEntries: GardenEntry[] = [
       },
       {
         layout: '1x1',
-        images: [
-          '/images/garden/breath/melody.jpg',
-        ],
+        images: ['/images/garden/breath/melody.jpg'],
       },
     ],
   },
@@ -237,4 +226,8 @@ export const gardenEntries: GardenEntry[] = [
 
 export function getGardenById(id: string) {
   return gardenEntries.find((item) => item.id === id)
+}
+
+export function getGardenKindLabel(item: GardenEntry) {
+  return item.kinds.join(' · ')
 }

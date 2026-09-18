@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { gardenEntries } from '../../data/garden'
+import { gardenEntries, getGardenKindLabel } from '../../data/garden'
 import { site } from '../../data/site'
 import './DigitalGarden.css'
 
@@ -36,7 +36,7 @@ export function DigitalGarden() {
               )}
 
               <div className="garden-card__body">
-                <span className="garden-card__kind">{entry.kind}</span>
+                <span className="garden-card__kind">{getGardenKindLabel(entry)}</span>
                 <h3 className="garden-card__title">
                   <Link to={`/garden/${entry.id}`}>{entry.title}</Link>
                 </h3>

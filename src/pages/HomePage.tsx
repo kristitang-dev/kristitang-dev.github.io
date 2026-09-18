@@ -5,7 +5,6 @@ import { About } from '../components/About/About'
 import { Work } from '../components/Work/Work'
 import { Research } from '../components/Research/Research'
 import { DigitalGarden } from '../components/DigitalGarden/DigitalGarden'
-import { Footer } from '../components/Footer/Footer'
 
 export function HomePage() {
   const location = useLocation()
@@ -28,7 +27,6 @@ export function HomePage() {
       <Work />
       <Research />
       <DigitalGarden />
-      <Footer />
     </>
   )
 }

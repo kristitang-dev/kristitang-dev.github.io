@@ -1,0 +1,243 @@
+.blog {
+  min-height: 100vh;
+  padding: calc(4rem + var(--section-padding)) var(--section-padding) 4rem;
+  background: #fafaf8;
+}
+
+.blog__inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.blog__back {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+  text-decoration: none;
+  margin-bottom: 2rem;
+}
+
+.blog__back:hover {
+  color: var(--red-500);
+}
+
+.blog__eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue-600);
+  margin-bottom: 0.5rem;
+}
+
+.blog__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--grey-900);
+  margin-bottom: 0.75rem;
+}
+
+.blog__intro {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--grey-700);
+  margin-bottom: 1.25rem;
+}
+
+.blog__external {
+  display: inline-block;
+  margin-bottom: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--red-500);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(214, 59, 59, 0.35);
+  padding-bottom: 0.1rem;
+}
+
+.blog__external:hover {
+  color: var(--red-700);
+}
+
+.blog__hero {
+  margin: 0 0 1.5rem;
+  overflow: hidden;
+  background: var(--grey-100);
+}
+
+.blog__hero img {
+  width: 100%;
+  display: block;
+}
+
+.blog__body {
+  margin: 0 0 2.5rem;
+  color: var(--grey-900);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+
+.blog__body p {
+  margin: 0 0 1.15rem;
+}
+
+.blog__body a {
+  color: var(--blue-600);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.blog__body a:hover {
+  color: var(--red-500);
+}
+
+.blog__body-figure {
+  margin: 1.25rem 0;
+}
+
+.blog__body-figure img {
+  width: 100%;
+  display: block;
+}
+
+.blog__body-figure figcaption {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--grey-500);
+}
+
+.blog__feed {
+  list-style: none;
+  border-top: 1px solid var(--grey-300);
+}
+
+.blog__feed-item {
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--grey-300);
+}
+
+.blog__feed-meta {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--grey-500);
+  margin-bottom: 0.5rem;
+}
+
+.blog__feed-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 400;
+  line-height: 1.25;
+  margin-bottom: 0.5rem;
+}
+
+.blog__feed-title a {
+  color: var(--grey-900);
+  text-decoration: none;
+}
+
+.blog__feed-title a:hover {
+  color: var(--red-500);
+}
+
+.blog__feed-excerpt {
+  color: var(--grey-700);
+  line-height: 1.7;
+  max-width: 58ch;
+}
+
+.blog__empty {
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--grey-300);
+  color: var(--grey-700);
+}
+
+.blog__date {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--grey-500);
+  margin-bottom: 0.75rem;
+}
+
+.blog__prose {
+  color: var(--grey-900);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+
+.blog__prose p,
+.blog__prose ul,
+.blog__prose ol,
+.blog__prose blockquote {
+  margin: 0 0 1.25rem;
+}
+
+.blog__prose h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.5vw, 1.85rem);
+  font-weight: 400;
+  line-height: 1.3;
+  margin: 2.25rem 0 0.85rem;
+}
+
+.blog__prose h3 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
+  margin: 1.75rem 0 0.6rem;
+}
+
+.blog__prose a {
+  color: var(--blue-600);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.blog__prose a:hover {
+  color: var(--red-500);
+}
+
+.blog__prose em,
+.blog__prose i {
+  font-style: italic;
+}
+
+.blog__prose strong {
+  font-weight: 600;
+}
+
+.blog__prose img {
+  width: 100%;
+  display: block;
+  margin: 1.5rem 0;
+}
+
+.blog__prose ul,
+.blog__prose ol {
+  padding-left: 1.25rem;
+}
+
+.blog__prose li {
+  margin-bottom: 0.4rem;
+}
+
+.blog__prose blockquote {
+  border-left: 2px solid var(--grey-300);
+  padding-left: 1rem;
+  color: var(--grey-700);
+  font-family: var(--font-display);
+  font-style: italic;
+}
