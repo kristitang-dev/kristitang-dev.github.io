@@ -1,7 +1,8 @@
 import { Navigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { DetailPage } from '../components/DetailPage/DetailPage'
-import { getGardenById } from '../data/garden'
+import { getGardenById, getGardenKindLabel } from '../data/garden'
+import { BlogSeries } from './BlogSeries'
 
 export function GardenDetail() {
   const { id } = useParams<{ id: string }>()
@@ -15,12 +16,16 @@ export function GardenDetail() {
     return <Navigate to="/" replace />
   }
 
+  if (item.blog) {
+    return <BlogSeries series={item} />
+  }
+
   return (
     <DetailPage
       backTo="/"
       backLabel="Back to Garden"
       backState={{ scrollTo: 'garden' }}
-      eyebrow={item.kind}
+      eyebrow={getGardenKindLabel(item)}
       title={item.title}
       lead={item.description}
       image={item.image}

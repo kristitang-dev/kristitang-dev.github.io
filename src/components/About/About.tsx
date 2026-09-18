@@ -40,6 +40,28 @@ export function About() {
               </div>
             )}
 
+            <nav className="about__contact" aria-label="Contact">
+              <a className="about__contact-link" href={`mailto:${site.email}`}>
+                Contact me
+              </a>
+              <a
+                className="about__contact-link"
+                href={site.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {site.linkedinLabel}
+              </a>
+              <a
+                className="about__contact-link"
+                href={site.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Instagram
+              </a>
+            </nav>
+
             <div className="about__tags">
               {site.about.skills.map((skill) => (
                 <span key={skill} className="about__tag">

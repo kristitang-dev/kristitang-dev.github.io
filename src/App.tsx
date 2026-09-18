@@ -4,6 +4,8 @@ import { HomePage } from './pages/HomePage'
 import { WorkDetail } from './pages/WorkDetail'
 import { ResearchDetail } from './pages/ResearchDetail'
 import { GardenDetail } from './pages/GardenDetail'
+import { BlogPostPage } from './pages/BlogPostPage'
+import { Footer } from './components/Footer/Footer'
 
 function App() {
   return (
@@ -13,8 +15,10 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/work/:id" element={<WorkDetail />} />
         <Route path="/research/:id" element={<ResearchDetail />} />
+        <Route path="/garden/:id/:slug" element={<BlogPostPage />} />
         <Route path="/garden/:id" element={<GardenDetail />} />
       </Routes>
+      <Footer />
     </HashRouter>
   )
 }
