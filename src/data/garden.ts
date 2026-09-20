@@ -56,7 +56,7 @@ export const gardenEntries: GardenEntry[] = [
     title: 'Creative Coding is...',
     kinds: ['writing', 'code'],
     description:
-      'Notes and p5.js experiments from NYU Tandon IDM Creative Coding.',
+      'Notes and p5.js experiments for IDM Creative Coding.',
     image: '/images/creative.png',
     link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/',
     linkLabel: 'Open Digital Sketches',
