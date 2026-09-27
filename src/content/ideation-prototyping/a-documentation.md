@@ -1,7 +1,8 @@
 ---
-title: Test
-date: 2026-09-16
-excerpt: Test
+title: 50 Ways of Seeing
+date: 2026-09-27
+excerpt: Fifty iterations of one of the oldest objects (Stone)
+redirect: https://stones-virid.vercel.app/
 ---
 
 ## Test

@@ -6,6 +6,8 @@ export interface BlogPost {
   sortDate: string
   excerpt?: string
   markdown: string
+  /** Opens this URL instead of rendering the post */
+  redirect?: string
 }
 
 function parseFrontmatter(raw: string) {
@@ -57,6 +59,7 @@ export const blogPosts: BlogPost[] = Object.entries(files).map(([path, raw]) => 
     sortDate,
     excerpt: meta.excerpt,
     markdown,
+    redirect: meta.redirect,
   }
 })
 

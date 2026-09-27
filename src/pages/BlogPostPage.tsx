@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import Markdown from 'react-markdown'
+import { ExternalRedirect } from '../components/ExternalRedirect'
 import { getPost } from '../content/loadPosts'
 import { getGardenById } from '../data/garden'
 import './Blog.css'
@@ -16,6 +17,11 @@ export function BlogPostPage() {
 
   if (!series?.blog || !post) {
     return <Navigate to={id ? `/garden/${id}` : '/'} replace />
+  }
+
+  const redirectUrl = post.redirect
+  if (redirectUrl) {
+    return <ExternalRedirect url={redirectUrl} />
   }
 
   return (
