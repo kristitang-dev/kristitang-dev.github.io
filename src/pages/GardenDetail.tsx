@@ -12,8 +12,18 @@ export function GardenDetail() {
     window.scrollTo(0, 0)
   }, [id])
 
+  useEffect(() => {
+    if (item?.redirect && item.link) {
+      window.location.replace(item.link)
+    }
+  }, [item])
+
   if (!item) {
     return <Navigate to="/" replace />
+  }
+
+  if (item.redirect && item.link) {
+    return null
   }
 
   if (item.blog) {

@@ -1,7 +1,37 @@
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { gardenEntries, getGardenKindLabel } from '../../data/garden'
+import { gardenEntries, getGardenKindLabel, type GardenEntry } from '../../data/garden'
 import { site } from '../../data/site'
 import './DigitalGarden.css'
+
+function GardenCardLink({
+  entry,
+  className,
+  children,
+}: {
+  entry: GardenEntry
+  className?: string
+  children: ReactNode
+}) {
+  if (entry.redirect && entry.link) {
+    return (
+      <a
+        href={entry.link}
+        className={className}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {children}
+      </a>
+    )
+  }
+
+  return (
+    <Link to={`/garden/${entry.id}`} className={className}>
+      {children}
+    </Link>
+  )
+}
 
 export function DigitalGarden() {
   return (
@@ -23,7 +53,7 @@ export function DigitalGarden() {
               className={`garden-card${entry.image ? '' : ' garden-card--text'}`}
             >
               {entry.image && (
-                <Link to={`/garden/${entry.id}`} className="garden-card__media-link">
+                <GardenCardLink entry={entry} className="garden-card__media-link">
                   <div className="garden-card__media">
                     <img
                       src={entry.image}
@@ -32,13 +62,13 @@ export function DigitalGarden() {
                       loading="lazy"
                     />
                   </div>
-                </Link>
+                </GardenCardLink>
               )}
 
               <div className="garden-card__body">
                 <span className="garden-card__kind">{getGardenKindLabel(entry)}</span>
                 <h3 className="garden-card__title">
-                  <Link to={`/garden/${entry.id}`}>{entry.title}</Link>
+                  <GardenCardLink entry={entry}>{entry.title}</GardenCardLink>
                 </h3>
                 <p className="garden-card__desc">{entry.description}</p>
                 {entry.link && (

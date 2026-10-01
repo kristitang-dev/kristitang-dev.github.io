@@ -13,6 +13,8 @@ export interface GardenEntry {
   image?: string
   link?: string
   linkLabel?: string
+  /** Card (and its detail route) open `link` instead of the garden page */
+  redirect?: boolean
   /** Longer detail-page copy — expand over time */
   body: Array<
     | string
@@ -40,27 +42,16 @@ export interface GardenEntry {
 
 export const gardenEntries: GardenEntry[] = [
   {
-    id: 'ideation-prototyping',
-    title: 'Ideation & Prototyping',
-    kinds: ['writing'],
-    description:
-      'Studio process for IDM Ideation & Prototyping — documented as I go.',
-    image: '/images/Goldfish.jpg',
-    blog: true,
-    body: [
-      'It is always good to document the work :)'
-    ],
-  },
-  {
     id: 'creative-coding',
     title: 'Creative Coding is...',
-    kinds: ['writing', 'code'],
+    kinds: ['code'],
     description:
-      'Notes and p5.js experiments for IDM Creative Coding.',
-    image: '/images/creative.png',
+      'Mainly p5.js experiments for IDM Creative Coding.',
+    image: '/images/creative.gif',
     link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/',
     linkLabel: 'Open Digital Sketches',
-    blog: true,
+    redirect: true,
+    //blog: true,
     body: [
       'I am taking Creative Coding at NYU Tandon IDM this fall. These are small studies, mostly in p5.js. Sketches live on a [separate GitHub Pages site](https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/).',
     ],
@@ -86,6 +77,18 @@ export const gardenEntries: GardenEntry[] = [
       '/images/details/bubble/Settlement3.png',
       '/images/details/bubble/Settlement1.png',
       '/images/details/bubble/Settlement2.png',
+    ],
+  },
+  {
+    id: 'ideation-prototyping',
+    title: 'Ideation & Prototyping',
+    kinds: ['writing'],
+    description:
+      'Studio process for IDM Ideation & Prototyping — documented as I go.',
+    image: '/images/Goldfish.jpg',
+    blog: true,
+    body: [
+      'It is always good to document the work :)'
     ],
   },
   {
