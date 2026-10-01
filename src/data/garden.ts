@@ -48,7 +48,7 @@ export const gardenEntries: GardenEntry[] = [
     description:
       'Mainly p5.js experiments for IDM Creative Coding.',
     image: '/images/creative.gif',
-    link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/',
+    link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/',
     linkLabel: 'Open Digital Sketches',
     redirect: true,
     //blog: true,
