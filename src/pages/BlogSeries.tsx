@@ -80,14 +80,29 @@ export function BlogSeries({ series }: BlogSeriesProps) {
         ) : (
           <ol className="blog__feed">
             {posts.map((post) => (
-              <li key={post.slug} className="blog__feed-item">
-                <time className="blog__feed-meta" dateTime={post.sortDate}>
-                  {post.date}
-                </time>
-                <h2 className="blog__feed-title">
-                  <Link to={`/garden/${series.id}/${post.slug}`}>{post.title}</Link>
-                </h2>
-                {post.excerpt && <p className="blog__feed-excerpt">{post.excerpt}</p>}
+              <li
+                key={post.slug}
+                className={`blog__feed-item${post.cover ? ' blog__feed-item--cover' : ''}`}
+              >
+                <div className="blog__feed-text">
+                  <time className="blog__feed-meta" dateTime={post.sortDate}>
+                    {post.date}
+                  </time>
+                  <h2 className="blog__feed-title">
+                    <Link to={`/garden/${series.id}/${post.slug}`}>{post.title}</Link>
+                  </h2>
+                  {post.excerpt && <p className="blog__feed-excerpt">{post.excerpt}</p>}
+                </div>
+                {post.cover && (
+                  <Link
+                    to={`/garden/${series.id}/${post.slug}`}
+                    className="blog__feed-cover"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                  >
+                    <img src={post.cover} alt="" loading="lazy" />
+                  </Link>
+                )}
               </li>
             ))}
           </ol>

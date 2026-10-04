@@ -5,6 +5,8 @@ export interface BlogPost {
   date: string
   sortDate: string
   excerpt?: string
+  /** Preview image shown in the series feed */
+  cover?: string
   markdown: string
   /** Opens this URL instead of rendering the post */
   redirect?: string
@@ -58,6 +60,7 @@ export const blogPosts: BlogPost[] = Object.entries(files).map(([path, raw]) => 
     date: formatDate(sortDate),
     sortDate,
     excerpt: meta.excerpt,
+    cover: meta.cover,
     markdown,
     redirect: meta.redirect,
   }
