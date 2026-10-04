@@ -2,7 +2,7 @@
 title: Endangered Animal
 date: 2026-10-04
 excerpt: A kinetic Chinese Sturgeon built from recycled materials — a tribute to a Yangtze "living fossil"
-cover: /images/garden/endangered-animal/cover.gif
+cover: /images/garden/endangered-animal/cover.webp
 ---
 
 ![Materials, the Chinese Sturgeon, and the finished prototype](/images/garden/endangered-animal/Hero.png)
@@ -27,7 +27,7 @@ To recreate the sturgeon's iconic diamond-shaped scutes, I cut discarded aluminu
 
 ## The Hook & Final Presentation
 
-The most critical design decision emerged when determining how to mount the piece. I utilized an industrial hook clip and fishing line to suspend the prototype mid-air. This was not merely a structural choice, but a narrative one—the hardware acts as a literal fishing hook, turning the prototype into a helpless, "caught" specimen, directly confronting the primary threat of illegal fishing.
+The most critical design decision emerged when determining how to mount the piece. I utilized an industrial hook clip and fishing line to suspend the prototype mid-air. The hardware acts as a literal fishing hook, turning the prototype into a helpless, "caught" specimen, directly confronting the primary threat of illegal fishing.
 
 ![The hooked sturgeon](/images/garden/endangered-animal/hook.jpg)
 
