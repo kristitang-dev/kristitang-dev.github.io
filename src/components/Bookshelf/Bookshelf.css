@@ -1,0 +1,278 @@
+.shelf {
+  background-color: #fafaf8;
+  border-top: 1px solid var(--grey-300);
+  padding: clamp(4rem, 10vh, 8rem) var(--section-padding);
+}
+
+.shelf__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.shelf__header {
+  margin-bottom: 3rem;
+}
+
+.shelf__eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue-600);
+  margin-bottom: 0.5rem;
+}
+
+.shelf__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 400;
+  color: var(--grey-900);
+}
+
+.shelf__row + .shelf__row {
+  margin-top: clamp(3rem, 7vh, 4.5rem);
+}
+
+.shelf__label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+  margin-bottom: 1.25rem;
+}
+
+.shelf__notebooks,
+.shelf__albums {
+  list-style: none;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: end;
+}
+
+/* Notebooks: spiral-bound covers */
+.shelf-notebook__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.shelf-notebook__cover {
+  --cover: var(--blue-600);
+  position: relative;
+  aspect-ratio: 4 / 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 0.9rem 1rem 1.6rem;
+  background-color: var(--cover);
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.035) 0 2px,
+      transparent 2px 5px
+    );
+  border-radius: 2px 4px 4px 2px;
+  box-shadow: 0 2px 6px rgba(26, 26, 31, 0.16);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shelf-notebook:nth-child(even) .shelf-notebook__cover {
+  --cover: var(--red-700);
+}
+
+/* Punched holes */
+.shelf-notebook__cover::before {
+  content: '';
+  position: absolute;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  left: 0.45rem;
+  width: 8px;
+  background-image: radial-gradient(circle, #fafaf8 2.5px, transparent 3px);
+  background-size: 8px 14px;
+  background-repeat: repeat-y;
+}
+
+/* Wire coil */
+.shelf-notebook__cover::after {
+  content: '';
+  position: absolute;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  left: -5px;
+  width: 16px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 4px,
+    #b9b9c0 4px 7px,
+    #8d8d96 7px 8px,
+    transparent 8px 14px
+  );
+  border-radius: 3px;
+}
+
+.shelf-notebook__link:hover .shelf-notebook__cover,
+.shelf-notebook__link:focus-visible .shelf-notebook__cover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 18px rgba(26, 26, 31, 0.2);
+}
+
+.shelf-notebook__label {
+  width: 100%;
+  padding: 0.55rem 0.7rem 0.45rem;
+  background-color: #fdfcf8;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 1.35rem,
+    rgba(43, 76, 126, 0.16) 1.35rem calc(1.35rem + 1px)
+  );
+  background-position: 0 0.5rem;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  font-family: var(--font-hand);
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-weight: 500;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--grey-900);
+}
+
+.shelf-notebook__link:hover .shelf-notebook__label {
+  color: var(--red-500);
+}
+
+/* Small photo taped under the label */
+.shelf-notebook__photo {
+  position: relative;
+  width: 78%;
+  padding: 4px 4px 10px;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  transform: rotate(-3deg);
+}
+
+.shelf-notebook__photo::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 42%;
+  height: 14px;
+  background: rgba(253, 245, 214, 0.75);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+  transform: translateX(-50%) rotate(2deg);
+}
+
+.shelf-notebook__photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 400 / 242;
+  object-fit: cover;
+}
+
+/* Albums: covers with a bound spine */
+.shelf-album__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.shelf-album__cover {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--grey-300);
+  border-radius: 1px 3px 3px 1px;
+  box-shadow: 0 2px 6px rgba(26, 26, 31, 0.14);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shelf-album__cover::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 10px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.28),
+    rgba(0, 0, 0, 0.06) 70%,
+    rgba(255, 255, 255, 0.15)
+  );
+  z-index: 1;
+}
+
+.shelf-album__cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shelf-album__link:hover .shelf-album__cover,
+.shelf-album__link:focus-visible .shelf-album__cover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 18px rgba(26, 26, 31, 0.18);
+}
+
+.shelf-album__kind {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+  margin-top: 0.9rem;
+}
+
+.shelf-album__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  color: var(--grey-900);
+  margin-top: 0.2rem;
+}
+
+.shelf-album__link:hover .shelf-album__title {
+  color: var(--red-500);
+}
+
+.shelf__more {
+  margin-top: 1.75rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--grey-700);
+}
+
+.shelf__more-link {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  color: var(--red-500);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(214, 59, 59, 0.35);
+  padding-bottom: 0.1rem;
+}
+
+.shelf__more-link:hover {
+  color: var(--red-700);
+  border-bottom-color: var(--red-700);
+}
+
+@media (max-width: 640px) {
+  .shelf__notebooks,
+  .shelf__albums {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shelf-album__cover,
+  .shelf-notebook__cover {
+    transition: none;
+  }
+}

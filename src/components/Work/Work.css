@@ -117,6 +117,7 @@
 
 .work-card__category {
   position: absolute;
+  z-index: 2;
   left: 0.75rem;
   bottom: 0.75rem;
   font-family: var(--font-mono);

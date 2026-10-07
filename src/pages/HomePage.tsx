@@ -4,6 +4,7 @@ import { Hero } from '../components/Hero/Hero'
 import { About } from '../components/About/About'
 import { Work } from '../components/Work/Work'
 import { Research } from '../components/Research/Research'
+import { Bookshelf } from '../components/Bookshelf/Bookshelf'
 import { DigitalGarden } from '../components/DigitalGarden/DigitalGarden'
 
 export function HomePage() {
@@ -27,6 +28,7 @@ export function HomePage() {
       <Work />
       <Research />
       <DigitalGarden />
+      <Bookshelf />
     </>
   )
 }

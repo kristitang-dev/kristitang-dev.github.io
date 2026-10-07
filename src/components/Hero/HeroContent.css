@@ -42,14 +42,6 @@
   letter-spacing: 0.02em;
 }
 
-.hero-copy__title {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--grey-700);
-}
-
 .hero-copy__tagline {
   margin-top: 1.25rem;
   font-family: var(--font-display);

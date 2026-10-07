@@ -58,7 +58,6 @@
 
 /* Lit text: blue light — except Matter & Medium stay red */
 .hero__layer--reality .hero-copy__name,
-.hero__layer--reality .hero-copy__title,
 .hero__layer--reality .hero-copy__tagline {
   color: #3d6ea8;
   text-shadow:

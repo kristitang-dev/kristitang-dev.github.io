@@ -121,6 +121,10 @@ type TimelineBlock =
   | { type: 'step'; step: DetailTimelineStep; index: number }
   | { type: 'loop'; steps: { step: DetailTimelineStep; index: number }[] }
 
+function isVideoHref(href: string) {
+  return /(?:youtu\.be|youtube\.com|vimeo\.com)/i.test(href)
+}
+
 function highlightCodePlaceholders(code: string) {
   const parts = code.split(/(\{[^}]+\})/g)
   return parts.map((part, index) =>
@@ -627,7 +631,25 @@ export function DetailPage({
 
         {image && (
           <figure className="detail__hero">
-            <img src={image} alt={imageAlt} className="detail__hero-image" />
+            {externalLink && isVideoHref(externalLink.href) ? (
+              <a
+                className="detail__hero-link"
+                href={externalLink.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={externalLink.label}
+              >
+                <img src={image} alt="" className="detail__hero-image" />
+                <span className="detail__hero-play">
+                  <span className="detail__hero-play-icon" aria-hidden="true" />
+                  <span className="detail__hero-play-label">
+                    {externalLink.label}
+                  </span>
+                </span>
+              </a>
+            ) : (
+              <img src={image} alt={imageAlt} className="detail__hero-image" />
+            )}
           </figure>
         )}
 

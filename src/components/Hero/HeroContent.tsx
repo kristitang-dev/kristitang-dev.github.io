@@ -8,7 +8,6 @@ export function HeroContent() {
       <div className="hero-content__left">
         <div className="hero-copy">
           <h1 className="hero-copy__name">{site.name}</h1>
-          <p className="hero-copy__title">{site.title}</p>
           <p className="hero-copy__tagline">
             Between <em>Matter</em> &amp; <em>Medium</em>
           </p>

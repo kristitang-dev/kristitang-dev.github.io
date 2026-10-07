@@ -72,6 +72,8 @@ export interface WorkItem {
   tags: string[]
   tools: string[]
   image: string
+  /** Motion hero on the case study. Homepage cards keep the still. */
+  detailImage?: string
   link?: string
   linkLabel?: string
   featured?: boolean
@@ -845,6 +847,7 @@ export const workItems: WorkItem[] = [
     tags: ['AI × Interaction', 'Speculative Game', 'Futuristic Game'],
     tools: ['Unity', 'OpenAI', 'C#', 'ElevenLabs'],
     image: '/images/nutrisynth.jpg',
+    detailImage: '/images/nutrisynth-loop-dialogue.gif',
     link: 'https://youtu.be/ZiPtCssE_RU',
     linkLabel: 'Watch trailer',
     featured: true,

@@ -18,6 +18,7 @@
   --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-hand: 'Caveat', 'Segoe Script', cursive;
 
   /* Spotlight */
   --spot-radius: 200px;

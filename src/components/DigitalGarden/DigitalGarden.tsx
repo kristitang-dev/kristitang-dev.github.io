@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { gardenEntries, getGardenKindLabel, type GardenEntry } from '../../data/garden'
-import { site } from '../../data/site'
 import './DigitalGarden.css'
 
-function GardenCardLink({
+export function GardenCardLink({
   entry,
   className,
   children,
@@ -35,19 +34,18 @@ function GardenCardLink({
 
 export function DigitalGarden() {
   return (
-    <section id="garden" className="garden">
+    <section id="sandbox" className="garden">
       <div className="garden__inner">
         <div className="garden__header">
-          <span className="garden__eyebrow">Personal</span>
-          <h2 className="garden__title">Digital Garden</h2>
+          <span className="garden__eyebrow">Experiments</span>
+          <h2 className="garden__title">Sandbox</h2>
           <p className="garden__intro">
-            A softer notebook for photography, video, game jams, and visual experiments —
-            curated without the pressure of a finished project.
+            Game jams and experiments
           </p>
         </div>
 
         <div className="garden__grid">
-          {gardenEntries.map((entry) => (
+          {gardenEntries.filter((entry) => !entry.shelf).map((entry) => (
             <article
               key={entry.id}
               className={`garden-card${entry.image ? '' : ' garden-card--text'}`}
@@ -85,18 +83,6 @@ export function DigitalGarden() {
             </article>
           ))}
         </div>
-
-        <p className="garden__more">
-          See more unsorted photography works{' '}
-          <a
-            href={site.instagramUrl}
-            className="garden__more-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {site.instagramHandle}
-          </a>
-        </p>
       </div>
     </section>
   )

@@ -2,7 +2,6 @@ export const site = {
   name: 'Kristi (Lu) Tang',
   shortName: 'KT',
   tagline: 'Between Matter & Medium',
-  title: 'Designer · Engineer',
   email: 'kristitang@outlook.com',
   instagramUrl: 'https://www.instagram.com/157k.jpg/',
   instagramHandle: '@157k.jpg',
@@ -10,6 +9,18 @@ export const site = {
   linkedinLabel: 'LinkedIn',
   cvUrl: 'https://drive.google.com/file/d/1afuIFP4d7Axhls3sJFrCaVTzuAszC0Oe/view?usp=drive_link',
   cvLabel: 'CV',
+  education: [
+    {
+      period: '2026–Present',
+      degree: 'Integrated Design & Media, MS',
+      school: '@New York University',
+    },
+    {
+      period: '2023–2026',
+      degree: 'Wood Products Processing, BS',
+      school: '@University of British Columbia',
+    },
+  ],
   about: {
     lead: 'Making—no matter the medium—has always been how I think, question, and express.',
     body: [

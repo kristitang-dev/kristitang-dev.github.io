@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { getPostsBySeries } from '../content/loadPosts'
-import { getGardenKindLabel, type GardenEntry } from '../data/garden'
+import { getGardenHome, getGardenKindLabel, type GardenEntry } from '../data/garden'
 import './Blog.css'
 
 interface BlogSeriesProps {
@@ -11,6 +11,7 @@ interface BlogSeriesProps {
 
 export function BlogSeries({ series }: BlogSeriesProps) {
   const posts = getPostsBySeries(series.id)
+  const home = getGardenHome(series)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -19,8 +20,8 @@ export function BlogSeries({ series }: BlogSeriesProps) {
   return (
     <main className="blog">
       <div className="blog__inner">
-        <Link to="/" className="blog__back" state={{ scrollTo: 'garden' }}>
-          ← Back to Garden
+        <Link to="/" className="blog__back" state={{ scrollTo: home.section }}>
+          ← Back to {home.label}
         </Link>
 
         <span className="blog__eyebrow">{getGardenKindLabel(series)}</span>

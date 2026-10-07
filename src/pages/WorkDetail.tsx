@@ -25,7 +25,7 @@ export function WorkDetail() {
       subtitle={item.subtitle}
       lead={item.description}
       meta={[item.period, item.type, item.tools.join(' · ')]}
-      image={item.image}
+      image={item.detailImage ?? item.image}
       imageAlt={item.title}
       body={item.body}
       sections={item.sections}

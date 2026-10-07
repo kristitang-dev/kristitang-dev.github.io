@@ -38,6 +38,12 @@ export interface GardenEntry {
   galleryBlocks?: DetailGalleryBlock[]
   /** Dated markdown posts in src/content/<id>/ */
   blog?: boolean
+  /** Bookshelf placement; entries without a shelf appear in the Sandbox */
+  shelf?: 'notebook' | 'album'
+  /** Shorter name for the notebook label */
+  courseLabel?: string
+  /** Small picture taped to the notebook cover */
+  notebookCover?: string
 }
 
 export const gardenEntries: GardenEntry[] = [
@@ -51,6 +57,9 @@ export const gardenEntries: GardenEntry[] = [
     link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/',
     linkLabel: 'Open Digital Sketches',
     redirect: true,
+    shelf: 'notebook',
+    courseLabel: 'Creative Coding',
+    notebookCover: '/images/creative.gif',
     //blog: true,
     body: [
       'I am taking Creative Coding at NYU Tandon IDM this fall. These are small studies, mostly in p5.js. Sketches live on a [separate GitHub Pages site](https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/).',
@@ -87,6 +96,8 @@ export const gardenEntries: GardenEntry[] = [
       'Studio process for IDM Ideation & Prototyping — documented as I go.',
     image: '/images/Goldfish.jpg',
     blog: true,
+    shelf: 'notebook',
+    courseLabel: 'Ideation & Prototyping',
     body: [
       'It is always good to document the work :)'
     ],
@@ -98,6 +109,7 @@ export const gardenEntries: GardenEntry[] = [
     description:
       'When the word ‘city’ was first imagined, no one pictured chaos — the neon lights, the noise, the haze of light and air pollution. Yet that is what a city becomes.',
     image: '/images/citylife.jpg',
+    shelf: 'album',
     body: [
       {
         type: 'split',
@@ -139,6 +151,7 @@ export const gardenEntries: GardenEntry[] = [
     description:
       'A photograph is never just one gaze.\nIt might be the subject looking outward,\nand me looking at them.\nAnd sometimes, we are looking at each other.',
     image: '/images/gaze.jpg',
+    shelf: 'album',
     body: [
       'The relationship between photographer and subject shapes everything the camera captures.',
     ],
@@ -173,6 +186,7 @@ export const gardenEntries: GardenEntry[] = [
     kinds: ['video'],
     description: 'Videography practice 01',
     image: '/images/Chongqing.jpg',
+    shelf: 'album',
     link: 'https://www.instagram.com/reel/Dctps1qRFpW/?utm_source=ig_web_copy_link&igsi=MzRlODBiNWFlZA==',
     linkLabel: 'Watch on Instagram',
     body: [],
@@ -183,6 +197,7 @@ export const gardenEntries: GardenEntry[] = [
     kinds: ['photography'],
     description: '...Even in some shared moments, that feeling still lingers...',
     image: '/images/breath.jpg',
+    shelf: 'album',
     body: [
       'These photos were mainly taken in rural China.',
       'To me, the countryside always carries a quiet loneliness, a sense of being left behind by time, by progress.',
@@ -231,6 +246,12 @@ export const gardenEntries: GardenEntry[] = [
 
 export function getGardenById(id: string) {
   return gardenEntries.find((item) => item.id === id)
+}
+
+export function getGardenHome(item: GardenEntry) {
+  return item.shelf
+    ? { label: 'Bookshelf', section: 'bookshelf' }
+    : { label: 'Sandbox', section: 'sandbox' }
 }
 
 export function getGardenKindLabel(item: GardenEntry) {

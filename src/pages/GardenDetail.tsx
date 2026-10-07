@@ -1,7 +1,7 @@
 import { Navigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { DetailPage } from '../components/DetailPage/DetailPage'
-import { getGardenById, getGardenKindLabel } from '../data/garden'
+import { getGardenById, getGardenHome, getGardenKindLabel } from '../data/garden'
 import { BlogSeries } from './BlogSeries'
 
 export function GardenDetail() {
@@ -30,11 +30,13 @@ export function GardenDetail() {
     return <BlogSeries series={item} />
   }
 
+  const home = getGardenHome(item)
+
   return (
     <DetailPage
       backTo="/"
-      backLabel="Back to Garden"
-      backState={{ scrollTo: 'garden' }}
+      backLabel={`Back to ${home.label}`}
+      backState={{ scrollTo: home.section }}
       eyebrow={getGardenKindLabel(item)}
       title={item.title}
       lead={item.description}

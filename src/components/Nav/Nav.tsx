@@ -5,7 +5,7 @@ import './Nav.css'
 const LINKS = [
   { label: 'Work', section: 'work' },
   { label: 'Research', section: 'research' },
-  { label: 'Garden', section: 'garden' },
+  { label: 'Sandbox', section: 'sandbox' },
   { label: 'About', section: 'about' },
 ] as const
 
