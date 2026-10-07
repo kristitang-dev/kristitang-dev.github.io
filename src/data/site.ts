@@ -22,10 +22,12 @@ export const site = {
     },
   ],
   about: {
-    lead: 'Making—no matter the medium—has always been how I think, question, and express.',
+    greeting: 'Hi, I’m Kristi.',
+    lead: 'I work across images, spaces, materials and games.',
     body: [
-      'Each medium holds its own structure and sensitivity.',
-      'I move between images, spaces, materials and systems, not to do more, but to search for forms that feel most capable of holding what I’m trying to say.',
+      'My journey started with wood. Studying Wood Products Processing at UBC, I learned how a single joint can shape a whole structure.',
+      'Wood also taught me that every material carries its own texture and warmth. Since then, I’ve been searching for the medium that best holds what I want to say.',
+      'Now at NYU IDM, I’m exploring broadly, building interactive work with physical computing and game engines.',
     ],
     skills: [
       'Interaction Design',
@@ -33,7 +35,6 @@ export const site = {
       'Game Design',
       'Unreal Engine',
       'Unity',
-      'UI / UX',
       'Physical Making',
       'Speculative Design',
     ],

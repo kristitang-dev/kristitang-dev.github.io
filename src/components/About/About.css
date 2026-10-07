@@ -58,7 +58,12 @@
   font-size: clamp(1.35rem, 2.4vw, 1.75rem);
   line-height: 1.4;
   color: var(--grey-900);
-  max-width: 36ch;
+  max-width: 42ch;
+}
+
+.about__greeting {
+  display: block;
+  color: var(--red-500);
 }
 
 .about__body {

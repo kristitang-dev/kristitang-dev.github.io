@@ -20,7 +20,10 @@ export function About() {
           </div>
 
           <div className="about__text">
-            <p className="about__lead">{site.about.lead}</p>
+            <p className="about__lead">
+              <span className="about__greeting">{site.about.greeting}</span>
+              {site.about.lead}
+            </p>
             {site.about.body.map((paragraph) => (
               <p key={paragraph} className="about__body">
                 {paragraph}
