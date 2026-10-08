@@ -1,52 +1,6 @@
-import type {
-  DetailGalleryBlock,
-  DetailGalleryLayout,
-} from '../components/DetailPage/DetailPage'
+import type { CatalogEntry } from './entry'
 
-export type GardenKind = 'photography' | 'game' | 'video' | 'code' | 'writing'
-
-export interface GardenEntry {
-  id: string
-  title: string
-  kinds: GardenKind[]
-  description: string
-  image?: string
-  link?: string
-  linkLabel?: string
-  /** Card (and its detail route) open `link` instead of the garden page */
-  redirect?: boolean
-  /** Longer detail-page copy — expand over time */
-  body: Array<
-    | string
-    | { type: 'image'; src: string; caption?: string }
-    | {
-        type: 'split'
-        text: string
-        image: string
-        caption?: string
-        layout?: 'text-image' | 'image-text'
-      }
-  >
-  /** Simple single gallery (games scroll strip, etc.) */
-  gallery?: string[]
-  galleryTitle?: string
-  galleryLayout?: DetailGalleryLayout
-  /**
-   * Mix layouts on one detail page, e.g. 2x1 then 1x1 then 3x1.
-   * Prefer this for photography series.
-   */
-  galleryBlocks?: DetailGalleryBlock[]
-  /** Dated markdown posts in src/content/<id>/ */
-  blog?: boolean
-  /** Bookshelf placement; entries without a shelf appear in the Sandbox */
-  shelf?: 'notebook' | 'album'
-  /** Shorter name for the notebook label */
-  courseLabel?: string
-  /** Small picture taped to the notebook cover */
-  notebookCover?: string
-}
-
-export const gardenEntries: GardenEntry[] = [
+export const notebooks: CatalogEntry[] = [
   {
     id: 'creative-coding',
     title: 'Creative Coding is...',
@@ -57,35 +11,10 @@ export const gardenEntries: GardenEntry[] = [
     link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/',
     linkLabel: 'Open Digital Sketches',
     redirect: true,
-    shelf: 'notebook',
     courseLabel: 'Creative Coding',
     notebookCover: '/images/creative.gif',
-    //blog: true,
     body: [
       'I am taking Creative Coding at NYU Tandon IDM this fall. These are small studies, mostly in p5.js. Sketches live on a [separate GitHub Pages site](https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kt/).',
-    ],
-  },
-  {
-    id: 'bubblebright',
-    title: 'BubbleBright. Co',
-    kinds: ['game'],
-    description:
-      'Global Game Jam 2025 (theme: Bubble) — a 2-day rhythm multitasking game.',
-    image: '/images/bubblebright.jpg',
-    link: 'https://klight7.itch.io/bubblebright-co',
-    linkLabel: 'Play on itch.io',
-    body: [
-      '"You’re a tired dispatcher at BubbleBright Co., juggling calls and intrusive thoughts while each action becomes part of the soundtrack."',
-      'I teamed up with my friend Steph, a Nintendo fan and music maker, for a game jam themed “Bubble.” In 2 days, we built a rhythm-based multitasking game set in BubbleBright Co., where the player is a tired dispatcher juggling calls and intrusive thoughts. Using Space to pick up, 1–4 to transfer, and typing “OUT” to clear negativity, each action triggers a sound. With Steph’s demo track in the background, players create music as they play.',
-      {
-        type: 'image',
-        src: '/images/details/bubble/contribution.png',
-      },
-    ],
-    gallery: [
-      '/images/details/bubble/Settlement3.png',
-      '/images/details/bubble/Settlement1.png',
-      '/images/details/bubble/Settlement2.png',
     ],
   },
   {
@@ -96,12 +25,14 @@ export const gardenEntries: GardenEntry[] = [
       'Studio process for IDM Ideation & Prototyping — documented as I go.',
     image: '/images/Goldfish.jpg',
     blog: true,
-    shelf: 'notebook',
     courseLabel: 'Ideation & Prototyping',
     body: [
-      'It is always good to document the work :)'
+      'It is always good to document the work :)',
     ],
   },
+]
+
+export const albums: CatalogEntry[] = [
   {
     id: 'city-life',
     title: 'City Life',
@@ -109,7 +40,6 @@ export const gardenEntries: GardenEntry[] = [
     description:
       'When the word ‘city’ was first imagined, no one pictured chaos — the neon lights, the noise, the haze of light and air pollution. Yet that is what a city becomes.',
     image: '/images/citylife.jpg',
-    shelf: 'album',
     body: [
       {
         type: 'split',
@@ -151,7 +81,6 @@ export const gardenEntries: GardenEntry[] = [
     description:
       'A photograph is never just one gaze.\nIt might be the subject looking outward,\nand me looking at them.\nAnd sometimes, we are looking at each other.',
     image: '/images/gaze.jpg',
-    shelf: 'album',
     body: [
       'The relationship between photographer and subject shapes everything the camera captures.',
     ],
@@ -186,7 +115,6 @@ export const gardenEntries: GardenEntry[] = [
     kinds: ['video'],
     description: 'Videography practice 01',
     image: '/images/Chongqing.jpg',
-    shelf: 'album',
     link: 'https://www.instagram.com/reel/Dctps1qRFpW/?utm_source=ig_web_copy_link&igsi=MzRlODBiNWFlZA==',
     linkLabel: 'Watch on Instagram',
     body: [],
@@ -197,7 +125,6 @@ export const gardenEntries: GardenEntry[] = [
     kinds: ['photography'],
     description: '...Even in some shared moments, that feeling still lingers...',
     image: '/images/breath.jpg',
-    shelf: 'album',
     body: [
       'These photos were mainly taken in rural China.',
       'To me, the countryside always carries a quiet loneliness, a sense of being left behind by time, by progress.',
@@ -243,17 +170,3 @@ export const gardenEntries: GardenEntry[] = [
     ],
   },
 ]
-
-export function getGardenById(id: string) {
-  return gardenEntries.find((item) => item.id === id)
-}
-
-export function getGardenHome(item: GardenEntry) {
-  return item.shelf
-    ? { label: 'Bookshelf', section: 'bookshelf' }
-    : { label: 'Sandbox', section: 'sandbox' }
-}
-
-export function getGardenKindLabel(item: GardenEntry) {
-  return item.kinds.join(' · ')
-}

@@ -84,7 +84,8 @@ interface DetailPageProps {
   imageAlt?: string
   body?: Array<
     | string
-    | { type: 'image'; src: string; caption?: string }
+    | { type: 'image'; src: string; caption?: string; scale?: number }
+    | { type: 'images'; images: { src: string; caption?: string }[] }
     | {
         type: 'split'
         text: string
@@ -113,6 +114,13 @@ interface DetailPageProps {
   externalLink?: {
     href: string
     label: string
+    icon?: string
+  }
+  /** Prompt placed under the preview image */
+  tryPrompt?: {
+    href: string
+    label: string
+    icon?: string
   }
   children?: ReactNode
 }
@@ -494,6 +502,7 @@ export function DetailPage({
   epilogue,
   tags,
   externalLink,
+  tryPrompt,
   children,
 }: DetailPageProps) {
   const blocks = resolveGalleryBlocks(
@@ -618,12 +627,21 @@ export function DetailPage({
         {lead && <p className="detail__lead">{lead}</p>}
 
         {externalLink && (
-          <p className="detail__external detail__external--early">
+          <p
+            className={`detail__external detail__external--early${externalLink.icon ? ' detail__external--icon' : ''}`}
+          >
             <a
               href={externalLink.href}
               target="_blank"
               rel="noopener noreferrer"
             >
+              {externalLink.icon && (
+                <img
+                  src={externalLink.icon}
+                  alt=""
+                  className="detail__external-icon"
+                />
+              )}
               {externalLink.label}
             </a>
           </p>
@@ -660,11 +678,35 @@ export function DetailPage({
                 return <p key={`body-text-${index}`}>{block}</p>
               }
 
+              if (block.type === 'images') {
+                return (
+                  <div key={`body-images-${index}`} className="detail__body-row">
+                    {block.images.map((item) => (
+                      <figure key={item.src} className="detail__body-figure">
+                        <img
+                          src={item.src}
+                          alt={item.caption ?? ''}
+                          className="detail__body-image"
+                        />
+                        {item.caption && (
+                          <figcaption className="detail-section__caption">
+                            {item.caption}
+                          </figcaption>
+                        )}
+                      </figure>
+                    ))}
+                  </div>
+                )
+              }
+
               if (block.type === 'image') {
+                const scale = block.scale
+                const scaled = scale != null && scale !== 1
                 return (
                   <figure
                     key={`body-image-${index}`}
-                    className="detail__body-figure"
+                    className={`detail__body-figure${scaled ? ' detail__body-figure--scaled' : ''}`}
+                    style={scaled ? { width: `${scale * 100}%` } : undefined}
                   >
                     <img
                       src={block.src}
@@ -737,6 +779,25 @@ export function DetailPage({
             {pageEpilogue}
             {pageTags}
           </>
+        )}
+
+        {tryPrompt && (
+          <p className="detail__external detail__external--icon detail__external--end">
+            <a
+              href={tryPrompt.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {tryPrompt.icon && (
+                <img
+                  src={tryPrompt.icon}
+                  alt=""
+                  className="detail__external-icon"
+                />
+              )}
+              {tryPrompt.label}
+            </a>
+          </p>
         )}
       </div>
 

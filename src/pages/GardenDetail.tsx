@@ -1,12 +1,13 @@
 import { Navigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { DetailPage } from '../components/DetailPage/DetailPage'
-import { getGardenById, getGardenHome, getGardenKindLabel } from '../data/garden'
+import { getCatalogEntry } from '../data/catalog'
+import { getEntryHome, getEntryKindLabel } from '../data/entry'
 import { BlogSeries } from './BlogSeries'
 
 export function GardenDetail() {
   const { id } = useParams<{ id: string }>()
-  const item = id ? getGardenById(id) : undefined
+  const item = id ? getCatalogEntry(id) : undefined
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -30,14 +31,14 @@ export function GardenDetail() {
     return <BlogSeries series={item} />
   }
 
-  const home = getGardenHome(item)
+  const home = getEntryHome(item)
 
   return (
     <DetailPage
       backTo="/"
       backLabel={`Back to ${home.label}`}
       backState={{ scrollTo: home.section }}
-      eyebrow={getGardenKindLabel(item)}
+      eyebrow={getEntryKindLabel(item)}
       title={item.title}
       lead={item.description}
       image={item.image}
@@ -49,7 +50,19 @@ export function GardenDetail() {
       galleryBlocks={item.galleryBlocks}
       externalLink={
         item.link
-          ? { href: item.link, label: item.linkLabel ?? 'Open link' }
+          ? {
+              href: item.link,
+              label: item.linkLabel ?? 'Open link',
+            }
+          : undefined
+      }
+      tryPrompt={
+        item.link && item.detailLinkLabel
+          ? {
+              href: item.link,
+              label: item.detailLinkLabel,
+              icon: item.linkIcon,
+            }
           : undefined
       }
     />

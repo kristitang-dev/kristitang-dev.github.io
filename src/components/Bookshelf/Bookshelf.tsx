@@ -1,10 +1,8 @@
-import { gardenEntries, getGardenKindLabel } from '../../data/garden'
+import { albums, notebooks } from '../../data/bookshelf'
+import { getEntryKindLabel } from '../../data/entry'
 import { site } from '../../data/site'
 import { GardenCardLink } from '../DigitalGarden/DigitalGarden'
 import './Bookshelf.css'
-
-const notebooks = gardenEntries.filter((entry) => entry.shelf === 'notebook')
-const albums = gardenEntries.filter((entry) => entry.shelf === 'album')
 
 export function Bookshelf() {
   return (
@@ -50,7 +48,7 @@ export function Bookshelf() {
                       <img src={entry.image} alt="" loading="lazy" />
                     )}
                   </div>
-                  <span className="shelf-album__kind">{getGardenKindLabel(entry)}</span>
+                  <span className="shelf-album__kind">{getEntryKindLabel(entry)}</span>
                   <span className="shelf-album__title">{entry.title}</span>
                 </GardenCardLink>
               </li>

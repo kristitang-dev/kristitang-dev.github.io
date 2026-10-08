@@ -3,12 +3,12 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { ExternalRedirect } from '../components/ExternalRedirect'
 import { getPost } from '../content/loadPosts'
-import { getGardenById } from '../data/garden'
+import { getCatalogEntry } from '../data/catalog'
 import './Blog.css'
 
 export function BlogPostPage() {
   const { id, slug } = useParams<{ id: string; slug: string }>()
-  const series = id ? getGardenById(id) : undefined
+  const series = id ? getCatalogEntry(id) : undefined
   const post = id && slug ? getPost(id, slug) : undefined
 
   useEffect(() => {

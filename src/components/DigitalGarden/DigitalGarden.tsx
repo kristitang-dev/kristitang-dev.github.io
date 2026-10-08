@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { gardenEntries, getGardenKindLabel, type GardenEntry } from '../../data/garden'
+import { getEntryKindLabel, type CatalogEntry } from '../../data/entry'
+import { sandboxEntries } from '../../data/sandbox'
 import './DigitalGarden.css'
 
 export function GardenCardLink({
@@ -8,7 +9,7 @@ export function GardenCardLink({
   className,
   children,
 }: {
-  entry: GardenEntry
+  entry: CatalogEntry
   className?: string
   children: ReactNode
 }) {
@@ -45,7 +46,7 @@ export function DigitalGarden() {
         </div>
 
         <div className="garden__grid">
-          {gardenEntries.filter((entry) => !entry.shelf).map((entry) => (
+          {sandboxEntries.map((entry) => (
             <article
               key={entry.id}
               className={`garden-card${entry.image ? '' : ' garden-card--text'}`}
@@ -64,7 +65,7 @@ export function DigitalGarden() {
               )}
 
               <div className="garden-card__body">
-                <span className="garden-card__kind">{getGardenKindLabel(entry)}</span>
+                <span className="garden-card__kind">{getEntryKindLabel(entry)}</span>
                 <h3 className="garden-card__title">
                   <GardenCardLink entry={entry}>{entry.title}</GardenCardLink>
                 </h3>
