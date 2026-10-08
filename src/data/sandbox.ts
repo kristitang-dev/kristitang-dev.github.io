@@ -26,8 +26,9 @@ export const sandboxEntries: CatalogEntry[] = [
           },
         ],
       },
-      'Somehow, I saw a face showed up in that first drawing. So I thought maybe I could try to draw a human face using the same pattern. Just like the halftone dots. And I picked Mona Lisa. Line by line would take forever, so I let p5.js read the pixels and map brightness to circle size. It worked.',
-      'I also tried shifting the canvas and cut the lights for more contrast, and a little moiré. And when plotting, I made them into two layers, which made that moiré easier to see.',
+      'Somehow, I saw a face showed up in that first drawing. So I thought maybe I could try to draw a human face using the same pattern. Just like the halftone dots.',
+      'And I picked Mona Lisa.',
+      'When plotting, I made them into two layers, which made that moiré easier to see.',
       {
         type: 'image',
         src: '/images/halftone/MonaLisaMorie.gif',
