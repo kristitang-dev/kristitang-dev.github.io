@@ -71,6 +71,18 @@ export function BlogSeries({ series }: BlogSeriesProps) {
                   </figure>
                 )
               }
+              if (block.type === 'images') {
+                return (
+                  <div key={`body-imgs-${index}`} className="blog__body-row">
+                    {block.images.map((item) => (
+                      <figure key={item.src} className="blog__body-figure">
+                        <img src={item.src} alt={item.caption ?? ''} />
+                        {item.caption && <figcaption>{item.caption}</figcaption>}
+                      </figure>
+                    ))}
+                  </div>
+                )
+              }
               return <p key={`body-${index}`}>{block.text}</p>
             })}
           </div>
