@@ -6,12 +6,6 @@ excerpt: A love letter, break-up letter, and “we need to talk” letter to the
 
 *“It’s complicated.”* I shoot instant and old film cameras, and I wait for the right moment because every frame costs something. But my phone lets me shoot 50 versions of the same thing without a second thought. I love how instant and free it is, but I hate that nothing feels worth waiting for.
 
-## Key concepts from assignment requirements
-
-- **Tangible user interface.** A system where digital information is represented through physical objects, allowing users to interact with data in a more intuitive and hands-on manner.
-- **Embodied interaction.** The design leverages physical actions — like picking up and placing marbles — to manage digital tasks, aligning with natural human behaviors and reducing the cognitive load associated with abstract interfaces.
-- **Physical representation of digital information.** By assigning a tangible object to digital information, abstract data becomes something you can see, hold, and act upon — making interactions more intuitive, memorable, and embodied.
-
 ## Chosen digital experience
 
 **Phone camera and camera roll.** I tap to shoot and swipe to browse, and there’s no cost, no waiting, and no limit.
@@ -27,10 +21,10 @@ excerpt: A love letter, break-up letter, and “we need to talk” letter to the
 A photo is captured, but it is not shown right away. You hold the “print” and wait. It slowly appears from a faint, pale frame.
 
 - **Hold is normal development.** Setting the card down slows it and leaves the image cool and thin.
-- **Shake or blow to speed it up (vibration switch).** This is a folk ritual with instant film(!). Peel-apart film makes you wait, and people shake or blow to hurry it. In the prototype, the more you shake, the faster the image develops.
+- **Shake or blow to speed it up (vibration switch).** This is a folk ritual with instant film[!]. Peel-apart film makes you wait, and people shake or blow to hurry it. In the prototype, the more you shake, the faster the image develops.
 - **Body warmth (temperature sensor).** Warmth also speeds development, but too much overdevelops it. Too much warmth gives a washed-out, warm-toned or blown-out image (adjusted in code). Holding it too little leaves it cold, which gives a bluish, low-contrast, slow image.
 
-**(!)One thing to note:** Polaroid says not to shake integral film, and shaking doesn’t actually speed up development. The prototype is built on the *ritual and belief* rather than the chemistry, which is an interesting point to discuss.
+**[!One thing to note:]** Polaroid says not to shake integral film, and shaking doesn’t actually speed up development. The prototype is built on the *ritual and belief* rather than the chemistry, which is an interesting point to discuss.
 
 ## My plan
 
