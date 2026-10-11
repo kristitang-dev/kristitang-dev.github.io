@@ -27,7 +27,7 @@ export const notebooks: CatalogEntry[] = [
     blog: true,
     courseLabel: 'Ideation & Prototyping',
     body: [
-      'It is always good to document the work :)',
+      '',
     ],
   },
 ]
