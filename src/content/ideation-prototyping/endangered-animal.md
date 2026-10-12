@@ -15,8 +15,6 @@ The choice to focus on the Chinese Sturgeon（中华鲟） is deeply personal an
 
 The physical project began in the Maker Space waste bins, where I was drawn to the structural properties of discarded plastic hoses. I realized that by cutting and interlocking these hoses, I could create a flexible, segmented spine. Instead of sculpting a rigid, static bust, this approach allowed the material's natural flexibility to mimic the undulating swimming motion of a fish. I intentionally focused on abstracting the sturgeon's most prominent characteristics rather than attempting a one-to-one anatomical replication.
 
-![Material exploration](/images/garden/endangered-animal/material.jpg)
-
 ## Construction & Prototyping
 
 To recreate the sturgeon's iconic diamond-shaped scutes, I cut discarded aluminum cans into sharp fragments and embedded them along the plastic spine. This gave the creature a harsh, cybernetic texture that contrasts with its organic inspiration. I utilized a repurposed lampshade to define the head and tail, and inserted small beads into translucent straws to represent the fish's roe. This micro-detail grounds the prototype in the biological reality of the animal's fragile survival rate in modern, altered environments.

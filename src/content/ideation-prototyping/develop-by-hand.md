@@ -12,11 +12,13 @@ excerpt: A love letter, break-up letter, and “we need to talk” letter to the
 
 ![iPhone Camera Control opening the camera](https://static0.anpoimages.com/wordpress/wp-content/uploads/2024/09/iphone-16-camera-control-anim.gif?q=70&fit=crop&w=600&dpr=1)
 
+One press, and the camera is open. I love how instant and free that is. I hate that nothing feels worth waiting for.
+
 ## The tensions
 
-1. **Free and infinite vs. scarce and chosen:** every shot should cost something.
-2. **Instant vs. ritual waiting:** holding, shaking, and blowing on a photo are part of the experience of film.
-3. **Fragile to conditions:** heat and cold change how an instant photo develops.
+1. Free and infinite vs. scarce and chosen: every shot should cost something.
+2. Instant vs. ritual waiting: holding, shaking, and blowing on a photo are part of the experience of film.
+3. Fragile to conditions: heat and cold change how an instant photo develops.
 
 ## Concept: *Develop by hand*
 
@@ -37,3 +39,13 @@ A photo is captured, but it is not shown right away. You hold the “print” an
 5. Add the DS18B20 temperature sensor later, and map hand warmth to speed and to a warm/cold color treatment in code.
 6. Optionally show it on the IPS LCD and add buzzer feedback.
 7. Test with people who have film experience and people who don’t, and note what they do without prompting.
+
+![Wiring for the Arduino Uno, ESP32, tilt switch, temperature sensor, shutter button, and screen](/images/garden/develop-by-hand/circuit.png)
+
+The diagram simulation built on the Wokwi: [https://wokwi.com/projects/477649105868929025](https://wokwi.com/projects/477649105868929025)
+
+## Prototype
+
+An Arduino Uno reads a tilt switch, a shutter button, and a temperature sensor. An ESP32-CAM takes the picture, and the Uno is the only cable. I tried to show the print on a small IPS screen. The backlight came on, but the picture chip never drew an image, so I set that board aside. The webpage is the print for now.
+
+![Develop by hand webpage, with a blank print waiting to develop](/images/garden/develop-by-hand/prototype.png) 
