@@ -7,6 +7,8 @@ export interface BlogPost {
   excerpt?: string
   /** Preview image shown in the series feed */
   cover?: string
+  /** Google Drive preview URL, rendered above the post body */
+  video?: string
   markdown: string
   /** Opens this URL instead of rendering the post */
   redirect?: string
@@ -61,6 +63,7 @@ export const blogPosts: BlogPost[] = Object.entries(files).map(([path, raw]) => 
     sortDate,
     excerpt: meta.excerpt,
     cover: meta.cover,
+    video: meta.video,
     markdown,
     redirect: meta.redirect,
   }

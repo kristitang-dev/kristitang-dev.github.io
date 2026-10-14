@@ -1,10 +1,49 @@
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { ExternalRedirect } from '../components/ExternalRedirect'
 import { getPost } from '../content/loadPosts'
 import { getCatalogEntry } from '../data/catalog'
 import './Blog.css'
+
+/** Sequence titles on Develop by Hand. Wording is matched exactly. */
+const handHeadings = new Set([
+  'What does it cost to take a photo',
+  'Back when a photo had to be developed by hand',
+  'Light is only the start',
+  'The picture is taken. It stays dark.',
+  'What makes a photo besides light?',
+  'Shake the formula',
+  'Then set it down',
+  'A warm hand - Hold to appreciate it',
+  'Hold to appreciate it',
+  'The print is in your hands',
+])
+
+function plainText(node: ReactNode): string {
+  if (node == null || typeof node === 'boolean') return ''
+  if (typeof node === 'string' || typeof node === 'number') return String(node)
+  if (Array.isArray(node)) return node.map(plainText).join('')
+  if (typeof node === 'object' && 'props' in node) {
+    const props = (node as { props?: { children?: ReactNode } }).props
+    return plainText(props?.children)
+  }
+  return ''
+}
+
+/** Only a Drive file preview is embedded. Other URLs are ignored. */
+function drivePreviewSrc(url: string | undefined) {
+  if (!url) return undefined
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return undefined
+  }
+  if (parsed.protocol !== 'https:' || parsed.hostname !== 'drive.google.com') return undefined
+  if (!/^\/file\/d\/[^/]+\/preview$/.test(parsed.pathname)) return undefined
+  return parsed.toString()
+}
 
 export function BlogPostPage() {
   const { id, slug } = useParams<{ id: string; slug: string }>()
@@ -24,6 +63,8 @@ export function BlogPostPage() {
     return <ExternalRedirect url={redirectUrl} />
   }
 
+  const videoSrc = drivePreviewSrc(post.video)
+
   return (
     <main className="blog">
       <article className="blog__inner">
@@ -36,8 +77,34 @@ export function BlogPostPage() {
         </time>
         <h1 className="blog__title">{post.title}</h1>
 
+        {videoSrc && (
+          <div className="blog__video">
+            <iframe
+              src={videoSrc}
+              title={post.title}
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
+          </div>
+        )}
+
         <div className="blog__prose">
-          <Markdown>{post.markdown}</Markdown>
+          <Markdown
+            components={
+              post.slug === 'develop-by-hand'
+                ? {
+                    h2: ({ children }) =>
+                      handHeadings.has(plainText(children).trim()) ? (
+                        <h2 className="blog__hand">{children}</h2>
+                      ) : (
+                        <h2>{children}</h2>
+                      ),
+                  }
+                : undefined
+            }
+          >
+            {post.markdown}
+          </Markdown>
         </div>
       </article>
     </main>

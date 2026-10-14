@@ -2,6 +2,8 @@
 title: Playful Interface - Develop by Hand
 date: 2026-10-11
 excerpt: A love letter, break-up letter, and “we need to talk” letter to the phone camera and camera roll.
+cover: /images/garden/develop-by-hand/cover.jpg
+video: https://drive.google.com/file/d/1fbl6q3gBQN3eLlxeO1pwtdwuOPLmMFhd/preview
 ---
 
 *“It’s complicated.”* I shoot instant and old film cameras, and I wait for the right moment because every frame costs something. But my phone lets me shoot 50 versions of the same thing without a second thought. I love how instant and free it is, but I hate that nothing feels worth waiting for.
@@ -47,10 +49,42 @@ The diagram simulation built on the Wokwi: [https://wokwi.com/projects/477649105
 ## Prototype
 
 An Arduino Uno reads a tilt switch, a shutter button, and a temperature sensor. An ESP32-CAM takes the picture, and the Uno is the only cable. I tried to show the print on a small IPS screen. The backlight came on, but the picture chip never drew an image, so I set that board aside. 
-![Oct 11-Failed IPS board :(](/images/garden/develop-by-hand/IPSboard.png) 
+![Oct 11-Failed IPS board :(](/images/garden/develop-by-hand/IPSboard.png)
+
 Oct 11 - Failed IPS board :（
 
-![Develop by hand webpage, with a blank print waiting to develop](/images/garden/develop-by-hand/prototype.png) 
-Oct 12 - The webpage is the print for now.
+![Develop by hand webpage, with a blank print waiting to develop](/images/garden/develop-by-hand/prototype.png)
 
-The webpage is the print for now.
+Oct 12 - The webpage was the print
+
+Oct 13 - Sucessfully integrated the IPS board!
+![Final Prototye](/images/garden/develop-by-hand/cover.jpg)
+
+## What does it cost to take a photo？
+
+![A mannequin hand holds the camera and a screen that reads “Press button to start”](/images/garden/develop-by-hand/press%20to%20start.jpg)
+
+## Back when a photo had to be developed by hand
+## Light is only the start
+
+![The screen on the hand reads “Say cheese”](/images/garden/develop-by-hand/saycheese.jpg)
+
+## The picture is taken. It stays dark.
+
+## What makes a photo besides light?
+
+![The screen goes dark and asks “What makes a photo besides light?”](/images/garden/develop-by-hand/whattodo.jpg)
+
+## Shake the formula
+
+*GIF — add later.*
+
+## Then set it down
+
+## Hold to appreciate it
+
+*GIF — add later.*
+
+## The print is in your hands
+
+![The developed portrait appears on the screen, held in the hand](/images/garden/develop-by-hand/getprint.jpg)
