@@ -50,7 +50,7 @@ An Arduino Uno reads a tilt switch, a shutter button, and a temperature sensor. 
 ![Oct 11-Failed IPS board :(](/images/garden/develop-by-hand/IPSboard.png) 
 Oct 11 - Failed IPS board :（
 
-The webpage is the print for now.
 ![Develop by hand webpage, with a blank print waiting to develop](/images/garden/develop-by-hand/prototype.png) 
 Oct 12 - The webpage is the print for now.
 
+The webpage is the print for now.
