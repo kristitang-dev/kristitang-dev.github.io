@@ -47,7 +47,10 @@ The diagram simulation built on the Wokwi: [https://wokwi.com/projects/477649105
 ## Prototype
 
 An Arduino Uno reads a tilt switch, a shutter button, and a temperature sensor. An ESP32-CAM takes the picture, and the Uno is the only cable. I tried to show the print on a small IPS screen. The backlight came on, but the picture chip never drew an image, so I set that board aside. 
-![Failed IPS board](/images/garden/develop-by-hand/IPSboard.png) 
+![Oct 11-Failed IPS board :(](/images/garden/develop-by-hand/IPSboard.png) 
+Oct 11 - Failed IPS board :（
 
 The webpage is the print for now.
 ![Develop by hand webpage, with a blank print waiting to develop](/images/garden/develop-by-hand/prototype.png) 
+Oct 12 - The webpage is the print for now.
+
