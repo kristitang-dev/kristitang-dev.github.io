@@ -14,6 +14,8 @@ export interface CatalogEntry {
   kinds: EntryKind[]
   description: string
   image?: string
+  /** Live page embedded in place of the cover image */
+  preview?: string
   link?: string
   linkLabel?: string
   /** Detail-page label when it should differ from the card link */

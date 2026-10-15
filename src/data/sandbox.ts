@@ -3,6 +3,22 @@ import type { CatalogEntry } from './entry'
 /** Experiments shown in the Sandbox. Add a new object here to put it on that shelf. */
 export const sandboxEntries: CatalogEntry[] = [
   {
+    id: 'time-space-clock',
+    title: 'Time & Space',
+    kinds: ['code'],
+    description:
+      'Built this clock on the concept of adding time as the fourth dimension.',
+    preview:
+      'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/week6_due_oct15/index.html',
+    link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/week6_due_oct15/index.html',
+    linkLabel: 'Open the clock',
+    body: [
+      'The inspiration for Space & Time stems from an exploration of the relationship between temporal scales and physical space. When I first conceptualized this clock, I realized that traditional timekeeping relies on three fundamental scalars: seconds, minutes, and hours. This naturally drew a parallel to the three foundational dimensions of our physical world: the X, Y, and Z axes. By mapping these three time units to three distinct spatial planes, invisible time is given a physical, structural skeleton within a 3D coordinate system.',
+      'But as modern physics suggests, the fourth dimension is time. Following this logic, I envisioned the clock itself as a planet navigating through a four-dimensional universe. Within this planetary model, not only do seconds, minutes, and hours operate on localized vertical and horizontal planes, but the system also incorporates Earth’s macro-temporal scale. Real-world data for the year, month, and day are translated into the clock’s actual orbital path and axial tilt.',
+      'Visually, the clock hands are represented by a breathing, continuously warping topology. This visual expression is inspired by modern cosmology: under the pressure of gravitational fields, physical forces, and the passage of time, the fabric of the universe is not perfectly flat, but constantly bending and collapsing. The distorted, noise-generated tubular trajectories serve as a direct, tangible materialization of this “spacetime distortion.”',
+    ],
+  },
+  {
     id: 'halftone',
     title: 'Halftone Camera',
     kinds: ['code'],

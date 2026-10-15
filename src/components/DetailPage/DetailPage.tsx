@@ -82,6 +82,8 @@ interface DetailPageProps {
   meta?: string[]
   image?: string
   imageAlt?: string
+  /** Live page embedded in place of the hero image */
+  preview?: string
   body?: Array<
     | string
     | { type: 'image'; src: string; caption?: string; scale?: number }
@@ -490,6 +492,7 @@ export function DetailPage({
   meta,
   image,
   imageAlt = '',
+  preview,
   body = [],
   sections,
   timeline,
@@ -647,7 +650,17 @@ export function DetailPage({
           </p>
         )}
 
-        {image && (
+        {preview && (
+          <figure className="detail__hero detail__hero--live">
+            <iframe
+              src={preview}
+              title={`${title} live preview`}
+              className="detail__hero-preview"
+            />
+          </figure>
+        )}
+
+        {!preview && image && (
           <figure className="detail__hero">
             {externalLink && isVideoHref(externalLink.href) ? (
               <a

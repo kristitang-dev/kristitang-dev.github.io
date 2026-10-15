@@ -49,17 +49,28 @@ export function DigitalGarden() {
           {sandboxEntries.map((entry) => (
             <article
               key={entry.id}
-              className={`garden-card${entry.image ? '' : ' garden-card--text'}`}
+              className={`garden-card${entry.image || entry.preview ? '' : ' garden-card--text'}`}
             >
-              {entry.image && (
+              {(entry.image || entry.preview) && (
                 <GardenCardLink entry={entry} className="garden-card__media-link">
                   <div className="garden-card__media">
-                    <img
-                      src={entry.image}
-                      alt=""
-                      className="garden-card__image"
-                      loading="lazy"
-                    />
+                    {entry.preview ? (
+                      <iframe
+                        src={entry.preview}
+                        title={`${entry.title} live preview`}
+                        className="garden-card__preview"
+                        loading="lazy"
+                        tabIndex={-1}
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <img
+                        src={entry.image}
+                        alt=""
+                        className="garden-card__image"
+                        loading="lazy"
+                      />
+                    )}
                   </div>
                 </GardenCardLink>
               )}
