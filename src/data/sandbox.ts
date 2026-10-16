@@ -9,8 +9,8 @@ export const sandboxEntries: CatalogEntry[] = [
     description:
       'Built this clock on the concept of adding time as the fourth dimension.',
     preview:
-      'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/week6_due_oct15/index.html',
-    link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/week6_due_oct15/index.html',
+      'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/time&space-clock/time&space.html',
+    link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/time&space-clock/time&space.html',
     linkLabel: 'Open the clock',
     body: [
       'The inspiration for Space & Time stems from an exploration of the relationship between temporal scales and physical space. When I first conceptualized this clock, I realized that traditional timekeeping relies on three fundamental scalars: seconds, minutes, and hours. This naturally drew a parallel to the three foundational dimensions of our physical world: the X, Y, and Z axes. By mapping these three time units to three distinct spatial planes, invisible time is given a physical, structural skeleton within a 3D coordinate system.',
