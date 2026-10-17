@@ -8,7 +8,7 @@ import './Blog.css'
 
 /** Sequence titles on Develop by Hand. Wording is matched exactly. */
 const handHeadings = new Set([
-  'What does it cost to take a photo',
+  'What does it cost to take a photo?',
   'Back when a photo had to be developed by hand',
   'Light is only the start',
   'The picture is taken. It stays dark.',
@@ -94,11 +94,26 @@ export function BlogPostPage() {
               post.slug === 'develop-by-hand'
                 ? {
                     h2: ({ children }) =>
-                      handHeadings.has(plainText(children).trim()) ? (
+                      handHeadings.has(plainText(children).trim().replace(/\uFF1F/g, '?')) ? (
                         <h2 className="blog__hand">{children}</h2>
                       ) : (
                         <h2>{children}</h2>
                       ),
+                    img: ({ src, alt }) => {
+                      const url = typeof src === 'string' ? src : ''
+                      const fullSize =
+                        url.includes('anpoimages.com') ||
+                        url.includes('/circuit.png') ||
+                        url.includes('/prototype.png') ||
+                        url.endsWith('/cover.jpg')
+                      return (
+                        <img
+                          src={url}
+                          alt={alt ?? ''}
+                          className={fullSize ? undefined : 'blog__img--half'}
+                        />
+                      )
+                    },
                   }
                 : undefined
             }

@@ -301,6 +301,10 @@
   margin: 1.5rem auto;
 }
 
+.blog__prose img.blog__img--half {
+  width: 35%;
+}
+
 .blog__prose p:has(> img):has(+ p) {
   margin-bottom: 0;
 }
@@ -318,6 +322,10 @@
   line-height: 1.5;
   color: var(--grey-500);
   overflow-wrap: anywhere;
+}
+
+.blog__prose p:has(> img.blog__img--half) + p {
+  max-width: 35%;
 }
 
 .blog__prose > p:first-child img {

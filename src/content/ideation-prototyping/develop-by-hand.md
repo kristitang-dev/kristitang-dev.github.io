@@ -77,13 +77,13 @@ Oct 13 - Sucessfully integrated the IPS board!
 
 ## Shake the formula
 
-*GIF — add later.*
+![Hands shake the wires beside the prototype](/images/garden/develop-by-hand/shake-the-formula.gif)
 
 ## Then set it down
 
 ## Hold to appreciate it
 
-*GIF — add later.*
+![A hand holds the sensor while the screen stays dark](/images/garden/develop-by-hand/hold-it.gif)
 
 ## The print is in your hands
 
