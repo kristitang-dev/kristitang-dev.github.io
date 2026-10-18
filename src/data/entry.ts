@@ -30,6 +30,12 @@ export interface CatalogEntry {
     | { type: 'image'; src: string; caption?: string; scale?: number }
     | { type: 'images'; images: { src: string; caption?: string }[] }
     | {
+        type: 'embed'
+        src: string
+        title?: string
+        height?: number
+      }
+    | {
         type: 'split'
         text: string
         image: string

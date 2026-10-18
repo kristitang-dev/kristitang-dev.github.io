@@ -83,6 +83,22 @@ export function BlogSeries({ series }: BlogSeriesProps) {
                   </div>
                 )
               }
+              if (block.type === 'embed') {
+                return (
+                  <div key={`body-embed-${index}`} className="blog__body-embed">
+                    <iframe
+                      src={block.src}
+                      title={block.title ?? 'Embedded media'}
+                      width="100%"
+                      height={block.height ?? 352}
+                      frameBorder={0}
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                      allowFullScreen
+                    />
+                  </div>
+                )
+              }
               return <p key={`body-${index}`}>{block.text}</p>
             })}
           </div>

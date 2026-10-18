@@ -88,7 +88,9 @@ export function BlogPostPage() {
           </div>
         )}
 
-        <div className="blog__prose">
+        <div
+          className={`blog__prose${post.slug === 'develop-by-hand' ? ' blog__prose--captions' : ''}`}
+        >
           <Markdown
             components={
               post.slug === 'develop-by-hand'
@@ -115,7 +117,21 @@ export function BlogPostPage() {
                       )
                     },
                   }
-                : undefined
+                : post.slug === 'genai-as-creative-material'
+                  ? {
+                      img: ({ src, alt }) => {
+                        const url = typeof src === 'string' ? src : ''
+                        const wide = /First%20Steps\.png|First Steps\.png|Saint-Remy\.png|Letter%20805\.png|Letter 805\.png|Generated/.test(url)
+                        return (
+                          <img
+                            src={url}
+                            alt={alt ?? ''}
+                            className={wide ? 'blog__img--wide' : undefined}
+                          />
+                        )
+                      },
+                    }
+                  : undefined
             }
           >
             {post.markdown}

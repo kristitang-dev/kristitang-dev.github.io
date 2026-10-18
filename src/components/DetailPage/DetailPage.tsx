@@ -89,6 +89,12 @@ interface DetailPageProps {
     | { type: 'image'; src: string; caption?: string; scale?: number }
     | { type: 'images'; images: { src: string; caption?: string }[] }
     | {
+        type: 'embed'
+        src: string
+        title?: string
+        height?: number
+      }
+    | {
         type: 'split'
         text: string
         image: string
@@ -732,6 +738,24 @@ export function DetailPage({
                       </figcaption>
                     )}
                   </figure>
+                )
+              }
+
+              if (block.type === 'embed') {
+                return (
+                  <div key={`body-embed-${index}`} className="detail__body-embed">
+                    <iframe
+                      src={block.src}
+                      title={block.title ?? 'Embedded media'}
+                      width="100%"
+                      height={block.height ?? 152}
+                      frameBorder={0}
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="eager"
+                      allowFullScreen
+                      referrerPolicy="strict-origin-when-cross-origin"
+                    />
+                  </div>
                 )
               }
 
