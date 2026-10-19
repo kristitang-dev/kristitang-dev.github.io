@@ -78,5 +78,22 @@ In a shallow, enclosed rural garden, a crouching man on the left extends his arm
 
 [Watch with sound](https://drive.google.com/file/d/1ic3cQkagEr4mFntZLOEnOh0ivSFX2S00/view?usp=sharing)
 
-I also asked my friends to do me a favor to replicate the scene. And I threw that picture into Gemini with similar prompts. I tried to give all-in-one prompt and step-by-step prompts. Below are the results:
-![](/images/garden/genai/Photography.png)
+I also asked my friends to act out the scene so I could photograph it. Then I gave that photo to Gemini with similar prompts, trying two approaches: one all-in-one prompt, and a series of step-by-step prompts. Here are the results:
+![Friends restaging the scene, then Gemini turning the photo into a Van Gogh-style painting with all-in-one and step-by-step prompts](/images/garden/genai/Photography-web.jpg)
+
+With the all-in-one prompt, Gemini painted the scene beautifully, but it turned my crouching friend into a blond toddler. With step-by-step prompts, it kept all three of my friends as themselves, but it filled the garden with flower pots, watering cans, and bean poles I never asked for, and the "painting" step felt more like a filter over a photo, with swirls mostly in the sky.
+
+## Reflection
+
+What struck me most is that the AI doesn't have a style of its own. It picks out the keywords it recognizes and turns each one up too loud. "Van Gogh" became swirls on every surface, whether sky, grass, or skin. "Impasto" became thick paint everywhere. In Gemini, "deep, emotional blues" swallowed the "spring yellow-greens," and my scene of new life turned into Halloween. "A rustic fence and a wheelbarrow" became two wheelbarrows and a garden full of props. Every word got its own spotlight, but nothing decided what mattered most.
+
+The thing I cared about most, the invisible pull between the toddler and the father's hands, never really showed up, maybe because there is no keyword for it. Wherever my prompt left a gap, the tools filled it with defaults: a young white family, pleasant but empty faces, a picture-perfect cottage garden. Even when ChatGPT came closest to Van Gogh, drifting toward the real *First Steps* without being told, it felt like an echo of a painting it had seen, not a choice it made.
+
+Each tool had its own habits. Firefly took my sketch most literally, ChatGPT leaned on the familiar painting, and Gemini gave me the most control once I used a real photo and went step by step. Changing what I gave the tools (a sketch, a collage, a photo) changed the results far more than rewording the prompt did. Still, the AI showed me things I would not have found alone: a contradiction in my own prompt, and, through the collage accident, a new story about a dad who is not ready.
+
+
+> "A heap of people do not copy, a heap of others copy – for my part, I set myself to it by chance and I find that it teaches me things, and above all it sometimes consoles me. And then my brush goes between my fingers as a bow would on the violin, and absolutely for my own pleasure." — Vincent van Gogh
+
+Van Gogh copied, and he said so plainly. In the asylum, with few models to paint from, he worked from black-and-white photographs of Millet's drawings. He set himself to it by chance, and it taught him and consoled him. But the brush was still his: the color, the rhythm, and the pleasure were his own. To me, that is what style is: not a set of recognizable features, but a way of deciding what matters and how to say it.
+
+AI copies without the teaching, the consolation, or the pleasure. It can borrow Van Gogh's swirls, but not his reason for painting them. Great minds may arrive at similar ideas; what makes each one different is the structure underneath, the choices about what to emphasize and what to leave out. For now, those choices are still mine to make.

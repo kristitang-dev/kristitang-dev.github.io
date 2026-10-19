@@ -123,6 +123,13 @@ export function BlogPostPage() {
                         const url = typeof src === 'string' ? src : ''
                         const wide = /First%20Steps\.png|First Steps\.png|Saint-Remy\.png|Letter%20805\.png|Letter 805\.png|Generated/.test(url)
                         const small = url.includes('movingImage.gif')
+                        if (url.includes('Photography-web.jpg')) {
+                          return (
+                            <a href={url} target="_blank" rel="noreferrer" className="blog__img-bleed">
+                              <img src={url} alt={alt ?? ''} />
+                            </a>
+                          )
+                        }
                         return (
                           <img
                             src={url}
