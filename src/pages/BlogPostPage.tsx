@@ -122,11 +122,14 @@ export function BlogPostPage() {
                       img: ({ src, alt }) => {
                         const url = typeof src === 'string' ? src : ''
                         const wide = /First%20Steps\.png|First Steps\.png|Saint-Remy\.png|Letter%20805\.png|Letter 805\.png|Generated/.test(url)
+                        const small = url.includes('movingImage.gif')
                         return (
                           <img
                             src={url}
                             alt={alt ?? ''}
-                            className={wide ? 'blog__img--wide' : undefined}
+                            width={small ? 240 : undefined}
+                            height={small ? 138 : undefined}
+                            className={wide ? 'blog__img--wide' : small ? 'blog__img--small' : undefined}
                           />
                         )
                       },

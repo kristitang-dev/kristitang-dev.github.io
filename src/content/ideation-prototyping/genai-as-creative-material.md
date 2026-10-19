@@ -44,7 +44,7 @@ This emotional and visual tension relates directly to my own creative interests 
 My text prompt and my sketch:
 
 ```
-An oil painting with an extreme impasto texture. The color palette is vibrant, fresh, and spring-like, heavily utilizing bright yellow-greens contrasting with deep, emotional blues to suggest a sudden burst of new life overcoming a heavy atmosphere. The brushstrokes are thick, unblended, and repetitive, creating a swirling, vibrating rhythm across the canvas. In a shallow, enclosed rural garden, a crouching man on the right extends his arms openly. On the left, a woman gently supports a toddler leaning forward to take a step. There is an invisible, tender, yet powerful emotional pull between the toddler and the man's hands. Mundane background objects like a rustic fence and a wheelbarrow feel alive and pulsating due to the turbulent flow of the paint.
+An oil painting with an extreme impasto texture. The color palette is vibrant, fresh, and spring-like, heavily utilizing bright yellow-greens contrasting with deep, emotional blues to suggest a sudden burst of new life overcoming a heavy atmosphere. The brushstrokes are thick, unblended, and repetitive, creating a swirling, vibrating rhythm across the canvas. In a shallow, enclosed rural garden, a crouching man on the left extends his arms openly. On the right, a woman gently supports a toddler leaning forward to take a step. There is an invisible, tender, yet powerful emotional pull between the toddler and the man's hands. Mundane background objects like a rustic fence and a wheelbarrow feel alive and pulsating due to the turbulent flow of the paint.
 ```
 ![I am not good at drawing](/images/garden/genai/My%20Sketch.jpg)
 
@@ -52,4 +52,26 @@ The Results:
 
 ![Generated images based on my Sketch](/images/garden/genai/Generated%20based%20on%20my%20sketch.png)
 
-Overall, Gemini performed the best among the three with no obvious flaws, although the background behind the father looked a bit strange. However, instead of capturing a sense of spring and hope, it gave off a creepy, mysterious Halloween vibe. ChatGPT rendered a horizontally flipped image despite the reference sketch indicating character placements. Firefly gave off a modern digital illustration vibe with what felt like a subtle, 15% Post-Impressionist filter layered on top.
+
+**How closely did each model follow my prompt?** None of them followed both my prompt and my sketch. Part of that is my fault: my prompt says the man is "on the right" and then says the woman is "on the right" too, while my sketch puts the man on the left. ChatGPT followed my text over my drawing, and that layout also happens to match Van Gogh's real *First Steps*. Gemini matched my sketch's layout best, with the bare tree in the middle and the fence, but deep blue took over the "spring yellow-greens," and it turned my rural peasants into a modern family in jeans. ChatGPT matched the mood and palette best: bright, spring-like, thick unblended strokes, and a woman in a long pale dress that feels like the 1800s. Firefly followed my sketch almost too literally and my text the least. It looks flat and smooth, with a pale yellow sky instead of deep emotional blues and almost no impasto.
+
+**What frustrated or perplexed me?** Firefly turned the father into a child. The figure on the left is a barefoot boy in shorts, and the adult on the right looks androgynous. It seems to have read my stick-figure proportions as kids, and it even turned my ground line into a strange crack across the lawn. Gemini gave me two wheelbarrows when I asked for one. All three defaulted to a young white couple with a blond toddler, even though I never mentioned race, age, or clothing. That is a bias worth noticing. There were no six-fingered hands, though ChatGPT's hands melt into the brushstrokes. Some of it also felt like slop: Gemini spread the same "Van Gogh" swirl evenly over every surface, and Firefly felt like a filter on top rather than actual painting.
+
+**What surprised or humored me?** ChatGPT came closest to the original painting even though I never named it, probably because my prompt describes *First Steps* so closely. That is impressive and a little unsettling at the same time. Gemini turned a few stick lines into a believable scene that kept my poses, from the father's open arms to the mother bending over the child. Firefly's literalness was funny in its own way; it even kept the two-branch shape of my tree.
+
+## Do Something Else to It
+I made a collage out of three generative art pieces, pulling one character from each of the three platforms I used. But now, it totally lost the whole 'resilience and new life' vibe. Instead, the dad looks absolutely terrified to hold the kid, like he's panicking and saying, 'The baby's not mine! I'm not ready to be a dad!' The funny part is that this "dad" is actually Firefly's child figure, placed next to Gemini's toddler and ChatGPT's mother.
+![Collage art](/images/garden/genai/Collaged.png)
+
+
+
+## Repeat?
+And then I threw this collaged with the new text prompt into Seedance 2.0 mini to generate a video. 
+
+```
+In a shallow, enclosed rural garden, a crouching man on the left extends his arms openly. On the right, a woman gently supports a toddler leaning forward to take a step. The dad in the left side looks kinda terrified to hold the kid, like he's panicking and saying, 'The baby's not mine! I'm not ready to be a dad!'
+```
+
+![Animated collage: the father pulls back as the child steps toward him](/images/garden/genai/movingImage.gif)
+
+[Watch with sound](https://drive.google.com/file/d/1ic3cQkagEr4mFntZLOEnOh0ivSFX2S00/view?usp=sharing)
