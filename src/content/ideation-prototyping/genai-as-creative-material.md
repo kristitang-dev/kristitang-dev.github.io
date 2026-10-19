@@ -77,3 +77,6 @@ In a shallow, enclosed rural garden, a crouching man on the left extends his arm
 ![Animated collage: the father pulls back as the child steps toward him](/images/garden/genai/movingImage.gif)
 
 [Watch with sound](https://drive.google.com/file/d/1ic3cQkagEr4mFntZLOEnOh0ivSFX2S00/view?usp=sharing)
+
+I also asked my friends to do me a favor to replicate the scene. And I threw that picture into Gemini with similar prompts. I tried to give all-in-one prompt and step-by-step prompts. Below are the results:
+![](/images/garden/genai/Photography.png)
