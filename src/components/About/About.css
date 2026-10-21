@@ -11,7 +11,9 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, var(--grey-500) 0%, rgba(122, 122, 133, 0.28) 46%, #ffffff 82%);
+  transform: scaleY(0.5);
+  transform-origin: top center;
+  background: var(--grey-300);
 }
 
 .about__inner {

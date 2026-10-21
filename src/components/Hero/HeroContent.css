@@ -121,6 +121,10 @@
     max-height: none;
   }
 
+  .hero-scene__canvas {
+    touch-action: pan-y;
+  }
+
   .hero-scene--spacer {
     min-height: 58vh;
   }

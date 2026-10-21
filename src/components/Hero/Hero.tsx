@@ -4,6 +4,11 @@ import './Hero.css'
 import './HeroContent.css'
 
 export function Hero() {
+  const scrollDown = () => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    document.getElementById('about')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
+  }
+
   return (
     <section id="home" className="hero" aria-label="Interactive hero">
       <HeroContent />
@@ -14,9 +19,9 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="hero__scroll-hint" aria-hidden="true">
-        <span className="hero__scroll-line" />
-      </div>
+      <button type="button" className="hero__scroll-hint" onClick={scrollDown} aria-label="Scroll to about">
+        <span className="hero__scroll-line" aria-hidden="true" />
+      </button>
     </section>
   )
 }

@@ -125,6 +125,15 @@ export function HeroScene() {
         const front = new THREE.DirectionalLight(0xffffff, 0.55);
         front.position.set(3.5, 7, 9);
         scene.add(front);
+        const traceDot = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 12), new THREE.MeshBasicMaterial({
+            color: 0xfff7f2,
+            transparent: true,
+            opacity: 0,
+            depthTest: false,
+        }));
+        traceDot.renderOrder = 3;
+        scene.add(traceDot);
+        let traceGlow = 0;
         const controls = new OrbitControls(camera, canvas);
         controls.enableDamping = true;
         controls.dampingFactor = 0.08;
@@ -137,6 +146,13 @@ export function HeroScene() {
         controls.maxZoom = 2.6;
         camera.position.set(8, 8, 8);
         controls.update();
+        canvas.style.cursor = '';
+        const phoneScroll = window.matchMedia('(max-width: 768px)');
+        const applyTouchScroll = () => {
+            canvas.style.touchAction = phoneScroll.matches ? 'pan-y' : 'none';
+        };
+        applyTouchScroll();
+        phoneScroll.addEventListener('change', applyTouchScroll);
         const scrollUniform = { value: 0 };
         const codeMap = new THREE.TextureLoader().load(CODE_URL);
         codeMap.wrapS = THREE.RepeatWrapping;
@@ -374,6 +390,7 @@ export function HeroScene() {
             dragged = false;
             if (!setPointer(event) || !pointerNearCamera() || !cameraRig)
                 return;
+            dragged = true;
             cameraDragging = true;
             cameraHover = true;
             controls.enabled = false;
@@ -385,6 +402,8 @@ export function HeroScene() {
                 dragOffset.set(0, 0, 0);
             canvas.classList.add('is-dragging');
             canvas.title = 'Camera';
+            event.preventDefault();
+            event.stopPropagation();
         };
         const onUp = () => {
             cameraDragging = false;
@@ -450,8 +469,12 @@ export function HeroScene() {
             clearHover();
         };
         const onClick = (event) => {
-            if (dragged)
+            if (dragged) {
+                dragged = false;
+                event.preventDefault();
+                event.stopPropagation();
                 return;
+            }
             const spot = hitTest(event);
             if (!spot)
                 return;
@@ -473,7 +496,7 @@ export function HeroScene() {
         canvas.addEventListener('pointermove', onMove);
         window.addEventListener('pointermove', onMove);
         canvas.addEventListener('pointerleave', onLeave);
-        canvas.addEventListener('click', onClick);
+        canvas.addEventListener('click', onClick, true);
         const observer = new ResizeObserver(resize);
         observer.observe(canvas);
         resize();
@@ -525,6 +548,14 @@ export function HeroScene() {
             }
             if (floatBook)
                 floatBook.position.y = bookBase.y + bookOut * 0.08;
+            if (cameraRig) {
+                cameraRig.getWorldPosition(dragWorld);
+                traceDot.position.copy(dragWorld);
+                traceDot.position.y += 0.07;
+                const traceGoal = cameraHover || cameraDragging ? 1 : 0;
+                traceGlow += (traceGoal - traceGlow) * 0.16;
+                traceDot.material.opacity = traceGlow;
+            }
             controls.update();
             renderer.render(scene, camera);
             raf = requestAnimationFrame(animate);
@@ -539,11 +570,15 @@ export function HeroScene() {
             canvas.removeEventListener('pointermove', onMove);
             window.removeEventListener('pointermove', onMove);
             canvas.removeEventListener('pointerleave', onLeave);
-            canvas.removeEventListener('click', onClick);
+            canvas.removeEventListener('click', onClick, true);
+            phoneScroll.removeEventListener('change', applyTouchScroll);
             controls.dispose();
             observer.disconnect();
             wallMaterial.dispose();
             codeMap.dispose();
+            traceDot.geometry.dispose();
+            traceDot.material.dispose();
+            scene.remove(traceDot);
             if (model) {
                 model.traverse((obj) => {
                     const mesh = obj;
