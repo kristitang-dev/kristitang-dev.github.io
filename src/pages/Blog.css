@@ -325,6 +325,36 @@
   width: 100%;
 }
 
+.blog__prose .blog__img-bleed {
+  display: block;
+  width: min(1200px, 94vw);
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 1.5rem 0;
+  cursor: zoom-in;
+}
+
+.blog__prose .blog__img-bleed img {
+  width: 100%;
+  margin: 0;
+}
+
+.blog__prose img.blog__img--small {
+  width: min(240px, 72%);
+  height: auto;
+  margin-bottom: 0.65rem;
+}
+
+.blog__prose p:has(> img.blog__img--small) {
+  margin-bottom: 0;
+}
+
+.blog__prose p:has(> img.blog__img--small) + p {
+  margin-top: 0;
+  text-align: center;
+}
+
 .blog__prose p:has(> img[src*="Saint-Remy"]),
 .blog__prose p:has(> img[src*="Letter"]) {
   margin-bottom: 0;
