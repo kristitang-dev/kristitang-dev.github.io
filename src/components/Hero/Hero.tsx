@@ -1,41 +1,16 @@
-import { useRef } from 'react'
-import { useSpotlight } from '../../hooks/useSpotlight'
 import { HeroContent } from './HeroContent'
+import { HeroScene } from './HeroScene'
 import './Hero.css'
 import './HeroContent.css'
 
 export function Hero() {
-  const containerRef = useRef<HTMLElement>(null)
-  const chairRef = useRef<HTMLSpanElement>(null)
-
-  useSpotlight(containerRef, chairRef)
-
   return (
-    <section
-      id="home"
-      className="hero"
-      ref={containerRef}
-      aria-label="Interactive hero"
-    >
-      {/* Spotlight layers: grayscale blueprint + color reveal (text / grid only) */}
-      <div className="hero__layer hero__layer--blueprint">
-        <HeroContent />
-      </div>
+    <section id="home" className="hero" aria-label="Interactive hero">
+      <HeroContent />
 
-      <div className="hero__layer hero__layer--reality">
-        <HeroContent />
-      </div>
-
-      {/* Always full-color illustration — not affected by spotlight */}
-      <div className="hero__scene-layer" aria-hidden="true">
+      <div className="hero__scene-layer">
         <div className="hero-scene">
-          <img
-            src="/images/hero-workspace.png"
-            alt=""
-            className="hero-scene__image"
-            draggable={false}
-          />
-          <span ref={chairRef} className="chair-anchor" />
+          <HeroScene />
         </div>
       </div>
 

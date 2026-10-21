@@ -3,76 +3,10 @@
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
-  cursor: crosshair;
-  --spot-x: 50%;
-  --spot-y: 50%;
-  --spot-radius: 200px;
+  background: #fff;
 }
 
-.hero__layer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* Blueprint layer — grayscale draft for text / background */
-.hero__layer--blueprint {
-  z-index: 1;
-  background-color: var(--grey-100);
-  filter: grayscale(1) contrast(1.05);
-}
-
-.hero__layer--blueprint::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--grey-300) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grey-300) 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.25;
-  pointer-events: none;
-}
-
-/* Reality layer — blue spotlight on words only (transparent bg) */
-.hero__layer--reality {
-  z-index: 2;
-  background-color: transparent;
-  pointer-events: none;
-  -webkit-mask-image: radial-gradient(
-    circle var(--spot-radius) at var(--spot-x) var(--spot-y),
-    black 0%,
-    black 55%,
-    rgba(0, 0, 0, 0.45) 78%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    circle var(--spot-radius) at var(--spot-x) var(--spot-y),
-    black 0%,
-    black 55%,
-    rgba(0, 0, 0, 0.45) 78%,
-    transparent 100%
-  );
-}
-
-/* Lit text: blue light — except Matter & Medium stay red */
-.hero__layer--reality .hero-copy__name,
-.hero__layer--reality .hero-copy__tagline {
-  color: #3d6ea8;
-  text-shadow:
-    0 0 12px rgba(61, 110, 168, 0.35),
-    0 0 28px rgba(61, 110, 168, 0.2);
-}
-
-.hero__layer--reality .hero-copy__tagline em {
-  color: var(--red-500);
-  text-shadow:
-    0 0 12px rgba(214, 59, 59, 0.4),
-    0 0 24px rgba(214, 59, 59, 0.2);
-}
-
-/* Full-color scene sits above the spotlight layers */
+/* 3D scene sits above the text */
 .hero__scene-layer {
   position: absolute;
   inset: 0;
@@ -80,8 +14,8 @@
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-  padding: var(--section-padding);
-  padding-bottom: clamp(1.5rem, 4vh, 3rem);
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  padding-bottom: clamp(0.75rem, 2vh, 1.5rem);
   pointer-events: none;
 }
 
@@ -95,35 +29,30 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  opacity: 0.4;
   pointer-events: none;
 }
 
 .hero__scroll-line {
   display: block;
   width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--grey-500), transparent);
-  animation: scroll-pulse 2s ease-in-out infinite;
+  height: 72px;
+  background: linear-gradient(to bottom, var(--red-500), #ffffff);
+  animation: scroll-float 2.4s ease-in-out infinite;
 }
 
-@keyframes scroll-pulse {
+@keyframes scroll-float {
   0%,
   100% {
-    opacity: 0.3;
-    transform: scaleY(0.8);
+    opacity: 0.55;
+    transform: translateY(0);
   }
   50% {
-    opacity: 0.7;
-    transform: scaleY(1);
+    opacity: 1;
+    transform: translateY(14px);
   }
 }
 
 @media (max-width: 768px) {
-  .hero {
-    --spot-radius: 140px;
-  }
-
   .hero__scene-layer {
     align-items: flex-end;
     justify-content: center;

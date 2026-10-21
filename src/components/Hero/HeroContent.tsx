@@ -1,7 +1,7 @@
 import { site } from '../../data/site'
 import './HeroContent.css'
 
-/** Text + layout only — the full-color scene is rendered separately above the spotlight. */
+/** Text and the spacer that reserves room for the 3D scene. */
 export function HeroContent() {
   return (
     <div className="hero-content">
