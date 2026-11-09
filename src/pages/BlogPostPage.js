@@ -84,5 +84,13 @@ export function BlogPostPage() {
                                         return (_jsx("img", { src: url, alt: alt ?? '', className: wide ? 'blog__img--wide' : undefined }));
                                     },
                                 }
-                                : undefined, children: post.markdown }) })] }) }));
+                                : post.slug === 'time-capsule'
+                                    ? {
+                                        img: ({ src, alt }) => {
+                                            const url = typeof src === 'string' ? src : '';
+                                            const wide = /Finding|Misinterpretation|organs|objects-curated/.test(url);
+                                            return (_jsx("img", { src: url, alt: alt ?? '', className: wide ? 'blog__img--wide' : undefined }));
+                                        },
+                                    }
+                                    : undefined, children: post.markdown }) })] }) }));
 }

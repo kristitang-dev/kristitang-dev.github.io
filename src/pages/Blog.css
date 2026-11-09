@@ -423,6 +423,28 @@
   object-fit: cover;
 }
 
+.blog__prose p:has(> img[src*="foam"]) {
+  width: 100%;
+  align-items: start;
+}
+
+.blog__prose p:has(> img[src*="foam"]) img {
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
+.blog__prose p:has(> img + img + img) {
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .blog__prose p:has(> img + img + img) {
+    grid-template-columns: 1fr;
+  }
+}
+
 .blog__prose ul,
 .blog__prose ol {
   padding-left: 1.25rem;
