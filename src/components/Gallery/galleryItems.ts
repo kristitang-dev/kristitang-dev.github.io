@@ -1,5 +1,5 @@
 import { sandboxEntries } from '../../data/sandbox'
-import { workItems } from '../../data/work'
+import { workItems, type WorkCategoryId } from '../../data/work'
 import { getPost } from '../../content/loadPosts'
 
 export type GalleryCard = {
@@ -10,6 +10,8 @@ export type GalleryCard = {
   image?: string
   preview?: string
   to: string
+  /** Work filters. Pieces without a category stay in All. */
+  categories?: WorkCategoryId[]
   /** Smaller, and drifts a little more loosely than the main orbit. */
   quiet?: boolean
 }
@@ -24,6 +26,11 @@ const kindLabel: Record<string, string> = {
 
 const quiet = new Set(['somo', 'bubblebright'])
 
+const heroGallery: Record<string, string> = {
+  nutrisynth: '/images/herogallery/LLM%20AI%20Native%20Game%20-%20NutriSynth.gif',
+  'lens-of-bias': '/images/herogallery/Trimmed_Through.gif',
+}
+
 const studioPosts = ['endangered-animal', 'time-capsule']
   .map((slug) => getPost('ideation-prototyping', slug))
   .filter((post) => post != null)
@@ -34,7 +41,8 @@ export const galleryCards: GalleryCard[] = [
     title: item.title,
     description: item.description,
     tags: item.tags,
-    image: item.detailImage ?? item.image,
+    image: heroGallery[item.id] ?? item.detailImage ?? item.image,
+    categories: item.categories,
     to: `/work/${item.id}`,
     quiet: quiet.has(item.id),
   })),
@@ -54,9 +62,11 @@ export const galleryCards: GalleryCard[] = [
     description: post.excerpt ?? '',
     tags: ['Ideation & Prototyping'],
     image:
-      post.slug === 'endangered-animal'
-        ? '/images/garden/endangered-animal/hook.jpg'
-        : post.cover,
+      post.slug === 'time-capsule'
+        ? '/images/herogallery/Misinterpretation.gif'
+        : post.slug === 'endangered-animal'
+          ? '/images/herogallery/endangered_animal.gif'
+          : post.cover,
     to: `/garden/${post.series}/${post.slug}`,
   })),
 ]

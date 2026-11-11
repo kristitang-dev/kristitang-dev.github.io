@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom'
 import { albums, notebooks } from '../../data/bookshelf'
 import { galleryCardMatches, galleryCards, getGalleryCard } from '../Gallery/galleryItems'
 import { researchItems, researchKindLabels } from '../../data/research'
+import { workFilters, type WorkCategory } from '../../data/work'
 import { rememberReturnOverlay, useSpatialStore } from '../../store/spatialStore'
-import { DiscoGallery } from '../Gallery/DiscoGallery'
+import { DiscoGallery, ProjectCard } from '../Gallery/DiscoGallery'
 import './SpatialLayer.css'
 
 type FilmFrame = {
@@ -79,18 +80,31 @@ function AbstractPanel() {
 
 function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
   const [query, setQuery] = useState('')
-  const cards = galleryCards.filter((card) => galleryCardMatches(card, query))
+  const [still, setStill] = useState(false)
+  const [group, setGroup] = useState<WorkCategory>('all')
+  const cards = galleryCards.filter((card) => {
+    if (!galleryCardMatches(card, query)) return false
+    if (!still || group === 'all') return true
+    return card.categories?.includes(group) ?? false
+  })
 
   useEffect(() => {
     const activeId = useSpatialStore.getState().activeProjectId
-    if (activeId && !galleryCards.some((card) => card.id === activeId && galleryCardMatches(card, query))) {
+    if (activeId && !cards.some((card) => card.id === activeId)) {
       useSpatialStore.getState().setActiveProject(null)
     }
-  }, [query])
+  }, [cards])
 
   return (
     <div className="spatial-laptop">
       <div className="spatial-gallery">
+        <button
+          type="button"
+          className="spatial-layout"
+          onClick={() => setStill((value) => !value)}
+        >
+          {still ? 'Orbit' : 'Grid'}
+        </button>
         <form className="spatial-search" role="search" onSubmit={(event) => event.preventDefault()}>
           <input
             type="search"
@@ -100,7 +114,33 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
             onChange={(event) => setQuery(event.target.value)}
           />
         </form>
-        <DiscoGallery cards={cards} exiting={exiting} />
+        <DiscoGallery cards={cards} exiting={exiting} still={still} />
+        {still && (
+          <div className="spatial-grid">
+            <div className="spatial-grid__filters" role="tablist" aria-label="Filter projects">
+              {workFilters.map(({ id, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={group === id}
+                  className={`spatial-grid__filter${group === id ? ' is-active' : ''}`}
+                  onClick={() => setGroup(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <ul className="spatial-grid__list">
+              {cards.map((item) => (
+                <li key={item.id}>
+                  <ProjectCard item={item} />
+                  <p className="spatial-grid__title">{item.title}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {cards.length === 0 && <p className="spatial-search__empty">No matching projects</p>}
       </div>
       <AbstractPanel />

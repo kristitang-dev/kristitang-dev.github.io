@@ -9,7 +9,7 @@ import { FlowField } from './FlowField'
 
 const SPHERE_RADIUS = 2.15
 
-function ProjectCard({ item }: { item: GalleryCard }) {
+export function ProjectCard({ item }: { item: GalleryCard }) {
   const selected = useSpatialStore((state) => state.activeProjectId === item.id)
   const setActiveProject = useSpatialStore((state) => state.setActiveProject)
 
@@ -127,16 +127,24 @@ function FrameCamera() {
   return null
 }
 
-export function DiscoGallery({ cards, exiting = false }: { cards: GalleryCard[]; exiting?: boolean }) {
+export function DiscoGallery({
+  cards,
+  exiting = false,
+  still = false,
+}: {
+  cards: GalleryCard[]
+  exiting?: boolean
+  still?: boolean
+}) {
   return (
-    <div className="disco-gallery">
+    <div className={`disco-gallery${still ? ' disco-gallery--behind' : ''}`}>
       <Canvas
         className="disco-gallery__canvas"
         camera={{ position: [0, 0.35, 8.4], fov: 36 }}
         dpr={[1, 1.6]}
         gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
         onPointerMissed={() => {
-          if (exiting) return
+          if (exiting || still) return
           const state = useSpatialStore.getState()
           if (state.activeProjectId) state.setActiveProject(null)
           else state.closeOverlay()
@@ -144,7 +152,7 @@ export function DiscoGallery({ cards, exiting = false }: { cards: GalleryCard[];
       >
         <FrameCamera />
         <FlowField exiting={exiting} />
-        <DiscoBall cards={cards} />
+        {!still && <DiscoBall cards={cards} />}
       </Canvas>
     </div>
   )
