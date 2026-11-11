@@ -11,6 +11,60 @@
   animation: spatial-veil 0.45s ease;
 }
 
+.spatial__close {
+  position: fixed;
+  z-index: 8;
+  top: 1.15rem;
+  right: 1.15rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--grey-900);
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 10px 28px rgba(15, 27, 46, 0.1);
+}
+
+.spatial__close svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  fill: none;
+}
+
+.spatial__close:hover {
+  color: var(--red-500);
+}
+
+.spatial__close:focus-visible {
+  outline: 2px solid var(--red-500);
+  outline-offset: 3px;
+}
+
+.spatial--darkroom .spatial__close,
+.spatial-lightbox .spatial__close {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  box-shadow: none;
+}
+
+.spatial--darkroom .spatial__close:hover,
+.spatial-lightbox .spatial__close:hover {
+  color: #fff;
+  background: rgba(214, 59, 59, 0.88);
+}
+
+.spatial-lightbox .spatial__close {
+  position: absolute;
+  z-index: 2;
+}
+
 .spatial__stage {
   position: fixed;
   inset: 0;
@@ -628,6 +682,7 @@
 .spatial--leaving .spatial-abstract,
 .spatial--leaving .spatial-layout,
 .spatial--leaving .spatial-search,
+.spatial--leaving .spatial__close,
 .spatial--leaving .spatial__scrim {
   opacity: 0;
   transition: opacity 0.45s ease;

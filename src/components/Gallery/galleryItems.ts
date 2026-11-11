@@ -60,7 +60,12 @@ export const galleryCards: GalleryCard[] = [
     id: post.slug,
     title: post.title,
     description: post.excerpt ?? '',
-    tags: ['Ideation & Prototyping'],
+    tags:
+      post.slug === 'time-capsule'
+        ? ['Form', 'Material', 'Three.js']
+        : post.slug === 'endangered-animal'
+          ? ['Form', 'Material']
+          : ['Ideation & Prototyping'],
     image:
       post.slug === 'time-capsule'
         ? '/images/herogallery/Misinterpretation.gif'

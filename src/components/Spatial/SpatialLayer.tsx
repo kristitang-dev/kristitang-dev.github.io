@@ -273,6 +273,16 @@ function FilmStill({
   )
 }
 
+function CloseButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button type="button" className="spatial__close" aria-label={label} onClick={onClick}>
+      <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M3.2 3.2 12.8 12.8M12.8 3.2 3.2 12.8" />
+      </svg>
+    </button>
+  )
+}
+
 function PhotoWindow({ frame, onClose }: { frame: FilmFrame; onClose: () => void }) {
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -287,6 +297,7 @@ function PhotoWindow({ frame, onClose }: { frame: FilmFrame; onClose: () => void
   return (
     <div className="spatial-lightbox" role="dialog" aria-modal="true" aria-label={frame.title}>
       <button type="button" className="spatial-lightbox__backdrop" aria-label="Close photograph" onClick={onClose} />
+      <CloseButton label="Close photograph" onClick={onClose} />
       <figure className="spatial-lightbox__figure">
         <img src={frame.src} alt={frame.title} />
         <figcaption>
@@ -391,6 +402,7 @@ export function SpatialLayer() {
         aria-modal="true"
         aria-label={overlayLabel[visible]}
       >
+        <CloseButton label="Close" onClick={closeOverlay} />
         {visible === 'laptop' && <LaptopLayer exiting={galleryExit} />}
         {visible === 'bookshelf' && <ArchiveLayer />}
         {visible === 'camera' && <CameraLayer />}
