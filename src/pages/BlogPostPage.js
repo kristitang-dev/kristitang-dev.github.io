@@ -88,7 +88,7 @@ export function BlogPostPage() {
                                     ? {
                                         img: ({ src, alt }) => {
                                             const url = typeof src === 'string' ? src : '';
-                                            const wide = /Finding|Misinterpretation|organs|objects-curated/.test(url);
+                                            const wide = /Finding|Misinterpretation|organs|objects-curated|manifest/.test(url);
                                             return (_jsx("img", { src: url, alt: alt ?? '', className: wide ? 'blog__img--wide' : undefined }));
                                         },
                                     }

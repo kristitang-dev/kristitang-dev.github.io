@@ -21,6 +21,8 @@ The sense of **touch**, however, was the hardest for me to package. Placing 
 
 To make the curation of the five senses more deliberate and visible, I decided to add a shipping manifest label to the exterior. (I had originally planned to print a formal receipt, but all the printers were broken on a Sunday) I also added the strict instruction:*"Wear gloves when touching."* Alongside it, I attached a physical magnifier to invite people to lean in, physically interact,and look closer at the objects I was preserving.
 
+![Handwritten item checklist, with gloves and the instruction to wear them when touching](/images/garden/time-capsule/manifest.jpg)
+
 ## Container / Capsule
 
 A cardboard shoebox. I have been packing my life in boxes like this. A delivery of 2026 to the future.
