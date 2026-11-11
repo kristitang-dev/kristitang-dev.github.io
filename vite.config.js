@@ -10,4 +10,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
     plugins: [react()],
     base: '/',
+    resolve: {
+        // tsc emit sits beside the sources (Hero.js + Hero.tsx). Prefer TypeScript.
+        extensions: ['.tsx', '.ts', '.jsx', '.mjs', '.js', '.mts', '.json'],
+    },
 });

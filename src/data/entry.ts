@@ -69,7 +69,11 @@ export function getEntryKindLabel(item: CatalogEntry) {
 }
 
 export function getEntryHome(item: PlacedEntry) {
-  return item.home === 'bookshelf'
-    ? { label: 'Bookshelf', section: 'bookshelf' }
-    : { label: 'Sandbox', section: 'sandbox' }
+  if (item.home === 'sandbox') {
+    return { label: 'Work', overlay: 'laptop' as const }
+  }
+  if (item.kinds.includes('photography') || item.kinds.includes('video')) {
+    return { label: 'Photography', overlay: 'camera' as const }
+  }
+  return { label: 'Research', overlay: 'bookshelf' as const }
 }

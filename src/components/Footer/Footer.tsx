@@ -5,8 +5,6 @@ export function Footer() {
   return (
     <footer className="footer">
       <div className="footer__inner">
-        <p className="footer__thanks">Thank you for spending time here.</p>
-
         <nav className="footer__contact" aria-label="Contact">
           <a className="footer__link" href={`mailto:${site.email}`}>
             Contact me

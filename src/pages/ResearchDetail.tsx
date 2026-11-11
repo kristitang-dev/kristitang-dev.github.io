@@ -19,7 +19,7 @@ export function ResearchDetail() {
     <DetailPage
       backTo="/"
       backLabel="Back to Research"
-      backState={{ scrollTo: 'research' }}
+      backState={{ overlay: 'bookshelf' }}
       eyebrow={researchKindLabels[item.kind]}
       title={item.title}
       lead={item.lead ?? item.contribution ?? item.description}

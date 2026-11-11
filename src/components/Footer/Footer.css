@@ -26,12 +26,6 @@
   margin-top: 0.35rem;
 }
 
-.footer__thanks {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--grey-700);
-}
-
 .footer__contact {
   display: flex;
   flex-wrap: wrap;

@@ -37,7 +37,7 @@ export function GardenDetail() {
     <DetailPage
       backTo="/"
       backLabel={`Back to ${home.label}`}
-      backState={{ scrollTo: home.section }}
+      backState={{ overlay: home.overlay }}
       eyebrow={getEntryKindLabel(item)}
       title={item.title}
       lead={item.description}

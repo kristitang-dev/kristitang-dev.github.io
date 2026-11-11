@@ -19,7 +19,7 @@ export function WorkDetail() {
     <DetailPage
       backTo="/"
       backLabel="Back to Work"
-      backState={{ scrollTo: 'work' }}
+      backState={{ overlay: 'laptop' }}
       eyebrow={getCategoryLabels(item).join(' · ')}
       title={item.title}
       subtitle={item.subtitle}

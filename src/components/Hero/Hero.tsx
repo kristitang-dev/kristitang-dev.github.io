@@ -1,5 +1,6 @@
 import { HeroContent } from './HeroContent'
 import { HeroScene } from './HeroScene'
+import { SpatialLayer } from '../Spatial/SpatialLayer'
 import './Hero.css'
 import './HeroContent.css'
 
@@ -22,6 +23,8 @@ export function Hero() {
       <button type="button" className="hero__scroll-hint" onClick={scrollDown} aria-label="Scroll to about">
         <span className="hero__scroll-line" aria-hidden="true" />
       </button>
+
+      <SpatialLayer />
     </section>
   )
 }

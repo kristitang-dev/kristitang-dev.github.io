@@ -20,7 +20,7 @@ export function BlogSeries({ series }: BlogSeriesProps) {
   return (
     <main className="blog">
       <div className="blog__inner">
-        <Link to="/" className="blog__back" state={{ scrollTo: home.section }}>
+        <Link to="/" className="blog__back" state={{ overlay: home.overlay }}>
           ← Back to {home.label}
         </Link>
 

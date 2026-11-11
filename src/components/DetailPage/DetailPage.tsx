@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import type { HomeLocationState } from '../../store/spatialStore'
 import {
   HistoryTimeline,
   type HistoryEra,
@@ -74,7 +75,7 @@ export interface DetailGalleryBlock {
 interface DetailPageProps {
   backTo: string
   backLabel: string
-  backState?: { scrollTo?: string }
+  backState?: HomeLocationState
   eyebrow: string
   title: string
   subtitle?: string

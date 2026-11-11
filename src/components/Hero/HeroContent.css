@@ -80,7 +80,7 @@
   height: 100%;
   pointer-events: auto;
   cursor: grab;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .hero-scene__canvas.is-link {
@@ -119,10 +119,6 @@
     width: min(94%, 520px);
     height: 58vh;
     max-height: none;
-  }
-
-  .hero-scene__canvas {
-    touch-action: pan-y;
   }
 
   .hero-scene--spacer {

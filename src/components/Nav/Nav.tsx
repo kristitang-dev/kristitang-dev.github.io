@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { clearReturnOverlay, useSpatialStore, type OverlayType } from '../../store/spatialStore'
 import './Nav.css'
 
 const LINKS = [
-  { label: 'Work', section: 'work' },
-  { label: 'Research', section: 'research' },
-  { label: 'Sandbox', section: 'sandbox' },
-  { label: 'About', section: 'about' },
+  { label: 'Work', overlay: 'laptop' },
+  { label: 'Research', overlay: 'bookshelf' },
+  { label: 'About', overlay: null },
 ] as const
 
 export function Nav() {
@@ -22,12 +22,19 @@ export function Nav() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const goToSection = (section: string) => {
+  const openOverlay = (overlay: OverlayType) => {
+    if (!isHome) navigate('/')
+    else window.scrollTo({ top: 0, behavior: 'auto' })
+    useSpatialStore.getState().setActiveOverlay(overlay)
+  }
+
+  const goToAbout = () => {
     if (isHome) {
-      document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' })
+      useSpatialStore.getState().scrollToAbout()
       return
     }
-    navigate('/', { state: { scrollTo: section } })
+    useSpatialStore.getState().closeOverlay()
+    navigate('/', { state: { scrollTo: 'about' } })
   }
 
   return (
@@ -37,21 +44,21 @@ export function Nav() {
           to="/"
           className="nav__brand"
           onClick={() => {
-            if (isHome) {
-              window.scrollTo({ top: 0, behavior: 'smooth' })
-            }
+            clearReturnOverlay()
+            useSpatialStore.getState().closeOverlay()
+            if (isHome) window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
         >
           Kristi Tang
         </Link>
 
         <ul className="nav__links">
-          {LINKS.map(({ label, section }) => (
-            <li key={section}>
+          {LINKS.map(({ label, overlay }) => (
+            <li key={label}>
               <button
                 type="button"
                 className="nav__link"
-                onClick={() => goToSection(section)}
+                onClick={() => (overlay ? openOverlay(overlay) : goToAbout())}
               >
                 {label}
               </button>
