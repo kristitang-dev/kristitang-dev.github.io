@@ -81,6 +81,7 @@ function AbstractPanel() {
 function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
   const [query, setQuery] = useState('')
   const [still, setStill] = useState(false)
+  const [speed, setSpeed] = useState(1)
   const [group, setGroup] = useState<WorkCategory>('all')
   const cards = galleryCards.filter((card) => {
     if (!galleryCardMatches(card, query)) return false
@@ -105,6 +106,21 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
         >
           {still ? 'Orbit' : 'Grid'}
         </button>
+        {!still && (
+          <label className="spatial-speed">
+            <span>Speed</span>
+            <input
+              type="range"
+              min={0}
+              max={2}
+              step={0.01}
+              value={speed}
+              aria-label="Orbit speed"
+              aria-valuetext={speed === 0 ? 'Stopped' : `${Math.round(speed * 100)}%`}
+              onChange={(event) => setSpeed(Number(event.target.value))}
+            />
+          </label>
+        )}
         <form className="spatial-search" role="search" onSubmit={(event) => event.preventDefault()}>
           <input
             type="search"
@@ -114,7 +130,7 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
             onChange={(event) => setQuery(event.target.value)}
           />
         </form>
-        <DiscoGallery cards={cards} exiting={exiting} still={still} />
+        <DiscoGallery cards={cards} exiting={exiting} still={still} speed={speed} />
         {still && (
           <div className="spatial-grid">
             <div className="spatial-grid__filters" role="tablist" aria-label="Filter projects">

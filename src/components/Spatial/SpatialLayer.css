@@ -316,6 +316,74 @@
   outline-offset: 2px;
 }
 
+.spatial-speed {
+  position: fixed;
+  z-index: 6;
+  top: 1.4rem;
+  left: 1.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey-500);
+  pointer-events: auto;
+}
+
+.spatial-speed input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 7.25rem;
+  height: 1.25rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.spatial-speed input[type='range']:focus-visible {
+  outline: 2px solid var(--red-500);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+.spatial-speed input[type='range']::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(122, 122, 133, 0.45);
+}
+
+.spatial-speed input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-top: -0.36rem;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(15, 27, 46, 0.16), 0 4px 10px rgba(15, 27, 46, 0.12);
+  cursor: pointer;
+}
+
+.spatial-speed input[type='range']::-moz-range-track {
+  height: 2px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(122, 122, 133, 0.45);
+}
+
+.spatial-speed input[type='range']::-moz-range-thumb {
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(15, 27, 46, 0.16);
+  cursor: pointer;
+}
+
 .spatial-search {
   position: fixed;
   z-index: 6;
@@ -681,6 +749,7 @@
 .spatial--leaving .disco-card,
 .spatial--leaving .spatial-abstract,
 .spatial--leaving .spatial-layout,
+.spatial--leaving .spatial-speed,
 .spatial--leaving .spatial-search,
 .spatial--leaving .spatial__close,
 .spatial--leaving .spatial__scrim {
@@ -747,6 +816,15 @@
   .spatial-layout {
     left: 0.75rem;
     bottom: 0.75rem;
+  }
+
+  .spatial-speed {
+    top: 0.9rem;
+    left: 0.85rem;
+  }
+
+  .spatial-speed input[type='range'] {
+    width: 5.5rem;
   }
 
   .spatial-archive {

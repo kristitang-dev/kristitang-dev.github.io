@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import type { Group } from 'three'
@@ -43,9 +43,11 @@ export function ProjectCard({ item }: { item: GalleryCard }) {
 function Thumbnail({
   item,
   position,
+  speed,
 }: {
   item: GalleryCard
   position: [number, number, number]
+  speed: RefObject<number>
 }) {
   const ref = useRef<Group>(null)
   const phase = useRef(item.id.length)
@@ -54,7 +56,7 @@ function Thumbnail({
     const group = ref.current
     if (!group || !item.quiet) return
     const focused = useSpatialStore.getState().activeProjectId !== null
-    const tempo = focused ? 0.22 : 0.42
+    const tempo = (focused ? 0.22 : 0.42) * speed.current
     const t = clock.elapsedTime
     group.position.set(
       position[0],
@@ -77,9 +79,11 @@ function Thumbnail({
   )
 }
 
-function DiscoBall({ cards }: { cards: GalleryCard[] }) {
+function DiscoBall({ cards, speed }: { cards: GalleryCard[]; speed: number }) {
   const ref = useRef<Group>(null)
   const spin = useRef(0)
+  const speedRef = useRef(speed)
+  speedRef.current = speed
   const [mounted, setMounted] = useState(false)
   const reduceMotion = useRef(
     typeof window !== 'undefined'
@@ -100,7 +104,8 @@ function DiscoBall({ cards }: { cards: GalleryCard[] }) {
     if (!group) return
     // Read Zustand outside React so pausing the ball does not re-render the hero.
     const focused = useSpatialStore.getState().activeProjectId !== null
-    const goal = reduceMotion.current ? 0 : focused ? 0.1 : 0.32
+    const pace = Math.max(0, speedRef.current)
+    const goal = reduceMotion.current ? 0 : (focused ? 0.1 : 0.32) * pace
     const blend = 1 - Math.exp(-delta * 7)
     spin.current += (goal - spin.current) * blend
     group.rotation.y += delta * spin.current
@@ -109,7 +114,7 @@ function DiscoBall({ cards }: { cards: GalleryCard[] }) {
   return (
     <group ref={ref}>
       {mounted && placements.map(({ item, position }) => (
-        <Thumbnail key={item.id} item={item} position={position} />
+        <Thumbnail key={item.id} item={item} position={position} speed={speedRef} />
       ))}
     </group>
   )
@@ -131,10 +136,12 @@ export function DiscoGallery({
   cards,
   exiting = false,
   still = false,
+  speed = 1,
 }: {
   cards: GalleryCard[]
   exiting?: boolean
   still?: boolean
+  speed?: number
 }) {
   return (
     <div className={`disco-gallery${still ? ' disco-gallery--behind' : ''}`}>
@@ -152,7 +159,7 @@ export function DiscoGallery({
       >
         <FrameCamera />
         <FlowField exiting={exiting} />
-        {!still && <DiscoBall cards={cards} />}
+        {!still && <DiscoBall cards={cards} speed={speed} />}
       </Canvas>
     </div>
   )
