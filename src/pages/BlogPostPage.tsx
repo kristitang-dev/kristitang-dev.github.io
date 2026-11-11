@@ -141,7 +141,21 @@ export function BlogPostPage() {
                         )
                       },
                     }
-                  : undefined
+                  : post.slug === 'time-capsule'
+                    ? {
+                        img: ({ src, alt }) => {
+                          const url = typeof src === 'string' ? src : ''
+                          const wide = /Finding|Misinterpretation|organs|objects-curated|manifest/.test(url)
+                          return (
+                            <img
+                              src={url}
+                              alt={alt ?? ''}
+                              className={wide ? 'blog__img--wide' : undefined}
+                            />
+                          )
+                        },
+                      }
+                    : undefined
             }
           >
             {post.markdown}
