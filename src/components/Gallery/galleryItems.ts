@@ -7,7 +7,15 @@ export type GalleryCard = {
   title: string
   description: string
   tags: string[]
+  /** Short labels under the preview. The detail card keeps `tags`. */
+  previewTags?: string[]
+  /** Sort Up groups. Pieces with none stay in All. */
+  sorts?: string[]
   image?: string
+  /** Show the whole image inside the preview instead of cropping it. */
+  contain?: boolean
+  /** Plays only while the card is hovered or focused. */
+  motion?: string
   preview?: string
   to: string
   /** Work filters. Pieces without a category stay in All. */
@@ -26,9 +34,49 @@ const kindLabel: Record<string, string> = {
 
 const quiet = new Set(['somo', 'bubblebright'])
 
-const heroGallery: Record<string, string> = {
-  nutrisynth: '/images/herogallery/LLM%20AI%20Native%20Game%20-%20NutriSynth.gif',
-  'lens-of-bias': '/images/herogallery/Trimmed_Through.gif',
+const previewTags: Record<string, string[]> = {
+  graintwin: ['Human–Machine Interaction', 'MR', 'Apple Vision Pro'],
+  'endangered-animal': ['Material'],
+  'lens-of-bias': ['VR', 'Game', 'Unreal Engine'],
+  'time-capsule': ['Three.js', 'Material'],
+  bubblebright: ['Game', 'Unity'],
+  nutrisynth: ['AI × Interaction', 'Game'],
+  somo: ['Wearable'],
+  'time-space-clock': ['P5.js'],
+  halftone: ['P5.js'],
+}
+
+const sortFromTag: Record<string, string> = {
+  MR: 'mr-vr',
+  VR: 'mr-vr',
+  Game: 'game',
+  Material: 'material',
+  'Three.js': 'code',
+  'P5.js': 'code',
+}
+
+function sortsFor(id: string) {
+  const groups = (previewTags[id] ?? []).map((tag) => sortFromTag[tag]).filter((group) => group != null)
+  return [...new Set(groups)]
+}
+
+export const gallerySorts: { id: string; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'mr-vr', label: 'MR/VR' },
+  { id: 'game', label: 'Game' },
+  { id: 'material', label: 'Material' },
+  { id: 'code', label: 'Code' },
+]
+
+const heroGallery: Record<string, { still: string; motion: string }> = {
+  nutrisynth: {
+    still: '/images/NutriSynth.png',
+    motion: '/images/herogallery/LLM%20AI%20Native%20Game%20-%20NutriSynth.gif',
+  },
+  'lens-of-bias': {
+    still: '/images/lens-of-bias.jpg',
+    motion: '/images/herogallery/Trimmed_Through.gif',
+  },
 }
 
 const studioPosts = ['endangered-animal', 'time-capsule']
@@ -41,7 +89,10 @@ export const galleryCards: GalleryCard[] = [
     title: item.title,
     description: item.description,
     tags: item.tags,
-    image: heroGallery[item.id] ?? item.detailImage ?? item.image,
+    previewTags: previewTags[item.id],
+    sorts: sortsFor(item.id),
+    image: heroGallery[item.id]?.still ?? item.detailImage ?? item.image,
+    motion: heroGallery[item.id]?.motion,
     categories: item.categories,
     to: `/work/${item.id}`,
     quiet: quiet.has(item.id),
@@ -51,6 +102,8 @@ export const galleryCards: GalleryCard[] = [
     title: entry.title,
     description: entry.description,
     tags: entry.kinds.map((kind) => kindLabel[kind] ?? kind),
+    previewTags: previewTags[entry.id],
+    sorts: sortsFor(entry.id),
     image: entry.image,
     preview: entry.image ? undefined : entry.preview,
     to: `/garden/${entry.id}`,
@@ -66,12 +119,15 @@ export const galleryCards: GalleryCard[] = [
         : post.slug === 'endangered-animal'
           ? ['Form', 'Material']
           : ['Ideation & Prototyping'],
+    previewTags: previewTags[post.slug],
+    sorts: sortsFor(post.slug),
     image:
       post.slug === 'time-capsule'
         ? '/images/herogallery/Misinterpretation.gif'
         : post.slug === 'endangered-animal'
-          ? '/images/herogallery/endangered_animal.gif'
+          ? '/images/herogallery/endangered-animal.png'
           : post.cover,
+    contain: post.slug === 'endangered-animal',
     to: `/garden/${post.series}/${post.slug}`,
   })),
 ]
@@ -83,6 +139,8 @@ export function getGalleryCard(id: string) {
 export function galleryCardMatches(card: GalleryCard, query: string) {
   const needle = query.trim().toLowerCase()
   if (!needle) return true
-  const haystack = [card.title, card.description, ...card.tags].join(' ').toLowerCase()
+  const haystack = [card.title, card.description, ...card.tags, ...(card.previewTags ?? [])]
+    .join(' ')
+    .toLowerCase()
   return haystack.includes(needle)
 }

@@ -1,29 +1,61 @@
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Html } from '@react-three/drei'
+import { CameraControls, CameraControlsImpl, Html } from '@react-three/drei'
 import type { Group } from 'three'
-import { type GalleryCard } from './galleryItems'
+import { galleryCards, type GalleryCard } from './galleryItems'
 import { useSpatialStore } from '../../store/spatialStore'
-import { fibonacciSphere } from './fibonacci'
 import { FlowField } from './FlowField'
 
-const SPHERE_RADIUS = 2.15
+function hashId(id: string) {
+  let hash = 2166136261
+  for (let i = 0; i < id.length; i += 1) {
+    hash ^= id.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
 
-export function ProjectCard({ item }: { item: GalleryCard }) {
+const screenSlot = new Map(
+  [...galleryCards]
+    .sort((a, b) => hashId(a.id) - hashId(b.id))
+    .map((card, index) => [card.id, index]),
+)
+
+function screenPosition(id: string): [number, number, number] {
+  const slot = screenSlot.get(id) ?? hashId(id) % 9
+  const column = slot % 3
+  const row = Math.floor(slot / 3)
+  const hash = hashId(id)
+  const jitterX = ((hash & 255) / 255 - 0.5) * 1.15
+  const jitterY = (((hash >>> 8) & 255) / 255 - 0.5) * 0.9
+  return [(column - 1) * 2.35 + jitterX, (1 - row) * 1.55 + jitterY, 0]
+}
+
+export function ProjectTile({ item }: { item: GalleryCard }) {
   const selected = useSpatialStore((state) => state.activeProjectId === item.id)
   const setActiveProject = useSpatialStore((state) => state.setActiveProject)
+  const [playing, setPlaying] = useState(false)
+  const showMotion = Boolean(item.motion && (playing || selected))
+
+  const choose = (event: { stopPropagation: () => void }) => {
+    event.stopPropagation()
+    setActiveProject(selected ? null : item.id)
+  }
 
   return (
+    <div className={`disco-tile${item.quiet ? ' disco-tile--quiet' : ''}`}>
     <button
       type="button"
       className={`disco-card${item.quiet ? ' disco-card--quiet' : ''}${selected ? ' is-active' : ''}`}
       aria-pressed={selected}
       aria-label={item.title}
+      data-project-id={item.id}
       onPointerDown={(event) => event.stopPropagation()}
-      onClick={(event) => {
-        event.stopPropagation()
-        setActiveProject(selected ? null : item.id)
-      }}
+      onPointerEnter={() => item.motion && setPlaying(true)}
+      onPointerLeave={() => setPlaying(false)}
+      onFocus={() => item.motion && setPlaying(true)}
+      onBlur={() => setPlaying(false)}
+      onClick={choose}
     >
       {item.preview ? (
         <iframe
@@ -34,64 +66,107 @@ export function ProjectCard({ item }: { item: GalleryCard }) {
           loading="lazy"
         />
       ) : (
-        <img src={item.image} alt="" draggable={false} />
+        <>
+          <img className={item.contain ? 'is-contain' : undefined} src={item.image} alt="" draggable={false} />
+          {item.motion && showMotion && (
+            <img className="disco-card__motion" src={item.motion} alt="" draggable={false} />
+          )}
+        </>
       )}
     </button>
+    <div className="disco-tile__meta" onClick={choose}>
+      <p className="disco-tile__title">{item.title}</p>
+      {(item.previewTags ?? item.tags).length > 0 && (
+        <ul className="disco-tile__tags">
+          {(item.previewTags ?? item.tags).map((tag) => (
+            <li key={tag}>{tag}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+    </div>
   )
 }
 
 function Thumbnail({
   item,
   position,
-  speed,
+  reduceMotion,
 }: {
   item: GalleryCard
   position: [number, number, number]
-  speed: RefObject<number>
+  reduceMotion: boolean
 }) {
   const ref = useRef<Group>(null)
-  const phase = useRef(item.id.length)
+  const started = useRef<number | null>(null)
+  const settled = useRef(reduceMotion)
+  const drift = useRef({ x: 0, y: 0 })
+  const phase = (hashId(item.id) % 1000) / 1000 * Math.PI * 2
+
+  useLayoutEffect(() => {
+    if (!settled.current || !ref.current) return
+    ref.current.position.set(
+      position[0] + drift.current.x,
+      position[1] + drift.current.y,
+      position[2],
+    )
+  }, [position])
 
   useFrame(({ clock }) => {
     const group = ref.current
-    if (!group || !item.quiet) return
-    const focused = useSpatialStore.getState().activeProjectId !== null
-    const tempo = (focused ? 0.22 : 0.42) * speed.current
-    const t = clock.elapsedTime
+    if (!group) return
+    if (!settled.current) {
+      if (started.current === null) started.current = clock.elapsedTime
+      const t = Math.min(1, (clock.elapsedTime - started.current) / 1.15)
+      const eased = 1 - (1 - t) ** 3
+      group.position.set(
+        position[0],
+        position[1],
+        position[2] - 2.6 * (1 - eased),
+      )
+      if (t >= 1) settled.current = true
+      return
+    }
+    if (reduceMotion) return
+    const time = clock.elapsedTime
+    const selected = useSpatialStore.getState().activeProjectId === item.id
+    const goalX = selected ? 0 : Math.sin(time * 0.42 + phase) * 0.08
+    const goalY = selected ? 0 : Math.cos(time * 0.29 + phase * 1.4) * 0.055
+    drift.current.x += (goalX - drift.current.x) * 0.045
+    drift.current.y += (goalY - drift.current.y) * 0.045
     group.position.set(
-      position[0],
-      position[1] + Math.sin(t * tempo + phase.current) * 0.18,
-      position[2] + Math.cos(t * tempo * 0.7 + phase.current) * 0.08,
+      position[0] + drift.current.x,
+      position[1] + drift.current.y,
+      position[2],
     )
   })
 
   return (
-    <group ref={ref} position={position}>
+    <group
+      ref={ref}
+      position={[position[0], position[1], reduceMotion ? position[2] : position[2] - 2.6]}
+    >
       <Html
         center
         distanceFactor={6}
         zIndexRange={[24, 0]}
         style={{ pointerEvents: 'auto' }}
       >
-        <ProjectCard item={item} />
+        <ProjectTile item={item} />
       </Html>
     </group>
   )
 }
 
-function DiscoBall({ cards, speed }: { cards: GalleryCard[]; speed: number }) {
-  const ref = useRef<Group>(null)
-  const spin = useRef(0)
-  const speedRef = useRef(speed)
-  speedRef.current = speed
+function DiscoBall({ cards }: { cards: GalleryCard[] }) {
   const [mounted, setMounted] = useState(false)
   const reduceMotion = useRef(
     typeof window !== 'undefined'
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
-  const placements = cards.map((item, index) => ({
+  const placements = cards.map((item) => ({
     item,
-    position: fibonacciSphere(index, cards.length, SPHERE_RADIUS),
+    position: screenPosition(item.id),
   }))
 
   useEffect(() => {
@@ -99,67 +174,122 @@ function DiscoBall({ cards, speed }: { cards: GalleryCard[]; speed: number }) {
     return () => cancelAnimationFrame(frame)
   }, [])
 
-  useFrame((_, delta) => {
-    const group = ref.current
-    if (!group) return
-    // Read Zustand outside React so pausing the ball does not re-render the hero.
-    const focused = useSpatialStore.getState().activeProjectId !== null
-    const pace = Math.max(0, speedRef.current)
-    const goal = reduceMotion.current ? 0 : (focused ? 0.1 : 0.32) * pace
-    const blend = 1 - Math.exp(-delta * 7)
-    spin.current += (goal - spin.current) * blend
-    group.rotation.y += delta * spin.current
-  })
-
   return (
-    <group ref={ref}>
+    <group>
       {mounted && placements.map(({ item, position }) => (
-        <Thumbnail key={item.id} item={item} position={position} speed={speedRef} />
+        <Thumbnail
+          key={item.id}
+          item={item}
+          position={position}
+          reduceMotion={reduceMotion.current}
+        />
       ))}
     </group>
   )
 }
 
-function FrameCamera() {
-  const camera = useThree((state) => state.camera)
+const gesture = { pressed: false, moved: false, suppress: false }
+const frameHome = { current: () => {} }
+
+const { ACTION } = CameraControlsImpl
+
+function GalleryCamera({ still }: { still: boolean }) {
+  const controls = useRef<CameraControlsImpl>(null)
+  const activeId = useSpatialStore((state) => state.activeProjectId)
   const width = useThree((state) => state.size.width)
+  const narrow = width < 520
 
-  useLayoutEffect(() => {
-    camera.position.z = width < 520 ? 11.2 : 8.4
-    camera.updateProjectionMatrix()
-  }, [camera, width])
+  const frame = (id: string | null, animate: boolean) => {
+    const rig = controls.current
+    if (!rig) return
+    if (!id) {
+      const distance = narrow ? 11.6 : 8.8
+      rig.setLookAt(0, 0, distance, 0, 0, 0, animate)
+      return
+    }
+    const [x, y] = screenPosition(id)
+    const distance = narrow ? 5.8 : 4.6
+    const aimX = narrow ? x : x + 0.85
+    const aimY = narrow ? y - 1.05 : y
+    rig.setLookAt(aimX, aimY, distance, aimX, aimY, 0, animate)
+  }
 
-  return null
+  frameHome.current = () => frame(null, true)
+
+  useEffect(() => {
+    frame(still ? null : activeId, true)
+  }, [narrow, still, still ? null : activeId])
+
+  return (
+    <CameraControls
+      ref={controls}
+      smoothTime={0.45}
+      draggingSmoothTime={0.04}
+      dollySpeed={1}
+      dollyToCursor
+      minDistance={narrow ? 3.2 : 2.8}
+      maxDistance={narrow ? 18 : 16}
+      minAzimuthAngle={0}
+      maxAzimuthAngle={0}
+      minPolarAngle={Math.PI / 2}
+      maxPolarAngle={Math.PI / 2}
+      mouseButtons={{
+        left: ACTION.TRUCK,
+        middle: ACTION.DOLLY,
+        right: ACTION.TRUCK,
+        wheel: ACTION.DOLLY,
+      }}
+      touches={{
+        one: ACTION.TOUCH_TRUCK,
+        two: ACTION.TOUCH_DOLLY,
+        three: ACTION.TOUCH_TRUCK,
+      }}
+      onStart={() => {
+        gesture.pressed = true
+        gesture.moved = false
+      }}
+      onControl={() => {
+        if (gesture.pressed) gesture.moved = true
+      }}
+      onEnd={() => {
+        gesture.pressed = false
+        if (gesture.moved) {
+          gesture.suppress = true
+          window.setTimeout(() => {
+            gesture.suppress = false
+          }, 160)
+        }
+        gesture.moved = false
+      }}
+    />
+  )
 }
 
 export function DiscoGallery({
   cards,
   exiting = false,
   still = false,
-  speed = 1,
 }: {
   cards: GalleryCard[]
   exiting?: boolean
   still?: boolean
-  speed?: number
 }) {
   return (
     <div className={`disco-gallery${still ? ' disco-gallery--behind' : ''}`}>
       <Canvas
         className="disco-gallery__canvas"
-        camera={{ position: [0, 0.35, 8.4], fov: 36 }}
+        camera={{ position: [0, 0, 8.8], fov: 36 }}
         dpr={[1, 1.6]}
         gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
         onPointerMissed={() => {
-          if (exiting || still) return
-          const state = useSpatialStore.getState()
-          if (state.activeProjectId) state.setActiveProject(null)
-          else state.closeOverlay()
+          if (exiting || still || gesture.suppress) return
+          useSpatialStore.getState().setActiveProject(null)
+          frameHome.current()
         }}
       >
-        <FrameCamera />
-        <FlowField exiting={exiting} />
-        {!still && <DiscoBall cards={cards} speed={speed} />}
+        <GalleryCamera still={still} />
+        <FlowField exiting={exiting} calm={still} />
+        <DiscoBall cards={cards} />
       </Canvas>
     </div>
   )

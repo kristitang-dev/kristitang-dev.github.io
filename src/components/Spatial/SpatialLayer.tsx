@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { albums, notebooks } from '../../data/bookshelf'
-import { galleryCardMatches, galleryCards, getGalleryCard } from '../Gallery/galleryItems'
+import { galleryCardMatches, galleryCards, gallerySorts, getGalleryCard } from '../Gallery/galleryItems'
 import { researchItems, researchKindLabels } from '../../data/research'
-import { workFilters, type WorkCategory } from '../../data/work'
 import { rememberReturnOverlay, useSpatialStore } from '../../store/spatialStore'
-import { DiscoGallery, ProjectCard } from '../Gallery/DiscoGallery'
+import { DiscoGallery, ProjectTile } from '../Gallery/DiscoGallery'
 import './SpatialLayer.css'
 
 type FilmFrame = {
@@ -58,10 +57,57 @@ function leaveForDetail() {
 function AbstractPanel() {
   const activeProjectId = useSpatialStore((state) => state.activeProjectId)
   const item = activeProjectId ? getGalleryCard(activeProjectId) : undefined
+  const panel = useRef<HTMLElement>(null)
+  const [spot, setSpot] = useState({ left: 0, top: 0, width: 280 })
+  const [aside, setAside] = useState(() => document.querySelector('.spatial-laptop.is-tidy') != null)
+
+  useEffect(() => {
+    if (!item) return
+    let frame = 0
+    const place = () => {
+      frame = requestAnimationFrame(place)
+      const host = panel.current?.closest('.spatial-laptop')
+      if (!host || !panel.current) return
+      const tidy = host.classList.contains('is-tidy')
+      setAside((current) => (current === tidy ? current : tidy))
+      if (tidy) return
+      const anchor = document.querySelector(`[data-project-id="${CSS.escape(item.id)}"]`)
+      if (!anchor) return
+      const bounds = host.getBoundingClientRect()
+      const margin = 44
+      const width = Math.min(280, bounds.width - margin * 2)
+      const height = panel.current.offsetHeight
+      const card = anchor.getBoundingClientRect()
+      let left = card.right - bounds.left + margin
+      let top = card.top - bounds.top + card.height * 0.12
+      if (left + width > bounds.width - margin) left = card.left - bounds.left - width - margin
+      if (left < margin) {
+        left = Math.min(Math.max(margin, card.left - bounds.left), bounds.width - width - margin)
+        top = card.bottom - bounds.top + margin
+        if (top + height > bounds.height - margin) top = card.top - bounds.top - height - margin
+      }
+      top = Math.min(Math.max(margin, top), Math.max(margin, bounds.height - height - margin))
+      left = Math.min(Math.max(margin, left), Math.max(margin, bounds.width - width - margin))
+      setSpot((current) => (
+        Math.abs(current.left - left) < 0.5
+        && Math.abs(current.top - top) < 0.5
+        && current.width === width
+          ? current
+          : { left, top, width }
+      ))
+    }
+    place()
+    return () => cancelAnimationFrame(frame)
+  }, [item])
+
   if (!item) return null
 
   return (
-    <aside className="spatial-glass spatial-abstract">
+    <aside
+      ref={panel}
+      className="spatial-glass spatial-abstract"
+      style={aside ? undefined : { left: spot.left, top: spot.top, width: spot.width }}
+    >
       <h2 className="spatial-abstract__title">{item.title}</h2>
       <p className="spatial-abstract__body">{item.description}</p>
       {item.tags.length > 0 && (
@@ -81,12 +127,15 @@ function AbstractPanel() {
 function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
   const [query, setQuery] = useState('')
   const [still, setStill] = useState(false)
-  const [speed, setSpeed] = useState(1)
-  const [group, setGroup] = useState<WorkCategory>('all')
+  const [gridMounted, setGridMounted] = useState(false)
+  const [gridOn, setGridOn] = useState(false)
+  const [group, setGroup] = useState('all')
+  const [sortOpen, setSortOpen] = useState(false)
+  const sortMenu = useRef<HTMLDivElement>(null)
   const cards = galleryCards.filter((card) => {
     if (!galleryCardMatches(card, query)) return false
     if (!still || group === 'all') return true
-    return card.categories?.includes(group) ?? false
+    return card.sorts?.includes(group) ?? false
   })
 
   useEffect(() => {
@@ -96,31 +145,48 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
     }
   }, [cards])
 
+  useEffect(() => {
+    if (still) {
+      setGridMounted(true)
+      setGridOn(true)
+      return
+    }
+    setGridOn(false)
+    setSortOpen(false)
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const timer = window.setTimeout(() => setGridMounted(false), reduce ? 0 : 620)
+    return () => window.clearTimeout(timer)
+  }, [still])
+
+  useEffect(() => {
+    if (!sortOpen) return
+    const close = (event: PointerEvent) => {
+      if (!sortMenu.current?.contains(event.target as Node)) setSortOpen(false)
+    }
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      event.stopImmediatePropagation()
+      setSortOpen(false)
+    }
+    window.addEventListener('pointerdown', close)
+    window.addEventListener('keydown', onKey, true)
+    return () => {
+      window.removeEventListener('pointerdown', close)
+      window.removeEventListener('keydown', onKey, true)
+    }
+  }, [sortOpen])
+
   return (
-    <div className="spatial-laptop">
+    <div className={`spatial-laptop${still ? ' is-tidy' : ''}`}>
       <div className="spatial-gallery">
         <button
           type="button"
-          className="spatial-layout"
+          className={`spatial-layout${still ? ' is-active' : ''}`}
+          aria-pressed={still}
           onClick={() => setStill((value) => !value)}
         >
-          {still ? 'Orbit' : 'Grid'}
+          Clean Up
         </button>
-        {!still && (
-          <label className="spatial-speed">
-            <span>Speed</span>
-            <input
-              type="range"
-              min={0}
-              max={2}
-              step={0.01}
-              value={speed}
-              aria-label="Orbit speed"
-              aria-valuetext={speed === 0 ? 'Stopped' : `${Math.round(speed * 100)}%`}
-              onChange={(event) => setSpeed(Number(event.target.value))}
-            />
-          </label>
-        )}
         <form className="spatial-search" role="search" onSubmit={(event) => event.preventDefault()}>
           <input
             type="search"
@@ -130,36 +196,55 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
             onChange={(event) => setQuery(event.target.value)}
           />
         </form>
-        <DiscoGallery cards={cards} exiting={exiting} still={still} speed={speed} />
-        {still && (
-          <div className="spatial-grid">
-            <div className="spatial-grid__filters" role="tablist" aria-label="Filter projects">
-              {workFilters.map(({ id, label }) => (
-                <button
-                  key={id}
-                  type="button"
-                  role="tab"
-                  aria-selected={group === id}
-                  className={`spatial-grid__filter${group === id ? ' is-active' : ''}`}
-                  onClick={() => setGroup(id)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+        <DiscoGallery cards={cards} exiting={exiting} still={still} />
+        {gridMounted && (
+          <div className={`spatial-grid${gridOn ? ' is-shown' : ''}`}>
             <ul className="spatial-grid__list">
               {cards.map((item) => (
                 <li key={item.id}>
-                  <ProjectCard item={item} />
-                  <p className="spatial-grid__title">{item.title}</p>
+                  <ProjectTile item={item} />
                 </li>
               ))}
             </ul>
           </div>
         )}
+        {gridMounted && (
+          <div className="spatial-sort" ref={sortMenu}>
+            <button
+              type="button"
+              className={`spatial-sort__button${sortOpen ? ' is-open' : ''}${group !== 'all' ? ' is-active' : ''}`}
+              aria-expanded={sortOpen}
+              aria-haspopup="menu"
+              onClick={() => setSortOpen((open) => !open)}
+            >
+              Sort Up
+            </button>
+            {sortOpen && (
+              <ul className="spatial-sort__menu" role="menu" aria-label="Sort by">
+                <li className="spatial-sort__label" role="presentation">Sort by</li>
+                {gallerySorts.map(({ id, label }) => (
+                  <li key={id} role="none">
+                    <button
+                      type="button"
+                      role="menuitemradio"
+                      aria-checked={group === id}
+                      className={group === id ? ' is-active' : ''}
+                      onClick={() => {
+                        setGroup(id)
+                        setSortOpen(false)
+                      }}
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
         {cards.length === 0 && <p className="spatial-search__empty">No matching projects</p>}
+        <AbstractPanel />
       </div>
-      <AbstractPanel />
     </div>
   )
 }
@@ -233,34 +318,18 @@ function useReducedMotion() {
 function FilmStill({
   frame,
   decorative = false,
+  ratio,
+  onRatio,
   onOpen,
 }: {
   frame: FilmFrame
   decorative?: boolean
+  ratio?: number
+  onRatio: (src: string, ratio: number) => void
   onOpen: (frame: FilmFrame) => void
 }) {
-  const ref = useRef<HTMLButtonElement>(null)
-  const [src, setSrc] = useState<string>()
-  const [ratio, setRatio] = useState<number>()
-
-  useEffect(() => {
-    const node = ref.current
-    if (!node) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return
-        setSrc(frame.src)
-        observer.disconnect()
-      },
-      { rootMargin: '320px' },
-    )
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [frame.src])
-
   return (
     <button
-      ref={ref}
       type="button"
       className="spatial-film__frame"
       style={ratio ? { width: `calc(var(--film-h) * ${ratio})` } : undefined}
@@ -269,23 +338,99 @@ function FilmStill({
       aria-hidden={decorative || undefined}
       tabIndex={decorative ? -1 : undefined}
     >
-      {src && (
-        <img
-          src={src}
-          alt=""
-          decoding="async"
-          draggable={false}
-          onLoad={(event) => {
-            const image = event.currentTarget
-            if (image.naturalHeight) setRatio(image.naturalWidth / image.naturalHeight)
-          }}
-        />
-      )}
+      <img
+        src={frame.src}
+        alt=""
+        decoding="async"
+        draggable={false}
+        onLoad={(event) => {
+          const image = event.currentTarget
+          if (image.naturalHeight) onRatio(frame.src, image.naturalWidth / image.naturalHeight)
+        }}
+      />
       <span className="spatial-film__meta">
         <span>{frame.title}</span>
         {frame.note && <small>{frame.note}</small>}
       </span>
     </button>
+  )
+}
+
+function MarqueeRow({
+  frames,
+  index,
+  reduced,
+  ratios,
+  onRatio,
+  onOpen,
+}: {
+  frames: FilmFrame[]
+  index: number
+  reduced: boolean
+  ratios: Record<string, number>
+  onRatio: (src: string, ratio: number) => void
+  onOpen: (frame: FilmFrame) => void
+}) {
+  const setRef = useRef<HTMLDivElement>(null)
+  const [shift, setShift] = useState(0)
+  const [ready, setReady] = useState(reduced)
+
+  useLayoutEffect(() => {
+    const node = setRef.current
+    if (!node || reduced) return
+    let settle = 0
+    let last = 0
+    const measure = () => {
+      const width = node.getBoundingClientRect().width
+      if (Math.abs(last - width) < 0.5) return
+      last = width
+      setShift(width)
+      setReady(false)
+      window.clearTimeout(settle)
+      settle = window.setTimeout(() => setReady(true), 180)
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(node)
+    return () => {
+      observer.disconnect()
+      window.clearTimeout(settle)
+    }
+  }, [frames, ratios, reduced])
+
+  return (
+    <div className="spatial-marquee__row">
+      <div
+        className={`spatial-marquee__track spatial-marquee__track--${index}${ready && shift ? ' is-ready' : ''}`}
+        style={shift ? ({ '--marquee-shift': `${shift}px` } as React.CSSProperties) : undefined}
+      >
+        <div className="spatial-marquee__set" ref={setRef}>
+          {frames.map((frame) => (
+            <FilmStill
+              key={frame.src}
+              frame={frame}
+              ratio={ratios[frame.src]}
+              onRatio={onRatio}
+              onOpen={onOpen}
+            />
+          ))}
+        </div>
+        {!reduced && (
+          <div className="spatial-marquee__set" aria-hidden="true">
+            {frames.map((frame) => (
+              <FilmStill
+                key={`${frame.src}-copy`}
+                frame={frame}
+                decorative
+                ratio={ratios[frame.src]}
+                onRatio={onRatio}
+                onOpen={onOpen}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -329,27 +474,24 @@ function CameraLayer() {
   const reducedMotion = useReducedMotion()
   const rows = filmRows(filmStills)
   const [active, setActive] = useState<FilmFrame | null>(null)
+  const [ratios, setRatios] = useState<Record<string, number>>({})
+  const rememberRatio = (src: string, ratio: number) => {
+    setRatios((current) => (current[src] === ratio ? current : { ...current, [src]: ratio }))
+  }
 
   return (
     <>
       <div className={`spatial-film${active ? ' is-viewing' : ''}`} aria-label="Light table">
         {rows.map((row, index) => (
-          <div className="spatial-marquee__row" key={index}>
-            <div className={`spatial-marquee__track spatial-marquee__track--${index}`}>
-              <div className="spatial-marquee__set">
-                {row.map((frame) => (
-                  <FilmStill key={frame.src} frame={frame} onOpen={setActive} />
-                ))}
-              </div>
-              {!reducedMotion && (
-                <div className="spatial-marquee__set" aria-hidden="true">
-                  {row.map((frame) => (
-                    <FilmStill key={`${frame.src}-copy`} frame={frame} decorative onOpen={setActive} />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          <MarqueeRow
+            key={index}
+            frames={row}
+            index={index}
+            reduced={reducedMotion}
+            ratios={ratios}
+            onRatio={rememberRatio}
+            onOpen={setActive}
+          />
         ))}
       </div>
       {active && <PhotoWindow frame={active} onClose={() => setActive(null)} />}

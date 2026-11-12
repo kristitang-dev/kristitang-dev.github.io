@@ -54,7 +54,7 @@ function createField() {
   return { homes, positions, colors, sizes, seeds }
 }
 
-export function FlowField({ exiting = false }: { exiting?: boolean }) {
+export function FlowField({ exiting = false, calm = false }: { exiting?: boolean; calm?: boolean }) {
   const positionAttr = useRef<BufferAttribute>(null)
   const materialRef = useRef<ShaderMaterial>(null)
   const reduceMotion = useRef(false)
@@ -81,8 +81,8 @@ export function FlowField({ exiting = false }: { exiting?: boolean }) {
     fade.current = exiting ? Math.max(0, fade.current - step / 0.5) : 1
     if (materialRef.current) materialRef.current.uniforms.uAlpha.value = fade.current
 
-    const focused = useSpatialStore.getState().activeProjectId !== null
-    const drift = (focused ? 0.4 : 1) * (exiting ? 0.35 : 1)
+    const focused = !calm && useSpatialStore.getState().activeProjectId !== null
+    const drift = (focused ? 0.4 : 1) * (exiting ? 0.35 : 1) * (calm ? 0.42 : 1)
     const time = clock.elapsedTime * 0.045
     const { positions, homes, seeds } = field
 
