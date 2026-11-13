@@ -26,8 +26,8 @@ export const site = {
     lead: 'I work across images, spaces, materials and games.',
     body: [
       'My journey started with wood. Studying Wood Products Processing at UBC, I learned how a single joint can shape a whole structure.',
-      'Wood also taught me that every material carries its own texture and warmth. Since then, I’ve been searching for the medium that best holds what I want to say.',
-      'Now at NYU IDM, I’m exploring broadly, building interactive work with physical computing and game engines.',
+      'Wood also taught me that every material carries its own texture and warmth. Over time, I realized I wanted to build things that could respond, shift, and invite people in.',
+      'Now at NYU IDM, I am exploring broadly. I blend physical craft, videography, motion, and real-time engines to tell stories that live across screens and physical objects.',
     ],
     skills: [
       'Interaction Design',
