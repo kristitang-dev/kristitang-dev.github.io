@@ -133,7 +133,7 @@ export function FlowField({ exiting = false, calm = false }: { exiting?: boolean
   })
 
   return (
-    <points>
+    <points raycast={() => null}>
       <bufferGeometry>
         <bufferAttribute
           ref={positionAttr}

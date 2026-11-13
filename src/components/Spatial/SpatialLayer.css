@@ -94,7 +94,7 @@
   pointer-events: auto;
 }
 
-.spatial-gallery > div:not(.spatial-sort),
+.spatial-gallery > div:not(.spatial-sort):not(.spatial-tools),
 .disco-gallery,
 .disco-gallery > div {
   width: 100% !important;
@@ -146,6 +146,7 @@
 
 .disco-card img.is-contain {
   object-fit: contain;
+  background: #fff;
 }
 
 .disco-gallery .disco-card {
@@ -283,7 +284,7 @@
   padding: 1.5rem 1.35rem 1.25rem;
   overflow: auto;
   scrollbar-width: none;
-  animation: spatial-veil 0.4s ease;
+  animation: spatial-abstract-in 0.52s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 .spatial-abstract::-webkit-scrollbar {
@@ -343,11 +344,22 @@
   pointer-events: auto;
 }
 
-.spatial-sort {
-  position: absolute;
+.spatial-tools {
+  position: fixed;
   z-index: 40;
-  top: 3.5rem;
-  right: 1.5rem;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  pointer-events: auto;
+}
+
+.spatial-sort {
+  position: relative;
+  z-index: 2;
+  top: auto;
+  right: auto;
   display: flex;
   justify-content: flex-end;
   margin: 0;
@@ -389,8 +401,10 @@
 
 .spatial-sort__menu {
   position: absolute;
-  top: calc(100% + 0.45rem);
-  right: 0;
+  top: auto;
+  bottom: calc(100% + 0.45rem);
+  left: 0;
+  right: auto;
   z-index: 3;
   width: max-content;
   min-width: 11rem;
@@ -451,7 +465,6 @@
   align-content: safe center;
   gap: 1.15rem 1.1rem;
   margin: 0;
-  margin-top: 3.15rem;
   padding: 0.25rem 0.15rem 0.35rem;
   overflow: auto;
   scrollbar-width: none;
@@ -523,10 +536,6 @@
   padding-right: calc(min(300px, 32%) + 2.75rem);
 }
 
-.spatial-laptop.is-tidy .spatial-sort {
-  right: calc(min(300px, 32%) + 2.75rem);
-}
-
 .spatial-laptop.is-tidy .spatial-abstract {
   left: auto;
   right: clamp(1rem, 2%, 1.75rem);
@@ -537,10 +546,10 @@
 }
 
 .spatial-layout {
-  position: fixed;
-  z-index: 40;
-  left: 1.25rem;
-  bottom: 1.25rem;
+  position: relative;
+  z-index: 1;
+  left: auto;
+  bottom: auto;
   border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.88);
@@ -1022,26 +1031,19 @@
   }
 }
 
-.spatial--leaving .disco-card,
-.spatial--leaving .spatial-abstract,
-.spatial--leaving .spatial-layout,
-.spatial--leaving .spatial-speed,
-.spatial--leaving .spatial-search,
-.spatial--leaving .spatial__close,
-.spatial--leaving .spatial__scrim {
+.spatial--leaving {
   opacity: 0;
-  transition: opacity 0.45s ease;
-}
-
-.spatial--leaving .spatial__scrim {
   pointer-events: none;
+  transition: opacity 0.36s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .disco-gallery .disco-tile,
   .spatial-grid,
   .spatial-grid__list li,
-  .spatial-layout {
+  .spatial-layout,
+  .spatial-abstract,
+  .spatial--leaving {
     transition: none;
     animation: none;
   }
@@ -1056,13 +1058,20 @@
   }
 }
 
+@keyframes spatial-abstract-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (max-width: 980px) {
   .spatial-laptop.is-tidy .spatial-grid {
     padding-right: calc(min(260px, 36%) + 2.25rem);
-  }
-
-  .spatial-laptop.is-tidy .spatial-sort {
-    right: calc(min(260px, 36%) + 2.25rem);
   }
 
   .spatial-laptop.is-tidy .spatial-abstract {
@@ -1134,11 +1143,9 @@
     padding: 1.15rem 0.85rem 4.6rem;
   }
 
-  .spatial-laptop.is-tidy .spatial-sort {
-    top: 1.15rem;
-    right: auto;
-    left: 0.85rem;
-    justify-content: flex-start;
+  .spatial-tools {
+    left: 0.75rem;
+    bottom: 0.75rem;
   }
 
   .spatial-grid__list {
@@ -1147,17 +1154,8 @@
     align-content: start;
   }
 
-  .spatial-grid__list {
-    margin-top: 2.6rem;
-  }
-
   .spatial-laptop.is-tidy:has(.spatial-abstract) .spatial-grid__list {
     padding-bottom: calc(min(30vh, 13.5rem) + 0.75rem);
-  }
-
-  .spatial-layout {
-    left: 0.75rem;
-    bottom: 0.75rem;
   }
 
   .spatial-speed {

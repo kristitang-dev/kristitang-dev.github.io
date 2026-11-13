@@ -32,6 +32,23 @@ export function consumeReturnOverlay(): Exclude<OverlayType, null> | null {
   }
 }
 
+/** Close the project gallery, and drop the history entry that Back should undo. */
+let galleryDismissing = false
+
+export function dismissGallery() {
+  if (galleryDismissing) return
+  const { activeOverlay, closeOverlay } = useSpatialStore.getState()
+  if (activeOverlay === 'laptop' && window.history.state?.spatialGallery) {
+    galleryDismissing = true
+    window.history.back()
+    window.setTimeout(() => {
+      galleryDismissing = false
+    }, 400)
+    return
+  }
+  closeOverlay()
+}
+
 export function clearReturnOverlay() {
   try {
     sessionStorage.removeItem(RETURN_OVERLAY_KEY)
@@ -54,10 +71,19 @@ type SpatialState = {
   scrollToAbout: () => void
 }
 
+function rememberGalleryHistory() {
+  if (typeof window === 'undefined') return
+  if (window.history.state?.spatialGallery) return
+  window.history.pushState({ ...(window.history.state ?? {}), spatialGallery: true }, '')
+}
+
 export const useSpatialStore = create<SpatialState>((set) => ({
   activeOverlay: null,
   activeProjectId: null,
-  setActiveOverlay: (activeOverlay) => set({ activeOverlay, activeProjectId: null }),
+  setActiveOverlay: (activeOverlay) => {
+    set({ activeOverlay, activeProjectId: null })
+    if (activeOverlay === 'laptop') rememberGalleryHistory()
+  },
   closeOverlay: () => set({ activeOverlay: null, activeProjectId: null }),
   setActiveProject: (activeProjectId) => set({ activeProjectId }),
   scrollToAbout: () => {

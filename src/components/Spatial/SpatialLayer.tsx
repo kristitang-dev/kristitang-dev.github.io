@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 import { albums, notebooks } from '../../data/bookshelf'
 import { galleryCardMatches, galleryCards, gallerySorts, getGalleryCard } from '../Gallery/galleryItems'
 import { researchItems, researchKindLabels } from '../../data/research'
-import { rememberReturnOverlay, useSpatialStore } from '../../store/spatialStore'
-import { DiscoGallery, ProjectTile } from '../Gallery/DiscoGallery'
+import { dismissGallery, rememberReturnOverlay, useSpatialStore } from '../../store/spatialStore'
+import { DiscoGallery, galleryDragged, onGalleryVoid, ProjectTile } from '../Gallery/DiscoGallery'
 import './SpatialLayer.css'
 
 type FilmFrame = {
@@ -54,23 +54,20 @@ function leaveForDetail() {
 }
 
 
-function AbstractPanel() {
+function AbstractPanel({ tidy }: { tidy: boolean }) {
   const activeProjectId = useSpatialStore((state) => state.activeProjectId)
   const item = activeProjectId ? getGalleryCard(activeProjectId) : undefined
   const panel = useRef<HTMLElement>(null)
+  const skipIntro = useRef(true)
   const [spot, setSpot] = useState({ left: 0, top: 0, width: 280 })
-  const [aside, setAside] = useState(() => document.querySelector('.spatial-laptop.is-tidy') != null)
 
   useEffect(() => {
-    if (!item) return
+    if (!item || tidy) return
     let frame = 0
     const place = () => {
       frame = requestAnimationFrame(place)
       const host = panel.current?.closest('.spatial-laptop')
       if (!host || !panel.current) return
-      const tidy = host.classList.contains('is-tidy')
-      setAside((current) => (current === tidy ? current : tidy))
-      if (tidy) return
       const anchor = document.querySelector(`[data-project-id="${CSS.escape(item.id)}"]`)
       if (!anchor) return
       const bounds = host.getBoundingClientRect()
@@ -98,7 +95,19 @@ function AbstractPanel() {
     }
     place()
     return () => cancelAnimationFrame(frame)
-  }, [item])
+  }, [item, tidy])
+
+  useEffect(() => {
+    const node = panel.current
+    if (!node) return
+    if (skipIntro.current) {
+      skipIntro.current = false
+      return
+    }
+    node.style.animation = 'none'
+    void node.offsetWidth
+    node.style.animation = ''
+  }, [item?.id, tidy])
 
   if (!item) return null
 
@@ -106,9 +115,9 @@ function AbstractPanel() {
     <aside
       ref={panel}
       className="spatial-glass spatial-abstract"
-      style={aside ? undefined : { left: spot.left, top: spot.top, width: spot.width }}
+      style={tidy ? undefined : { left: spot.left, top: spot.top, width: spot.width }}
     >
-      <h2 className="spatial-abstract__title">{item.title}</h2>
+      {tidy && <h2 className="spatial-abstract__title">{item.title}</h2>}
       <p className="spatial-abstract__body">{item.description}</p>
       {item.tags.length > 0 && (
         <ul className="spatial-abstract__tags">
@@ -138,12 +147,18 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
     return card.sorts?.includes(group) ?? false
   })
 
+  const cardIds = cards.map((card) => card.id).join('\n')
+
   useEffect(() => {
+    const ids = cardIds ? cardIds.split('\n') : []
     const activeId = useSpatialStore.getState().activeProjectId
-    if (activeId && !cards.some((card) => card.id === activeId)) {
-      useSpatialStore.getState().setActiveProject(null)
+    if (activeId && ids.includes(activeId)) return
+    if (still && ids[0]) {
+      useSpatialStore.getState().setActiveProject(ids[0])
+      return
     }
-  }, [cards])
+    if (activeId) useSpatialStore.getState().setActiveProject(null)
+  }, [still, cardIds])
 
   useEffect(() => {
     if (still) {
@@ -178,15 +193,60 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
 
   return (
     <div className={`spatial-laptop${still ? ' is-tidy' : ''}`}>
-      <div className="spatial-gallery">
-        <button
-          type="button"
-          className={`spatial-layout${still ? ' is-active' : ''}`}
-          aria-pressed={still}
-          onClick={() => setStill((value) => !value)}
-        >
-          Clean Up
-        </button>
+      <div
+        className="spatial-gallery"
+        onClick={(event) => {
+          if (exiting) return
+          const target = event.target as HTMLElement
+          if (target.closest('.disco-tile, .spatial-tools, .spatial-search, .spatial-abstract, a, button')) return
+          if (galleryDragged()) return
+          onGalleryVoid(still)
+        }}
+      >
+        <div className="spatial-tools">
+          <button
+            type="button"
+            className={`spatial-layout${still ? ' is-active' : ''}`}
+            aria-pressed={still}
+            onClick={() => setStill((value) => !value)}
+          >
+            Clean Up
+          </button>
+          {gridMounted && (
+            <div className="spatial-sort" ref={sortMenu}>
+              <button
+                type="button"
+                className={`spatial-sort__button${sortOpen ? ' is-open' : ''}${group !== 'all' ? ' is-active' : ''}`}
+                aria-expanded={sortOpen}
+                aria-haspopup="menu"
+                onClick={() => setSortOpen((open) => !open)}
+              >
+                Sort Up
+              </button>
+              {sortOpen && (
+                <ul className="spatial-sort__menu" role="menu" aria-label="Sort by">
+                  <li className="spatial-sort__label" role="presentation">Sort by</li>
+                  {gallerySorts.map(({ id, label }) => (
+                    <li key={id} role="none">
+                      <button
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={group === id}
+                        className={group === id ? ' is-active' : ''}
+                        onClick={() => {
+                          setGroup(id)
+                          setSortOpen(false)
+                        }}
+                      >
+                        {label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
         <form className="spatial-search" role="search" onSubmit={(event) => event.preventDefault()}>
           <input
             type="search"
@@ -198,7 +258,14 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
         </form>
         <DiscoGallery cards={cards} exiting={exiting} still={still} />
         {gridMounted && (
-          <div className={`spatial-grid${gridOn ? ' is-shown' : ''}`}>
+          <div
+            className={`spatial-grid${gridOn ? ' is-shown' : ''}`}
+            onClick={(event) => {
+              const target = event.target as HTMLElement
+              if (target.closest('.disco-tile, .spatial-sort, a, button')) return
+              onGalleryVoid(true)
+            }}
+          >
             <ul className="spatial-grid__list">
               {cards.map((item) => (
                 <li key={item.id}>
@@ -208,42 +275,8 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
             </ul>
           </div>
         )}
-        {gridMounted && (
-          <div className="spatial-sort" ref={sortMenu}>
-            <button
-              type="button"
-              className={`spatial-sort__button${sortOpen ? ' is-open' : ''}${group !== 'all' ? ' is-active' : ''}`}
-              aria-expanded={sortOpen}
-              aria-haspopup="menu"
-              onClick={() => setSortOpen((open) => !open)}
-            >
-              Sort Up
-            </button>
-            {sortOpen && (
-              <ul className="spatial-sort__menu" role="menu" aria-label="Sort by">
-                <li className="spatial-sort__label" role="presentation">Sort by</li>
-                {gallerySorts.map(({ id, label }) => (
-                  <li key={id} role="none">
-                    <button
-                      type="button"
-                      role="menuitemradio"
-                      aria-checked={group === id}
-                      className={group === id ? ' is-active' : ''}
-                      onClick={() => {
-                        setGroup(id)
-                        setSortOpen(false)
-                      }}
-                    >
-                      {label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
         {cards.length === 0 && <p className="spatial-search__empty">No matching projects</p>}
-        <AbstractPanel />
+        <AbstractPanel tidy={still} />
       </div>
     </div>
   )
@@ -507,7 +540,6 @@ const overlayLabel = {
 
 export function SpatialLayer() {
   const activeOverlay = useSpatialStore((state) => state.activeOverlay)
-  const closeOverlay = useSpatialStore((state) => state.closeOverlay)
   const [tracked, setTracked] = useState(activeOverlay)
   const [galleryExit, setGalleryExit] = useState(false)
 
@@ -518,11 +550,23 @@ export function SpatialLayer() {
 
   useEffect(() => {
     if (!galleryExit) return
-    const timer = window.setTimeout(() => setGalleryExit(false), 680)
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const timer = window.setTimeout(() => setGalleryExit(false), reduce ? 0 : 400)
     return () => window.clearTimeout(timer)
   }, [galleryExit])
 
   const overlayOpen = activeOverlay !== null || galleryExit
+
+  useEffect(() => {
+    const onPop = () => {
+      const marked = Boolean(window.history.state?.spatialGallery)
+      const open = useSpatialStore.getState().activeOverlay === 'laptop'
+      if (open && !marked) useSpatialStore.getState().closeOverlay()
+      else if (!open && marked) useSpatialStore.getState().setActiveOverlay('laptop')
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
 
   useEffect(() => {
     if (!overlayOpen) return
@@ -542,7 +586,7 @@ export function SpatialLayer() {
         state.setActiveProject(null)
         return
       }
-      state.closeOverlay()
+      dismissGallery()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -553,14 +597,14 @@ export function SpatialLayer() {
 
   return createPortal(
     <div className={`spatial${visible === 'camera' ? ' spatial--darkroom' : ''}${galleryExit ? ' spatial--leaving' : ''}`}>
-      <button type="button" className="spatial__scrim" aria-label="Close" onClick={closeOverlay} />
+      <button type="button" className="spatial__scrim" aria-label="Close" onClick={dismissGallery} />
       <div
         className={`spatial__stage spatial__stage--${visible}`}
         role="dialog"
         aria-modal="true"
         aria-label={overlayLabel[visible]}
       >
-        <CloseButton label="Close" onClick={closeOverlay} />
+        <CloseButton label="Close" onClick={dismissGallery} />
         {visible === 'laptop' && <LaptopLayer exiting={galleryExit} />}
         {visible === 'bookshelf' && <ArchiveLayer />}
         {visible === 'camera' && <CameraLayer />}

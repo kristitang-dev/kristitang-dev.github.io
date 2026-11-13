@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { CameraControls, CameraControlsImpl, Html } from '@react-three/drei'
 import type { Group } from 'three'
 import { galleryCards, type GalleryCard } from './galleryItems'
-import { useSpatialStore } from '../../store/spatialStore'
+import { dismissGallery, useSpatialStore } from '../../store/spatialStore'
 import { FlowField } from './FlowField'
 
 function hashId(id: string) {
@@ -189,6 +189,26 @@ function DiscoBall({ cards }: { cards: GalleryCard[] }) {
 }
 
 const gesture = { pressed: false, moved: false, suppress: false }
+let voidHandled = false
+
+export function galleryDragged() {
+  return gesture.moved || gesture.suppress
+}
+
+/** Empty space leaves a close-up for the full gallery, and leaves the full gallery for home. */
+export function onGalleryVoid(still: boolean) {
+  if (voidHandled) return
+  voidHandled = true
+  window.setTimeout(() => {
+    voidHandled = false
+  }, 0)
+  const { activeProjectId, setActiveProject } = useSpatialStore.getState()
+  if (!still && activeProjectId) {
+    setActiveProject(null)
+    return
+  }
+  dismissGallery()
+}
 const frameHome = { current: () => {} }
 
 const { ACTION } = CameraControlsImpl
@@ -199,31 +219,42 @@ function GalleryCamera({ still }: { still: boolean }) {
   const width = useThree((state) => state.size.width)
   const narrow = width < 520
 
-  const frame = (id: string | null, animate: boolean) => {
+  const frame = (id: string | null) => {
     const rig = controls.current
-    if (!rig) return
+    if (!rig) return false
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const ease = !reduce
     if (!id) {
       const distance = narrow ? 11.6 : 8.8
-      rig.setLookAt(0, 0, distance, 0, 0, 0, animate)
-      return
+      rig.setLookAt(0, 0, distance, 0, 0, 0, ease)
+    } else {
+      const [x, y] = screenPosition(id)
+      const distance = narrow ? 5.8 : 4.6
+      const aimX = narrow ? x : x + 0.85
+      const aimY = narrow ? y - 1.05 : y
+      rig.setLookAt(aimX, aimY, distance, aimX, aimY, 0, ease)
     }
-    const [x, y] = screenPosition(id)
-    const distance = narrow ? 5.8 : 4.6
-    const aimX = narrow ? x : x + 0.85
-    const aimY = narrow ? y - 1.05 : y
-    rig.setLookAt(aimX, aimY, distance, aimX, aimY, 0, animate)
+    return true
   }
 
-  frameHome.current = () => frame(null, true)
+  frameHome.current = () => {
+    frame(null)
+  }
 
-  useEffect(() => {
-    frame(still ? null : activeId, true)
+  useLayoutEffect(() => {
+    let frameId = 0
+    const apply = () => {
+      if (frame(still ? null : activeId)) return
+      frameId = window.requestAnimationFrame(apply)
+    }
+    apply()
+    return () => window.cancelAnimationFrame(frameId)
   }, [narrow, still, still ? null : activeId])
 
   return (
     <CameraControls
       ref={controls}
-      smoothTime={0.45}
+      smoothTime={0.7}
       draggingSmoothTime={0.04}
       dollySpeed={1}
       dollyToCursor
@@ -235,13 +266,13 @@ function GalleryCamera({ still }: { still: boolean }) {
       maxPolarAngle={Math.PI / 2}
       mouseButtons={{
         left: ACTION.TRUCK,
-        middle: ACTION.DOLLY,
+        middle: ACTION.TRUCK,
         right: ACTION.TRUCK,
-        wheel: ACTION.DOLLY,
+        wheel: ACTION.NONE,
       }}
       touches={{
         one: ACTION.TOUCH_TRUCK,
-        two: ACTION.TOUCH_DOLLY,
+        two: ACTION.TOUCH_TRUCK,
         three: ACTION.TOUCH_TRUCK,
       }}
       onStart={() => {
@@ -282,9 +313,8 @@ export function DiscoGallery({
         dpr={[1, 1.6]}
         gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
         onPointerMissed={() => {
-          if (exiting || still || gesture.suppress) return
-          useSpatialStore.getState().setActiveProject(null)
-          frameHome.current()
+          if (exiting || gesture.moved || gesture.suppress) return
+          onGalleryVoid(still)
         }}
       >
         <GalleryCamera still={still} />
