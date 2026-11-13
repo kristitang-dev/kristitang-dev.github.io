@@ -27,6 +27,13 @@ body {
   min-height: 100vh;
 }
 
+#about,
+#work,
+#research,
+#bookshelf {
+  scroll-margin-top: 5.25rem;
+}
+
 a {
   color: var(--blue-600);
   text-decoration: none;

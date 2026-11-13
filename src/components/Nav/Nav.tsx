@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { clearReturnOverlay, useSpatialStore, type OverlayType } from '../../store/spatialStore'
+import { clearReturnOverlay, useSpatialStore } from '../../store/spatialStore'
 import './Nav.css'
 
 const LINKS = [
-  { label: 'Work', overlay: 'laptop' },
-  { label: 'Research', overlay: 'bookshelf' },
-  { label: 'About', overlay: null },
+  { label: 'Work', section: 'work' },
+  { label: 'Research', section: 'research' },
+  { label: 'About', section: 'about' },
 ] as const
 
 export function Nav() {
@@ -22,19 +22,13 @@ export function Nav() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const openOverlay = (overlay: OverlayType) => {
-    if (!isHome) navigate('/')
-    else window.scrollTo({ top: 0, behavior: 'auto' })
-    useSpatialStore.getState().setActiveOverlay(overlay)
-  }
-
-  const goToAbout = () => {
+  const goToSection = (section: string) => {
     if (isHome) {
-      useSpatialStore.getState().scrollToAbout()
+      useSpatialStore.getState().scrollToSection(section)
       return
     }
     useSpatialStore.getState().closeOverlay()
-    navigate('/', { state: { scrollTo: 'about' } })
+    navigate('/', { state: { scrollTo: section } })
   }
 
   return (
@@ -53,12 +47,12 @@ export function Nav() {
         </Link>
 
         <ul className="nav__links">
-          {LINKS.map(({ label, overlay }) => (
+          {LINKS.map(({ label, section }) => (
             <li key={label}>
               <button
                 type="button"
                 className="nav__link"
-                onClick={() => (overlay ? openOverlay(overlay) : goToAbout())}
+                onClick={() => goToSection(section)}
               >
                 {label}
               </button>

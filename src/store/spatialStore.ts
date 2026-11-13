@@ -68,6 +68,7 @@ type SpatialState = {
   setActiveOverlay: (overlay: OverlayType) => void
   closeOverlay: () => void
   setActiveProject: (id: string | null) => void
+  scrollToSection: (id: string) => void
   scrollToAbout: () => void
 }
 
@@ -86,12 +87,16 @@ export const useSpatialStore = create<SpatialState>((set) => ({
   },
   closeOverlay: () => set({ activeOverlay: null, activeProjectId: null }),
   setActiveProject: (activeProjectId) => set({ activeProjectId }),
-  scrollToAbout: () => {
+  scrollToSection: (id) => {
     set({ activeOverlay: null, activeProjectId: null })
     document.body.style.overflow = ''
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    document.getElementById('about')?.scrollIntoView({
+    document.getElementById(id)?.scrollIntoView({
       behavior: reduce ? 'auto' : 'smooth',
+      block: 'start',
     })
+  },
+  scrollToAbout: () => {
+    useSpatialStore.getState().scrollToSection('about')
   },
 }))

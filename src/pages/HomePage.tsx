@@ -2,16 +2,15 @@ import { useLayoutEffect } from 'react'
 import { useLocation, useNavigationType } from 'react-router-dom'
 import { Hero } from '../components/Hero/Hero'
 import { About } from '../components/About/About'
+import { Work } from '../components/Work/Work'
+import { Research } from '../components/Research/Research'
+import { Bookshelf } from '../components/Bookshelf/Bookshelf'
 import {
   clearReturnOverlay,
   consumeReturnOverlay,
   useSpatialStore,
   type HomeLocationState,
 } from '../store/spatialStore'
-// import { Work } from '../components/Work/Work'
-// import { Research } from '../components/Research/Research'
-// import { Bookshelf } from '../components/Bookshelf/Bookshelf'
-// import { DigitalGarden } from '../components/DigitalGarden/DigitalGarden'
 
 let homeHasMounted = false
 
@@ -61,10 +60,9 @@ export function HomePage() {
     <>
       <Hero />
       <About />
-      {/* <Work /> */}
-      {/* <Research /> */}
-      {/* <DigitalGarden /> */}
-      {/* <Bookshelf /> */}
+      <Work />
+      <Research />
+      <Bookshelf />
     </>
   )
 }

@@ -3,8 +3,9 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 220;
   padding: 1rem var(--section-padding);
+  pointer-events: none;
   transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
@@ -20,6 +21,13 @@
   justify-content: space-between;
   max-width: var(--max-width);
   margin: 0 auto;
+  pointer-events: none;
+}
+
+.nav__brand,
+.nav__links,
+.nav__link {
+  pointer-events: auto;
 }
 
 .nav__brand {
