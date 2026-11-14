@@ -1,7 +1,7 @@
 export const site = {
     name: 'Kristi (Lu) Tang',
     shortName: 'KT',
-    tagline: 'Between Matter & Medium',
+    tagline: 'Kristi Tang is a Multidisciplinary Designer.',
     email: 'kristitang@outlook.com',
     instagramUrl: 'https://www.instagram.com/157k.jpg/',
     instagramHandle: '@157k.jpg',
@@ -26,7 +26,7 @@ export const site = {
         lead: 'I work across images, spaces, materials and games.',
         body: [
             'My journey started with wood. Studying Wood Products Processing at UBC, I learned how a single joint can shape a whole structure.',
-            'Wood also taught me that every material carries its own texture and warmth. Over time, I realized I wanted to build things that could respond, shift, and invite people in. ',
+            'Wood also taught me that every material carries its own texture and warmth. Over time, I realized I wanted to build things that could respond, shift, and invite people in.',
             'Now at NYU IDM, I am exploring broadly. I blend physical craft, videography, motion, and real-time engines to tell stories that live across screens and physical objects.',
         ],
         skills: [

@@ -6,6 +6,7 @@ import {
   workItems,
   type WorkCategory,
 } from '../../data/work'
+import { returnLinkProps } from '../../store/spatialStore'
 import './Work.css'
 
 export function Work() {
@@ -26,7 +27,6 @@ export function Work() {
       <div className="work__inner">
         <div className="work__header">
           <div className="work__titles">
-            <span className="work__eyebrow">The Medium</span>
             <h2 className="work__title">Work</h2>
             <p className="work__intro">
               Digital work across VR/MR, games, and assistive tech — where design meets computation.
@@ -53,7 +53,10 @@ export function Work() {
           {visible.map((item) => (
             <li key={item.id} className="work-card">
               <article>
-                <Link to={`/work/${item.id}`} className="work-card__media-link">
+                <Link
+                  {...returnLinkProps(`/work/${item.id}`, { kind: 'section', section: 'work' })}
+                  className="work-card__media-link"
+                >
                   <div className="work-card__media">
                     <img
                       src={item.image}
@@ -75,7 +78,11 @@ export function Work() {
                   </div>
 
                   <h3 className="work-card__title">
-                    <Link to={`/work/${item.id}`}>{item.title}</Link>
+                    <Link
+                      {...returnLinkProps(`/work/${item.id}`, { kind: 'section', section: 'work' })}
+                    >
+                      {item.title}
+                    </Link>
                   </h3>
                   <p className="work-card__subtitle">{item.subtitle}</p>
                   <p className="work-card__desc">{item.description}</p>

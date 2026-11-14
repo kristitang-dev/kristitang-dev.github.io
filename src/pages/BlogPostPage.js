@@ -81,7 +81,11 @@ export function BlogPostPage() {
                                     img: ({ src, alt }) => {
                                         const url = typeof src === 'string' ? src : '';
                                         const wide = /First%20Steps\.png|First Steps\.png|Saint-Remy\.png|Letter%20805\.png|Letter 805\.png|Generated/.test(url);
-                                        return (_jsx("img", { src: url, alt: alt ?? '', className: wide ? 'blog__img--wide' : undefined }));
+                                        const small = url.includes('movingImage.gif');
+                                        if (url.includes('Photography-web.jpg')) {
+                                            return (_jsx("a", { href: url, target: "_blank", rel: "noreferrer", className: "blog__img-bleed", children: _jsx("img", { src: url, alt: alt ?? '' }) }));
+                                        }
+                                        return (_jsx("img", { src: url, alt: alt ?? '', width: small ? 240 : undefined, height: small ? 138 : undefined, className: wide ? 'blog__img--wide' : small ? 'blog__img--small' : undefined }));
                                     },
                                 }
                                 : post.slug === 'time-capsule'

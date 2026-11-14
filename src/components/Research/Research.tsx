@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { researchItems, researchKindLabels } from '../../data/research'
+import { returnLinkProps } from '../../store/spatialStore'
 import './Research.css'
 
 export function Research() {
@@ -11,7 +12,6 @@ export function Research() {
     <section id="research" className="research">
       <div className="research__inner">
         <div className="research__header">
-          <span className="research__eyebrow">The Matter</span>
           <h2 className="research__title">Research &amp; Experience</h2>
           <p className="research__intro">
             Physical and data-driven work — publications, scale models, and academic practice.
@@ -35,11 +35,24 @@ export function Research() {
                 </div>
 
                 <h3 className="research__item-title">
-                  <Link to={`/research/${item.id}`}>{item.title}</Link>
+                  <Link
+                    {...returnLinkProps(`/research/${item.id}`, {
+                      kind: 'section',
+                      section: 'research',
+                    })}
+                  >
+                    {item.title}
+                  </Link>
                 </h3>
 
                 {item.image && (
-                  <Link to={`/research/${item.id}`} className="research__thumb-link">
+                  <Link
+                    {...returnLinkProps(`/research/${item.id}`, {
+                      kind: 'section',
+                      section: 'research',
+                    })}
+                    className="research__thumb-link"
+                  >
                     <img
                       src={item.image}
                       alt=""

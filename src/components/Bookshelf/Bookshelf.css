@@ -242,28 +242,6 @@
   color: var(--red-500);
 }
 
-.shelf__more {
-  margin-top: 1.75rem;
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  color: var(--grey-700);
-}
-
-.shelf__more-link {
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  letter-spacing: 0.04em;
-  color: var(--red-500);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(214, 59, 59, 0.35);
-  padding-bottom: 0.1rem;
-}
-
-.shelf__more-link:hover {
-  color: var(--red-700);
-  border-bottom-color: var(--red-700);
-}
-
 @media (max-width: 640px) {
   .shelf__notebooks,
   .shelf__albums {

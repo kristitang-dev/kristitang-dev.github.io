@@ -2,6 +2,7 @@ import { Navigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { DetailPage } from '../components/DetailPage/DetailPage'
 import { getCategoryLabels, getWorkById } from '../data/work'
+import { useDetailReturn } from '../store/spatialStore'
 
 export function WorkDetail() {
   const { id } = useParams<{ id: string }>()
@@ -11,6 +12,8 @@ export function WorkDetail() {
     window.scrollTo(0, 0)
   }, [id])
 
+  const backState = useDetailReturn('work')
+
   if (!item) {
     return <Navigate to="/" replace />
   }
@@ -19,7 +22,7 @@ export function WorkDetail() {
     <DetailPage
       backTo="/"
       backLabel="Back to Work"
-      backState={{ overlay: 'laptop' }}
+      backState={backState}
       eyebrow={getCategoryLabels(item).join(' · ')}
       title={item.title}
       subtitle={item.subtitle}

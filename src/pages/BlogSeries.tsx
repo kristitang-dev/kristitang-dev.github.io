@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { getPostsBySeries } from '../content/loadPosts'
 import { getEntryHome, getEntryKindLabel, type PlacedEntry } from '../data/entry'
+import { useDetailReturn } from '../store/spatialStore'
 import './Blog.css'
 
 interface BlogSeriesProps {
@@ -12,6 +13,7 @@ interface BlogSeriesProps {
 export function BlogSeries({ series }: BlogSeriesProps) {
   const posts = getPostsBySeries(series.id)
   const home = getEntryHome(series)
+  const backState = useDetailReturn(series.home === 'sandbox' ? 'work' : 'bookshelf')
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -20,7 +22,7 @@ export function BlogSeries({ series }: BlogSeriesProps) {
   return (
     <main className="blog">
       <div className="blog__inner">
-        <Link to="/" className="blog__back" state={{ overlay: home.overlay }}>
+        <Link to="/" className="blog__back" state={backState}>
           ← Back to {home.label}
         </Link>
 
@@ -118,20 +120,38 @@ export function BlogSeries({ series }: BlogSeriesProps) {
                     {post.date}
                   </time>
                   <h2 className="blog__feed-title">
-                    <Link to={`/garden/${series.id}/${post.slug}`}>{post.title}</Link>
+                    {post.redirect ? (
+                      <a href={post.redirect} target="_blank" rel="noopener noreferrer">
+                        {post.title}
+                      </a>
+                    ) : (
+                      <Link to={`/garden/${series.id}/${post.slug}`}>{post.title}</Link>
+                    )}
                   </h2>
                   {post.excerpt && <p className="blog__feed-excerpt">{post.excerpt}</p>}
                 </div>
-                {post.cover && (
-                  <Link
-                    to={`/garden/${series.id}/${post.slug}`}
-                    className="blog__feed-cover"
-                    tabIndex={-1}
-                    aria-hidden="true"
-                  >
-                    <img src={post.cover} alt="" loading="lazy" />
-                  </Link>
-                )}
+                {post.cover &&
+                  (post.redirect ? (
+                    <a
+                      href={post.redirect}
+                      className="blog__feed-cover"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                    >
+                      <img src={post.cover} alt="" loading="lazy" />
+                    </a>
+                  ) : (
+                    <Link
+                      to={`/garden/${series.id}/${post.slug}`}
+                      className="blog__feed-cover"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                    >
+                      <img src={post.cover} alt="" loading="lazy" />
+                    </Link>
+                  ))}
               </li>
             ))}
           </ol>

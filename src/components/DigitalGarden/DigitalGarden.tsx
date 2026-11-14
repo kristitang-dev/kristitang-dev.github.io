@@ -1,16 +1,19 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { getEntryKindLabel, type CatalogEntry } from '../../data/entry'
+import { returnLinkProps } from '../../store/spatialStore'
 import { sandboxEntries } from '../../data/sandbox'
 import './DigitalGarden.css'
 
 export function GardenCardLink({
   entry,
   className,
+  section = 'bookshelf',
   children,
 }: {
   entry: CatalogEntry
   className?: string
+  section?: string
   children: ReactNode
 }) {
   if (entry.redirect && entry.link) {
@@ -27,7 +30,10 @@ export function GardenCardLink({
   }
 
   return (
-    <Link to={`/garden/${entry.id}`} className={className}>
+    <Link
+      {...returnLinkProps(`/garden/${entry.id}`, { kind: 'section', section })}
+      className={className}
+    >
       {children}
     </Link>
   )
@@ -52,7 +58,7 @@ export function DigitalGarden() {
               className={`garden-card${entry.image || entry.preview ? '' : ' garden-card--text'}`}
             >
               {(entry.image || entry.preview) && (
-                <GardenCardLink entry={entry} className="garden-card__media-link">
+                <GardenCardLink entry={entry} section="sandbox" className="garden-card__media-link">
                   <div className="garden-card__media">
                     {entry.preview ? (
                       <iframe
@@ -78,7 +84,7 @@ export function DigitalGarden() {
               <div className="garden-card__body">
                 <span className="garden-card__kind">{getEntryKindLabel(entry)}</span>
                 <h3 className="garden-card__title">
-                  <GardenCardLink entry={entry}>{entry.title}</GardenCardLink>
+                  <GardenCardLink entry={entry} section="sandbox">{entry.title}</GardenCardLink>
                 </h3>
                 <p className="garden-card__desc">{entry.description}</p>
                 {entry.link && (

@@ -4,7 +4,12 @@ import { Link } from 'react-router-dom'
 import { albums, notebooks } from '../../data/bookshelf'
 import { galleryCardMatches, galleryCards, gallerySorts, getGalleryCard } from '../Gallery/galleryItems'
 import { researchItems, researchKindLabels } from '../../data/research'
-import { dismissGallery, rememberReturnOverlay, useSpatialStore } from '../../store/spatialStore'
+import {
+  dismissGallery,
+  rememberReturnPlace,
+  useSpatialStore,
+  type ReturnPlace,
+} from '../../store/spatialStore'
 import { DiscoGallery, galleryDragged, onGalleryVoid, ProjectTile } from '../Gallery/DiscoGallery'
 import './SpatialLayer.css'
 
@@ -47,10 +52,16 @@ function filmRows(frames: FilmFrame[], count = 3) {
 
 const filmStills = stills()
 
-function leaveForDetail() {
+function overlayReturn(path: string) {
   const overlay = useSpatialStore.getState().activeOverlay
-  if (overlay) rememberReturnOverlay(overlay)
-  useSpatialStore.getState().closeOverlay()
+  const place: ReturnPlace | null = overlay ? { kind: 'overlay', overlay } : null
+  return {
+    state: place ? { from: place } : undefined,
+    onClick: () => {
+      if (place) rememberReturnPlace(path, place)
+      useSpatialStore.getState().closeOverlay()
+    },
+  }
 }
 
 
@@ -126,7 +137,7 @@ function AbstractPanel({ tidy }: { tidy: boolean }) {
           ))}
         </ul>
       )}
-      <Link className="spatial-abstract__cta" to={item.to} onClick={leaveForDetail}>
+      <Link className="spatial-abstract__cta" to={item.to} {...overlayReturn(item.to)}>
         View project
       </Link>
     </aside>
@@ -298,7 +309,7 @@ function ArchiveLayer() {
                   <small>{entry.description}</small>
                 </a>
               ) : (
-                <Link to={`/garden/${entry.id}`} onClick={leaveForDetail}>
+                <Link to={`/garden/${entry.id}`} {...overlayReturn(`/garden/${entry.id}`)}>
                   <span>{entry.courseLabel ?? entry.title}</span>
                   <small>{entry.description}</small>
                 </Link>
@@ -313,7 +324,7 @@ function ArchiveLayer() {
         <ul className="spatial-archive__list">
           {researchItems.map((item) => (
             <li key={item.id}>
-              <Link to={`/research/${item.id}`} onClick={leaveForDetail}>
+              <Link to={`/research/${item.id}`} {...overlayReturn(`/research/${item.id}`)}>
                 <span className="spatial-archive__text">
                   <span>{item.title}</span>
                   <small>

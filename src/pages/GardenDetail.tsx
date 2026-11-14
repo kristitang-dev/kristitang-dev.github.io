@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { DetailPage } from '../components/DetailPage/DetailPage'
 import { getCatalogEntry } from '../data/catalog'
 import { getEntryHome, getEntryKindLabel } from '../data/entry'
+import { useDetailReturn } from '../store/spatialStore'
 import { BlogSeries } from './BlogSeries'
 
 export function GardenDetail() {
@@ -18,6 +19,8 @@ export function GardenDetail() {
       window.location.replace(item.link)
     }
   }, [item])
+
+  const backState = useDetailReturn(item?.home === 'sandbox' ? 'work' : 'bookshelf')
 
   if (!item) {
     return <Navigate to="/" replace />
@@ -37,7 +40,7 @@ export function GardenDetail() {
     <DetailPage
       backTo="/"
       backLabel={`Back to ${home.label}`}
-      backState={{ overlay: home.overlay }}
+      backState={backState}
       eyebrow={getEntryKindLabel(item)}
       title={item.title}
       lead={item.description}

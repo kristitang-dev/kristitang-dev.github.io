@@ -1,6 +1,5 @@
 import { albums, notebooks } from '../../data/bookshelf'
 import { getEntryKindLabel } from '../../data/entry'
-import { site } from '../../data/site'
 import { GardenCardLink } from '../DigitalGarden/DigitalGarden'
 import './Bookshelf.css'
 
@@ -54,17 +53,6 @@ export function Bookshelf() {
               </li>
             ))}
           </ul>
-          <p className="shelf__more">
-            See more unsorted photography works{' '}
-            <a
-              href={site.instagramUrl}
-              className="shelf__more-link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {site.instagramHandle}
-            </a>
-          </p>
         </div>
       </div>
     </section>

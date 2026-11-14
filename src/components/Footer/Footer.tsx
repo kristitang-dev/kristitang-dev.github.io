@@ -17,14 +17,6 @@ export function Footer() {
           >
             {site.linkedinLabel}
           </a>
-          <a
-            className="footer__link"
-            href={site.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Instagram {site.instagramHandle}
-          </a>
         </nav>
 
         <p className="footer__copy">

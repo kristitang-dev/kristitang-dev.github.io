@@ -1,10 +1,8 @@
 export const site = {
   name: 'Kristi (Lu) Tang',
   shortName: 'KT',
-  tagline: 'Between Matter & Medium',
+  tagline: 'is a Multidisciplinary Designer',
   email: 'kristitang@outlook.com',
-  instagramUrl: 'https://www.instagram.com/157k.jpg/',
-  instagramHandle: '@157k.jpg',
   linkedinUrl: 'https://www.linkedin.com/in/lu-tang-899773291',
   linkedinLabel: 'LinkedIn',
   cvUrl: 'https://drive.google.com/file/d/1afuIFP4d7Axhls3sJFrCaVTzuAszC0Oe/view?usp=drive_link',

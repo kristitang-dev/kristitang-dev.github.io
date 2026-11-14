@@ -55,14 +55,6 @@ export function About() {
               >
                 {site.linkedinLabel}
               </a>
-              <a
-                className="about__contact-link"
-                href={site.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Instagram
-              </a>
             </nav>
 
             <div className="about__tags">

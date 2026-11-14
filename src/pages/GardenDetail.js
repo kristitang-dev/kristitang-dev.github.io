@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { DetailPage } from '../components/DetailPage/DetailPage';
 import { getCatalogEntry } from '../data/catalog';
 import { getEntryHome, getEntryKindLabel } from '../data/entry';
+import { useDetailReturn } from '../store/spatialStore';
 import { BlogSeries } from './BlogSeries';
 export function GardenDetail() {
     const { id } = useParams();
@@ -16,6 +17,7 @@ export function GardenDetail() {
             window.location.replace(item.link);
         }
     }, [item]);
+    const backState = useDetailReturn(item?.home === 'sandbox' ? 'work' : 'bookshelf');
     if (!item) {
         return _jsx(Navigate, { to: "/", replace: true });
     }
@@ -26,7 +28,7 @@ export function GardenDetail() {
         return _jsx(BlogSeries, { series: item });
     }
     const home = getEntryHome(item);
-    return (_jsx(DetailPage, { backTo: "/", backLabel: `Back to ${home.label}`, backState: { scrollTo: home.section }, eyebrow: getEntryKindLabel(item), title: item.title, lead: item.description, image: item.image, imageAlt: item.title, preview: item.preview, body: item.body, gallery: item.gallery, galleryTitle: item.galleryTitle, galleryLayout: item.galleryLayout ?? 'scroll', galleryBlocks: item.galleryBlocks, externalLink: item.link
+    return (_jsx(DetailPage, { backTo: "/", backLabel: `Back to ${home.label}`, backState: backState, eyebrow: getEntryKindLabel(item), title: item.title, lead: item.description, image: item.image, imageAlt: item.title, preview: item.preview, body: item.body, gallery: item.gallery, galleryTitle: item.galleryTitle, galleryLayout: item.galleryLayout ?? 'scroll', galleryBlocks: item.galleryBlocks, externalLink: item.link
             ? {
                 href: item.link,
                 label: item.linkLabel ?? 'Open link',

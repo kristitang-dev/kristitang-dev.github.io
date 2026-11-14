@@ -4,27 +4,31 @@ import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { useSpatialStore } from '../../store/spatialStore';
 /** Click map for the hero model. `section` scrolls the homepage. `route` opens a site page. `url` opens an external link. */
 const HOTSPOTS = [
     {
         label: 'Bookshelf',
+        title: 'Open archive',
         test: (name) => name.startsWith('Book'),
-        section: 'bookshelf',
+        action: 'bookshelf',
     },
     {
         label: 'About',
         test: (name) => name.startsWith('Chair'),
-        section: 'about',
+        action: 'about',
     },
     {
         label: 'Work',
+        title: 'Open projects',
         test: (name) => name.startsWith('Laptop'),
-        section: 'work',
+        action: 'laptop',
     },
     {
         label: 'Sandbox',
+        title: 'Open projects',
         test: (name) => name === 'LedWall',
-        section: 'sandbox',
+        action: 'laptop',
     },
 ];
 const MODEL_URL = `${import.meta.env.BASE_URL}models/hero-room.glb`;
@@ -53,7 +57,7 @@ const wallFragment = /* glsl */ `
 `;
 function dropOffset(delay, distance, t, duration = 0.9) {
     const u = Math.min(1, Math.max(0, (t - delay) / duration));
-    const eased = 1 - Math.pow(1 - u, 3);
+    const eased = 1 - (1 - u) ** 3;
     return distance * (1 - eased);
 }
 function frameCamera(camera, fit, aspect, zoomOut = 1) {
@@ -138,21 +142,15 @@ export function HeroScene() {
         controls.enableDamping = true;
         controls.dampingFactor = 0.08;
         controls.enablePan = false;
+        controls.enableZoom = false;
         controls.rotateSpeed = 0.7;
-        controls.zoomSpeed = 0.7;
         controls.minPolarAngle = 0.25;
         controls.maxPolarAngle = Math.PI / 2 - 0.04;
-        controls.minZoom = 0.7;
-        controls.maxZoom = 2.6;
         camera.position.set(8, 8, 8);
         controls.update();
         canvas.style.cursor = '';
-        const phoneScroll = window.matchMedia('(max-width: 768px)');
-        const applyTouchScroll = () => {
-            canvas.style.touchAction = phoneScroll.matches ? 'pan-y' : 'none';
-        };
-        applyTouchScroll();
-        phoneScroll.addEventListener('change', applyTouchScroll);
+        // OrbitControls sets touch-action: none, which traps trackpad and touch scrolling.
+        canvas.style.touchAction = 'pan-y';
         const scrollUniform = { value: 0 };
         const codeMap = new THREE.TextureLoader().load(CODE_URL);
         codeMap.wrapS = THREE.RepeatWrapping;
@@ -258,14 +256,16 @@ export function HeroScene() {
                 ?? null;
             const drop = [];
             model.traverse((obj) => {
-                if (/backdrop/i.test(obj.name) || obj.name === 'DiscLaptop' || obj.name === 'DiscChair')
+                if (/backdrop/i.test(obj.name) || obj.name === 'DiscLaptop' || obj.name === 'DiscChair') {
                     drop.push(obj);
+                }
             });
             for (const obj of drop) {
                 obj.removeFromParent();
-                if (obj.isMesh) {
-                    obj.geometry?.dispose();
-                    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+                const mesh = obj;
+                if (mesh.isMesh) {
+                    mesh.geometry?.dispose();
+                    const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
                     for (const mat of mats)
                         mat?.dispose();
                 }
@@ -390,7 +390,6 @@ export function HeroScene() {
             dragged = false;
             if (!setPointer(event) || !pointerNearCamera() || !cameraRig)
                 return;
-            dragged = true;
             cameraDragging = true;
             cameraHover = true;
             controls.enabled = false;
@@ -402,8 +401,6 @@ export function HeroScene() {
                 dragOffset.set(0, 0, 0);
             canvas.classList.add('is-dragging');
             canvas.title = 'Camera';
-            event.preventDefault();
-            event.stopPropagation();
         };
         const onUp = () => {
             cameraDragging = false;
@@ -412,9 +409,13 @@ export function HeroScene() {
         };
         const onMove = (event) => {
             if (cameraDragging) {
-                if (setPointer(event))
-                    dragCamera();
-                dragged = true;
+                const moved = Math.hypot(event.clientX - downX, event.clientY - downY);
+                if (moved > 4) {
+                    dragged = true;
+                    if (setPointer(event))
+                        dragCamera();
+                    event.preventDefault();
+                }
                 canvas.classList.add('is-dragging');
                 canvas.title = 'Camera';
                 return;
@@ -445,7 +446,7 @@ export function HeroScene() {
                 return;
             hovered = label;
             canvas.classList.add('is-link');
-            canvas.title = spot.label;
+            canvas.title = spot.title ?? spot.label;
             for (const mesh of meshesFor(label)) {
                 const mat = mesh.material;
                 if (Array.isArray(mat) || !(mat instanceof THREE.MeshStandardMaterial))
@@ -475,9 +476,21 @@ export function HeroScene() {
                 event.stopPropagation();
                 return;
             }
+            if (setPointer(event) && pointerNearCamera()) {
+                useSpatialStore.getState().setActiveOverlay('camera');
+                return;
+            }
             const spot = hitTest(event);
             if (!spot)
                 return;
+            if (spot.action === 'laptop' || spot.action === 'bookshelf') {
+                useSpatialStore.getState().setActiveOverlay(spot.action);
+                return;
+            }
+            if (spot.action === 'about') {
+                useSpatialStore.getState().scrollToAbout();
+                return;
+            }
             if (spot.url) {
                 window.open(spot.url, '_blank', 'noopener');
                 return;
@@ -506,10 +519,11 @@ export function HeroScene() {
             const time = clock.getElapsedTime();
             if (!reduceMotion)
                 scrollUniform.value = time * 0.22;
+            const spatial = useSpatialStore.getState();
             const chairGoal = (hovered === 'About' ? -0.72 : 0) + (reduceMotion ? 0 : Math.sin(time * 0.85) * 0.04);
-            const laptopGoal = hovered === 'Work' ? 0.22 : 0;
-            const cameraGoal = cameraHover ? 0.22 : 0;
-            const bookGoal = hovered === 'Bookshelf' ? 1 : 0;
+            const laptopGoal = hovered === 'Work' || spatial.activeOverlay === 'laptop' ? 0.22 : 0;
+            const cameraGoal = cameraHover || spatial.activeOverlay === 'camera' ? 0.22 : 0;
+            const bookGoal = hovered === 'Bookshelf' || spatial.activeOverlay === 'bookshelf' ? 1 : 0;
             chairSpin += (chairGoal - chairSpin) * 0.07;
             laptopLift += (laptopGoal - laptopLift) * 0.06;
             cameraLift += (cameraGoal - cameraLift) * 0.06;
@@ -520,7 +534,7 @@ export function HeroScene() {
                 chairPivot.rotation.y = chairSpin + chairTurn;
             if (introLive) {
                 const u = Math.min(1, introT / 1.85);
-                const eased = 1 - Math.pow(1 - u, 3);
+                const eased = 1 - (1 - u) ** 3;
                 introScale = 1.5 + (1 - 1.5) * eased;
                 const width = canvas.clientWidth;
                 const height = canvas.clientHeight;
@@ -554,7 +568,8 @@ export function HeroScene() {
                 traceDot.position.y += 0.07;
                 const traceGoal = cameraHover || cameraDragging ? 1 : 0;
                 traceGlow += (traceGoal - traceGlow) * 0.16;
-                traceDot.material.opacity = traceGlow;
+                const dotMat = traceDot.material;
+                dotMat.opacity = traceGlow;
             }
             controls.update();
             renderer.render(scene, camera);
@@ -571,7 +586,6 @@ export function HeroScene() {
             window.removeEventListener('pointermove', onMove);
             canvas.removeEventListener('pointerleave', onLeave);
             canvas.removeEventListener('click', onClick, true);
-            phoneScroll.removeEventListener('change', applyTouchScroll);
             controls.dispose();
             observer.disconnect();
             wallMaterial.dispose();
@@ -596,5 +610,5 @@ export function HeroScene() {
             renderer.dispose();
         };
     }, [navigate]);
-    return (_jsx("canvas", { ref: canvasRef, className: "hero-scene__canvas", "aria-label": "Workspace model. Drag the desk camera to move it, or drag elsewhere to turn the view. Scroll to zoom. The bookcase, chair, laptop, and code wall can be clicked." }));
+    return (_jsx("canvas", { ref: canvasRef, className: "hero-scene__canvas", "aria-label": "Workspace model. Drag the desk camera to move it, or click it to open photographs. Drag elsewhere to turn the view. The bookcase opens an archive, the chair scrolls to about, and the laptop and code wall open projects." }));
 }

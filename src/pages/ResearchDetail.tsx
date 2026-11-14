@@ -2,6 +2,7 @@ import { Navigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { DetailPage } from '../components/DetailPage/DetailPage'
 import { getResearchById, researchKindLabels } from '../data/research'
+import { useDetailReturn } from '../store/spatialStore'
 
 export function ResearchDetail() {
   const { id } = useParams<{ id: string }>()
@@ -11,6 +12,8 @@ export function ResearchDetail() {
     window.scrollTo(0, 0)
   }, [id])
 
+  const backState = useDetailReturn('research')
+
   if (!item) {
     return <Navigate to="/" replace />
   }
@@ -19,7 +22,7 @@ export function ResearchDetail() {
     <DetailPage
       backTo="/"
       backLabel="Back to Research"
-      backState={{ overlay: 'bookshelf' }}
+      backState={backState}
       eyebrow={researchKindLabels[item.kind]}
       title={item.title}
       lead={item.lead ?? item.contribution ?? item.description}

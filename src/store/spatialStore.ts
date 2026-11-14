@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom'
 import { create } from 'zustand'
 
 export type OverlayType = 'laptop' | 'bookshelf' | 'camera' | null
@@ -7,29 +8,84 @@ export type HomeLocationState = {
   overlay?: Exclude<OverlayType, null>
 }
 
-const RETURN_OVERLAY_KEY = 'spatial-return-overlay'
+/** Where a visitor was before they opened a project. */
+export type ReturnPlace =
+  | { kind: 'overlay'; overlay: Exclude<OverlayType, null> }
+  | { kind: 'section'; section: string }
 
-function isOverlay(value: string | null): value is Exclude<OverlayType, null> {
+const RETURN_OVERLAY_KEY = 'spatial-return-overlay'
+const RETURN_PLACE_KEY = 'spatial-return-place'
+
+function isOverlay(value: unknown): value is Exclude<OverlayType, null> {
   return value === 'laptop' || value === 'bookshelf' || value === 'camera'
 }
 
-/** Remember which window a detail page should restore on browser back. */
-export function rememberReturnOverlay(overlay: Exclude<OverlayType, null>) {
+export function isReturnPlace(value: unknown): value is ReturnPlace {
+  if (!value || typeof value !== 'object') return false
+  const place = value as ReturnPlace
+  if (place.kind === 'overlay') return isOverlay(place.overlay)
+  if (place.kind === 'section') return typeof place.section === 'string' && place.section.length > 0
+  return false
+}
+
+function readStoredPlace(): { path: string; place: ReturnPlace } | null {
   try {
-    sessionStorage.setItem(RETURN_OVERLAY_KEY, overlay)
+    const stored = JSON.parse(sessionStorage.getItem(RETURN_PLACE_KEY) ?? 'null') as {
+      path?: unknown
+      place?: unknown
+    } | null
+    if (!stored || typeof stored.path !== 'string' || !isReturnPlace(stored.place)) return null
+    return { path: stored.path, place: stored.place }
+  } catch {
+    return null
+  }
+}
+
+/** Remember where this detail page should send the visitor back. */
+export function rememberReturnPlace(path: string, place: ReturnPlace) {
+  try {
+    sessionStorage.setItem(RETURN_PLACE_KEY, JSON.stringify({ path, place }))
+    sessionStorage.removeItem(RETURN_OVERLAY_KEY)
   } catch {
     // Session storage can be unavailable in private browsing.
   }
 }
 
-export function consumeReturnOverlay(): Exclude<OverlayType, null> | null {
-  try {
-    const value = sessionStorage.getItem(RETURN_OVERLAY_KEY)
-    sessionStorage.removeItem(RETURN_OVERLAY_KEY)
-    return isOverlay(value) ? value : null
-  } catch {
-    return null
+export function peekReturnPlace(path: string): ReturnPlace | null {
+  const stored = readStoredPlace()
+  if (!stored || stored.path !== path) return null
+  return stored.place
+}
+
+/** Read and clear the place recorded for the page the visitor just left. */
+export function consumeReturnPlace(): ReturnPlace | null {
+  const stored = readStoredPlace()
+  clearReturnOverlay()
+  if (stored) return stored.place
+  return null
+}
+
+export function returnLinkProps(path: string, place: ReturnPlace) {
+  return {
+    to: path,
+    state: { from: place },
+    onClick: () => rememberReturnPlace(path, place),
   }
+}
+
+export function placeToHomeState(place: ReturnPlace): HomeLocationState {
+  return place.kind === 'overlay'
+    ? { overlay: place.overlay }
+    : { scrollTo: place.section }
+}
+
+/** Back destination for a detail page: the path they arrived on, or a section. */
+export function useDetailReturn(fallbackSection: string): HomeLocationState {
+  const location = useLocation()
+  const from = (location.state as { from?: unknown } | null)?.from
+  const place = isReturnPlace(from) ? from : peekReturnPlace(location.pathname)
+  if (place) return placeToHomeState(place)
+  return { scrollTo: fallbackSection }
 }
 
 /** Close the project gallery, and drop the history entry that Back should undo. */
@@ -52,6 +108,7 @@ export function dismissGallery() {
 export function clearReturnOverlay() {
   try {
     sessionStorage.removeItem(RETURN_OVERLAY_KEY)
+    sessionStorage.removeItem(RETURN_PLACE_KEY)
   } catch {
     // Ignore storage failures.
   }
