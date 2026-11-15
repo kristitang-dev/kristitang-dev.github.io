@@ -31,7 +31,7 @@ body {
 #work,
 #research,
 #bookshelf {
-  scroll-margin-top: 5.25rem;
+  scroll-margin-top: var(--nav-height);
 }
 
 a {

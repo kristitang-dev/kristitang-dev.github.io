@@ -1,25 +1,16 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  getCategoryLabels,
-  workFilters,
-  workItems,
-  type WorkCategory,
-} from '../../data/work'
-import { returnLinkProps } from '../../store/spatialStore'
+import { workItems } from '../../data/work'
+import { returnLinkProps, useSpatialStore } from '../../store/spatialStore'
 import './Work.css'
 
 export function Work() {
-  const [filter, setFilter] = useState<WorkCategory>('all')
-
   const visible = useMemo(
     () =>
-      [...(filter === 'all'
-        ? workItems
-        : workItems.filter((item) => item.categories.includes(filter)))].sort(
-        (a, b) => b.sortDate.localeCompare(a.sortDate),
-      ),
-    [filter],
+      workItems
+        .filter((item) => item.featured)
+        .sort((a, b) => b.sortDate.localeCompare(a.sortDate)),
+    [],
   )
 
   return (
@@ -27,25 +18,10 @@ export function Work() {
       <div className="work__inner">
         <div className="work__header">
           <div className="work__titles">
-            <h2 className="work__title">Work</h2>
+            <h2 className="work__title">Featured Work</h2>
             <p className="work__intro">
               Digital work across VR/MR, games, and assistive tech — where design meets computation.
             </p>
-          </div>
-
-          <div className="work__filters" role="tablist" aria-label="Filter work">
-            {workFilters.map(({ id, label }) => (
-              <button
-                key={id}
-                type="button"
-                role="tab"
-                aria-selected={filter === id}
-                className={`work__filter${filter === id ? ' is-active' : ''}`}
-                onClick={() => setFilter(id)}
-              >
-                {label}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -64,9 +40,13 @@ export function Work() {
                       className="work-card__image"
                       loading="lazy"
                     />
-                    {getCategoryLabels(item).length > 0 && (
-                      <span className="work-card__category">
-                        {getCategoryLabels(item).join(' · ')}
+                    {item.tools.length > 0 && (
+                      <span className="work-card__tools">
+                        {item.tools.map((tool) => (
+                          <span key={tool} className="work-card__tool">
+                            {tool}
+                          </span>
+                        ))}
                       </span>
                     )}
                   </div>
@@ -97,12 +77,18 @@ export function Work() {
                     ))}
                   </div>
 
-                  <p className="work-card__tools">{item.tools.join(' · ')}</p>
                 </div>
               </article>
             </li>
           ))}
         </ul>
+        <button
+          type="button"
+          className="work__more"
+          onClick={() => useSpatialStore.getState().setActiveOverlay('laptop')}
+        >
+          See more of my work
+        </button>
       </div>
     </section>
   )

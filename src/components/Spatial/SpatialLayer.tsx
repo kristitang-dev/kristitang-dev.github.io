@@ -1,7 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { albums, notebooks } from '../../data/bookshelf'
+import { albums, cameraShots, notebooks } from '../../data/bookshelf'
 import { galleryCardMatches, galleryCards, gallerySorts, getGalleryCard } from '../Gallery/galleryItems'
 import { researchItems, researchKindLabels } from '../../data/research'
 import {
@@ -41,6 +41,11 @@ function stills() {
       frames.push({ src, albumId: album.id, title: album.title, note: filmNotes[album.id] })
     }
   }
+  for (const shot of cameraShots) {
+    if (!shot.image || seen.has(shot.image)) continue
+    seen.add(shot.image)
+    frames.push({ src: shot.image, albumId: shot.id, title: shot.title, note: shot.note })
+  }
   return frames
 }
 
@@ -51,6 +56,113 @@ function filmRows(frames: FilmFrame[], count = 3) {
 }
 
 const filmStills = stills()
+
+const ratioCache = new Map<string, number>()
+const ratioListeners = new Set<() => void>()
+const ratioProbes = new Set<string>()
+let ratioFlush = 0
+
+function publishRatio(src: string, ratio: number) {
+  if (!Number.isFinite(ratio) || ratio <= 0) return
+  const known = ratioCache.get(src)
+  if (known !== undefined && Math.abs(known - ratio) < 0.001) return
+  ratioCache.set(src, ratio)
+  window.cancelAnimationFrame(ratioFlush)
+  ratioFlush = window.requestAnimationFrame(() => {
+    ratioListeners.forEach((listener) => listener())
+  })
+}
+
+function ratioFromBytes(bytes: Uint8Array) {
+  if (bytes.length < 24) return null
+  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+    const width = bytes[6] | (bytes[7] << 8)
+    const height = bytes[8] | (bytes[9] << 8)
+    return height ? width / height : null
+  }
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
+    const width = (bytes[16] << 24) | (bytes[17] << 16) | (bytes[18] << 8) | bytes[19]
+    const height = (bytes[20] << 24) | (bytes[21] << 16) | (bytes[22] << 8) | bytes[23]
+    return height ? width / height : null
+  }
+  if (bytes[0] !== 0xff || bytes[1] !== 0xd8) return null
+  let i = 2
+  while (i + 8 < bytes.length) {
+    if (bytes[i] !== 0xff) return null
+    while (bytes[i] === 0xff) i += 1
+    const marker = bytes[i]
+    i += 1
+    if (marker === 0xd8 || marker === 0xd9) continue
+    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) continue
+    if (i + 1 >= bytes.length) return null
+    const size = (bytes[i] << 8) | bytes[i + 1]
+    if (size < 2) return null
+    const sized = (marker >= 0xc0 && marker <= 0xc3)
+      || (marker >= 0xc5 && marker <= 0xc7)
+      || (marker >= 0xc9 && marker <= 0xcb)
+      || (marker >= 0xcd && marker <= 0xcf)
+    if (sized) {
+      if (i + 6 >= bytes.length) return null
+      const height = (bytes[i + 3] << 8) | bytes[i + 4]
+      const width = (bytes[i + 5] << 8) | bytes[i + 6]
+      return height ? width / height : null
+    }
+    i += size
+  }
+  return null
+}
+
+function preloadStill(src: string) {
+  if (ratioCache.has(src) || ratioProbes.has(src)) return
+  ratioProbes.add(src)
+  fetch(src, { headers: { Range: 'bytes=0-65535' } })
+    .then(async (response) => {
+      const reader = response.body?.getReader()
+      if (!reader) return
+      const chunks: Uint8Array[] = []
+      let got = 0
+      while (got < 65536) {
+        const { done, value } = await reader.read()
+        if (done || !value) break
+        chunks.push(value)
+        got += value.length
+      }
+      reader.cancel().catch(() => {})
+      const bytes = new Uint8Array(got)
+      let offset = 0
+      for (const chunk of chunks) {
+        bytes.set(chunk, offset)
+        offset += chunk.length
+      }
+      const ratio = ratioFromBytes(bytes)
+      if (ratio) publishRatio(src, ratio)
+    })
+    .catch(() => {})
+}
+
+function useFilmRatios() {
+  const [ratios, setRatios] = useState<Record<string, number>>(() => Object.fromEntries(ratioCache))
+  useEffect(() => {
+    const sync = () => setRatios(Object.fromEntries(ratioCache))
+    ratioListeners.add(sync)
+    sync()
+    return () => {
+      ratioListeners.delete(sync)
+    }
+  }, [])
+  return ratios
+}
+
+const rowMotion = [
+  { seconds: 96, direction: 1, start: 0 },
+  { seconds: 114, direction: -1, start: 0.42 },
+  { seconds: 84, direction: 1, start: 26 / 84 },
+] as const
+
+type FilmRowHandle = {
+  offset: () => number
+  setOffset: (value: number) => void
+}
 
 function overlayReturn(path: string) {
   const overlay = useSpatialStore.getState().activeOverlay
@@ -144,9 +256,13 @@ function AbstractPanel({ tidy }: { tidy: boolean }) {
   )
 }
 
+function tidyGalleryByDefault() {
+  return window.matchMedia('(max-width: 760px)').matches
+}
+
 function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
   const [query, setQuery] = useState('')
-  const [still, setStill] = useState(false)
+  const [still, setStill] = useState(tidyGalleryByDefault)
   const [gridMounted, setGridMounted] = useState(false)
   const [gridOn, setGridOn] = useState(false)
   const [group, setGroup] = useState('all')
@@ -363,15 +479,25 @@ function FilmStill({
   frame,
   decorative = false,
   ratio,
-  onRatio,
   onOpen,
 }: {
   frame: FilmFrame
   decorative?: boolean
   ratio?: number
-  onRatio: (src: string, ratio: number) => void
   onOpen: (frame: FilmFrame) => void
 }) {
+  const imgRef = useRef<HTMLImageElement>(null)
+  const [shown, setShown] = useState(false)
+  const reveal = (image: HTMLImageElement) => {
+    if (image.naturalHeight) publishRatio(frame.src, image.naturalWidth / image.naturalHeight)
+    setShown(true)
+  }
+
+  useLayoutEffect(() => {
+    const image = imgRef.current
+    if (image?.complete && image.naturalWidth) reveal(image)
+  }, [frame.src])
+
   return (
     <button
       type="button"
@@ -383,14 +509,14 @@ function FilmStill({
       tabIndex={decorative ? -1 : undefined}
     >
       <img
+        ref={imgRef}
         src={frame.src}
         alt=""
         decoding="async"
         draggable={false}
-        onLoad={(event) => {
-          const image = event.currentTarget
-          if (image.naturalHeight) onRatio(frame.src, image.naturalWidth / image.naturalHeight)
-        }}
+        className={shown ? 'is-shown' : undefined}
+        onLoad={(event) => reveal(event.currentTarget)}
+        onError={() => publishRatio(frame.src, 1)}
       />
       <span className="spatial-film__meta">
         <span>{frame.title}</span>
@@ -400,83 +526,119 @@ function FilmStill({
   )
 }
 
-function MarqueeRow({
-  frames,
-  index,
-  reduced,
-  ratios,
-  onRatio,
-  onOpen,
-}: {
+const MarqueeRow = forwardRef<FilmRowHandle, {
   frames: FilmFrame[]
   index: number
   reduced: boolean
   ratios: Record<string, number>
-  onRatio: (src: string, ratio: number) => void
+  paused: boolean
+  dragging: boolean
   onOpen: (frame: FilmFrame) => void
-}) {
+}>(function MarqueeRow({ frames, index, reduced, ratios, paused, dragging, onOpen }, ref) {
+  const motion = rowMotion[index] ?? rowMotion[0]
+  const rowRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
   const setRef = useRef<HTMLDivElement>(null)
-  const [shift, setShift] = useState(0)
-  const [ready, setReady] = useState(reduced)
+  const offsetRef = useRef(0)
+  const loopRef = useRef(0)
+  const pausedRef = useRef(false)
+  const [copies, setCopies] = useState(2)
+  const [held, setHeld] = useState(false)
+  const ready = frames.every((frame) => ratios[frame.src])
+  pausedRef.current = reduced || paused || held || dragging
+
+  const paint = () => {
+    const loop = loopRef.current
+    const track = trackRef.current
+    if (!track || loop <= 0) return
+    const wrapped = ((offsetRef.current % loop) + loop) % loop
+    track.style.transform = `translate3d(${-wrapped}px, 0, 0)`
+  }
+
+  useImperativeHandle(ref, () => ({
+    offset: () => offsetRef.current,
+    setOffset: (value: number) => {
+      offsetRef.current = value
+      paint()
+    },
+  }))
 
   useLayoutEffect(() => {
-    const node = setRef.current
-    if (!node || reduced) return
-    let settle = 0
-    let last = 0
+    const setNode = setRef.current
+    const rowNode = rowRef.current
+    if (!setNode || !rowNode) return
     const measure = () => {
-      const width = node.getBoundingClientRect().width
-      if (Math.abs(last - width) < 0.5) return
-      last = width
-      setShift(width)
-      setReady(false)
-      window.clearTimeout(settle)
-      settle = window.setTimeout(() => setReady(true), 180)
+      const width = setNode.getBoundingClientRect().width
+      const view = rowNode.clientWidth
+      if (width > 1) {
+        const previous = loopRef.current
+        if (!(previous > 1 && Math.abs(previous - width) < 0.5)) {
+          offsetRef.current = previous > 1 ? offsetRef.current * (width / previous) : width * motion.start
+          loopRef.current = width
+        }
+        const needed = Math.max(2, Math.ceil(view / width) + 1)
+        setCopies((current) => (current === needed ? current : needed))
+      }
+      paint()
     }
     measure()
     const observer = new ResizeObserver(measure)
-    observer.observe(node)
-    return () => {
-      observer.disconnect()
-      window.clearTimeout(settle)
+    observer.observe(setNode)
+    observer.observe(rowNode)
+    return () => observer.disconnect()
+  }, [frames, ratios, copies, motion.start])
+
+  useEffect(() => {
+    if (reduced) return
+    let last = performance.now()
+    let frame = 0
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000)
+      last = now
+      const loop = loopRef.current
+      if (loop > 0 && !pausedRef.current) offsetRef.current += (loop / motion.seconds) * motion.direction * dt
+      paint()
+      frame = requestAnimationFrame(tick)
     }
-  }, [frames, ratios, reduced])
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [reduced, motion.seconds, motion.direction])
 
   return (
-    <div className="spatial-marquee__row">
-      <div
-        className={`spatial-marquee__track spatial-marquee__track--${index}${ready && shift ? ' is-ready' : ''}`}
-        style={shift ? ({ '--marquee-shift': `${shift}px` } as React.CSSProperties) : undefined}
-      >
-        <div className="spatial-marquee__set" ref={setRef}>
-          {frames.map((frame) => (
-            <FilmStill
-              key={frame.src}
-              frame={frame}
-              ratio={ratios[frame.src]}
-              onRatio={onRatio}
-              onOpen={onOpen}
-            />
-          ))}
-        </div>
-        {!reduced && (
-          <div className="spatial-marquee__set" aria-hidden="true">
+    <div
+      ref={rowRef}
+      className={`spatial-marquee__row${ready ? ' is-ready' : ''}${dragging ? ' is-dragging' : ''}`}
+      data-row={index}
+      onPointerEnter={() => setHeld(true)}
+      onPointerLeave={() => setHeld(false)}
+      onFocus={() => setHeld(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setHeld(false)
+      }}
+    >
+      <div ref={trackRef} className={`spatial-marquee__track spatial-marquee__track--${index}`}>
+        {Array.from({ length: copies }, (_, copy) => (
+          <div
+            key={copy}
+            className="spatial-marquee__set"
+            ref={copy === 0 ? setRef : undefined}
+            aria-hidden={copy > 0 || undefined}
+          >
             {frames.map((frame) => (
               <FilmStill
-                key={`${frame.src}-copy`}
+                key={`${frame.src}-${copy}`}
                 frame={frame}
-                decorative
+                decorative={copy > 0}
                 ratio={ratios[frame.src]}
-                onRatio={onRatio}
                 onOpen={onOpen}
               />
             ))}
           </div>
-        )}
+        ))}
       </div>
     </div>
   )
-}
+})
 
 function CloseButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
@@ -517,23 +679,96 @@ function PhotoWindow({ frame, onClose }: { frame: FilmFrame; onClose: () => void
 function CameraLayer() {
   const reducedMotion = useReducedMotion()
   const rows = filmRows(filmStills)
+  const ratios = useFilmRatios()
   const [active, setActive] = useState<FilmFrame | null>(null)
-  const [ratios, setRatios] = useState<Record<string, number>>({})
-  const rememberRatio = (src: string, ratio: number) => {
-    setRatios((current) => (current[src] === ratio ? current : { ...current, [src]: ratio }))
+  const [dragRow, setDragRow] = useState<number | null>(null)
+  useEffect(() => {
+    filmStills.forEach((frame) => preloadStill(frame.src))
+  }, [])
+  const filmRef = useRef<HTMLDivElement>(null)
+  const rowRefs = useRef<Array<FilmRowHandle | null>>([])
+  const shiftRows = (indexes: number[], delta: number, origins: number[]) => {
+    indexes.forEach((index, place) => {
+      rowRefs.current[index]?.setOffset(origins[place] + delta)
+    })
   }
+
+  useEffect(() => {
+    const node = filmRef.current
+    if (!node) return
+    const onWheel = (event: WheelEvent) => {
+      const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? node.clientWidth : 1
+      const rawX = event.deltaX * scale
+      const rawY = event.deltaY * scale
+      const delta = Math.abs(rawX) > Math.abs(rawY) ? rawX : rawY
+      if (!delta) return
+      const row = (event.target as Element | null)?.closest?.('.spatial-marquee__row')
+      const index = row ? Number((row as HTMLElement).dataset.row) : -1
+      const indexes = index >= 0 ? [index] : rowRefs.current.map((_, place) => place)
+      event.preventDefault()
+      shiftRows(
+        indexes,
+        delta,
+        indexes.map((place) => rowRefs.current[place]?.offset() ?? 0),
+      )
+    }
+    node.addEventListener('wheel', onWheel, { passive: false })
+    return () => node.removeEventListener('wheel', onWheel)
+  }, [])
 
   return (
     <>
-      <div className={`spatial-film${active ? ' is-viewing' : ''}`} aria-label="Light table">
+      <div
+        ref={filmRef}
+        className={`spatial-film${active ? ' is-viewing' : ''}${dragRow !== null ? ' is-dragging' : ''}`}
+        aria-label="Light table"
+        onPointerDown={(event) => {
+          if (event.button !== 0) return
+          const row = (event.target as Element).closest('.spatial-marquee__row')
+          const index = row ? Number((row as HTMLElement).dataset.row) : -1
+          const indexes = index >= 0 ? [index] : rowRefs.current.map((_, place) => place)
+          const origins = indexes.map((place) => rowRefs.current[place]?.offset() ?? 0)
+          const startX = event.clientX
+          let moved = false
+          const onMove = (ev: PointerEvent) => {
+            const dx = ev.clientX - startX
+            if (!moved && Math.abs(dx) <= 6) return
+            if (!moved) {
+              moved = true
+              setDragRow(index)
+            }
+            shiftRows(indexes, -dx, origins)
+          }
+          const onUp = () => {
+            window.removeEventListener('pointermove', onMove)
+            window.removeEventListener('pointerup', onUp)
+            window.removeEventListener('pointercancel', onUp)
+            setDragRow(null)
+            if (!moved) return
+            const stopClick = (click: Event) => {
+              click.preventDefault()
+              click.stopPropagation()
+              window.removeEventListener('click', stopClick, true)
+            }
+            window.addEventListener('click', stopClick, true)
+          }
+          window.addEventListener('pointermove', onMove)
+          window.addEventListener('pointerup', onUp)
+          window.addEventListener('pointercancel', onUp)
+        }}
+      >
         {rows.map((row, index) => (
           <MarqueeRow
             key={index}
+            ref={(node) => {
+              rowRefs.current[index] = node
+            }}
             frames={row}
             index={index}
             reduced={reducedMotion}
             ratios={ratios}
-            onRatio={rememberRatio}
+            paused={active !== null}
+            dragging={dragRow === index || dragRow === -1}
             onOpen={setActive}
           />
         ))}

@@ -1,5 +1,6 @@
 import { albums, notebooks } from '../../data/bookshelf'
 import { getEntryKindLabel } from '../../data/entry'
+import { useSpatialStore } from '../../store/spatialStore'
 import { GardenCardLink } from '../DigitalGarden/DigitalGarden'
 import './Bookshelf.css'
 
@@ -37,7 +38,16 @@ export function Bookshelf() {
         </div>
 
         <div className="shelf__row">
-          <h3 className="shelf__label">Albums</h3>
+          <div className="shelf__label-row">
+            <h3 className="shelf__label">Albums</h3>
+            <button
+              type="button"
+              className="shelf__gallery"
+              onClick={() => useSpatialStore.getState().setActiveOverlay('camera')}
+            >
+              View gallery
+            </button>
+          </div>
           <ul className="shelf__albums">
             {albums.map((entry) => (
               <li key={entry.id} className="shelf-album">

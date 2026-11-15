@@ -32,6 +32,16 @@ export const notebooks: CatalogEntry[] = [
   },
 ]
 
+/** Light-table frames that are not bookshelf albums. */
+export const cameraShots: { id: string; title: string; note?: string; image: string }[] = [
+  {
+    id: 'morpho',
+    title: 'Morpho @Time Square Nov 5, 2026',
+    note: 'Commercial',
+    image: '/images/herogallery/morpho.gif',
+  },
+]
+
 export const albums: CatalogEntry[] = [
   {
     id: 'city-life',
@@ -114,7 +124,7 @@ export const albums: CatalogEntry[] = [
     title: 'Chongqing 2023SS',
     kinds: ['video'],
     description: 'Videography practice 01',
-    image: '/images/Chongqing.jpg',
+    image: '/images/herogallery/chongqing.gif',
     link: 'https://www.instagram.com/reel/Dctps1qRFpW/?utm_source=ig_web_copy_link&igsi=MzRlODBiNWFlZA==',
     linkLabel: 'Watch on Instagram',
     body: [],

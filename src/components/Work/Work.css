@@ -9,12 +9,7 @@
 }
 
 .work__header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 2rem;
   margin-bottom: 3rem;
-  align-items: flex-end;
 }
 
 .work__title {
@@ -31,34 +26,36 @@
   line-height: 1.6;
 }
 
-.work__filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.work__filter {
+.work__more {
+  display: block;
+  width: fit-content;
+  margin: 2.75rem 0 0 auto;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--red-500);
+  border-radius: 2px;
+  background-color: var(--red-500);
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
+  font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.5rem 0.875rem;
-  border: 1px solid var(--grey-300);
-  background: transparent;
-  color: var(--grey-700);
+  line-height: 1.6;
+  color: white;
   cursor: pointer;
-  border-radius: 2px;
-  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.work__filter:hover,
-.work__filter.is-active {
-  border-color: var(--red-500);
-  color: var(--red-500);
+.work__more:hover,
+.work__more:focus-visible {
+  background-color: var(--red-700);
+  border-color: var(--red-700);
+  color: white;
 }
 
-.work__filter.is-active {
-  background-color: rgba(214, 59, 59, 0.06);
+.work__more:focus-visible {
+  outline: 2px solid var(--red-500);
+  outline-offset: 4px;
 }
 
 .work__grid {
@@ -105,18 +102,25 @@
   transform: scale(1.03);
 }
 
-.work-card__category {
+.work-card__tools {
   position: absolute;
   z-index: 2;
   left: 0.75rem;
+  right: 0.75rem;
   bottom: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.work-card__tool {
   font-family: var(--font-mono);
   font-size: 0.625rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 0.3rem 0.55rem;
-  background: rgba(26, 26, 31, 0.82);
-  color: white;
+  padding: 0.28rem 0.5rem;
+  background: rgba(26, 26, 31, 0.78);
+  color: #fff;
 }
 
 .work-card__meta {
@@ -177,13 +181,6 @@
   color: var(--red-700);
   border-bottom: 1px solid rgba(214, 59, 59, 0.35);
   padding-bottom: 0.1rem;
-}
-
-.work-card__tools {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
-  color: var(--grey-500);
 }
 
 @media (max-width: 768px) {

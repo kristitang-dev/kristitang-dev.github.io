@@ -29,4 +29,5 @@
   --hero-split: 40%;
   --section-padding: clamp(1.5rem, 4vw, 4rem);
   --max-width: 1200px;
+  --nav-height: 3.625rem;
 }
