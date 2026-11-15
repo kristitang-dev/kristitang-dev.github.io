@@ -36,6 +36,7 @@ const quiet = new Set(['somo', 'bubblebright'])
 
 const previewTags: Record<string, string[]> = {
   graintwin: ['Human–Machine Interaction', 'MR', 'Apple Vision Pro'],
+  paloma: ['Figma', 'Video'],
   'endangered-animal': ['Material'],
   'lens-of-bias': ['VR', 'Game', 'Unreal Engine'],
   'time-capsule': ['Three.js', 'Material'],

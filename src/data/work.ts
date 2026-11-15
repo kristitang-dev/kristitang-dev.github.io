@@ -102,6 +102,80 @@ export function getCategoryLabels(item: WorkItem): string[] {
 
 export const workItems: WorkItem[] = [
   {
+    id: 'paloma',
+    title: 'Paloma:l',
+    subtitle: 'Make the Journey Matter',
+    categories: [],
+    period: 'Nov 2026',
+    sortDate: '2026-11',
+    type: 'Hackathon · with Kate Ju · Role: Design Concept, Video Editing',
+    description:
+      'An anonymous note-sharing app that turns an NYC subway commute into a trail of small, unexpected messages — carried by a pigeon named Palo.',
+    tags: ['Journey', 'Anonymous notes', 'NYC subway'],
+    tools: ['Figma'],
+    image: '/images/paloma/note-1.jpg',
+    link: 'https://www.youtube.com/watch?v=sSR_Nd6q-Vc',
+    linkLabel: 'Watch the film',
+    featured: true,
+    body: [
+      'Every day, millions of New Yorkers sit shoulder to shoulder on the subway and almost never speak. The ride is treated as empty time between where you are and where you want to be — and when the train takes the signal with it, that time feels even emptier.',
+      'Paloma:l was made with Kate Ju for the 2026 UXC NYU Fall Design-a-thon, on the theme Journey Matters. Named after paloma, Spanish for pigeon, it sends a digital carrier pigeon along your subway line with anonymous notes, sketches, and replies from strangers. I worked mainly on the design concept and the film.',
+    ],
+    sections: [
+      {
+        heading: 'The ride',
+        paragraphs: [
+          'Palo delivers a few notes left by people on the same line: a passing thought, a question, a doodle. You can leave one of your own, even while the train is underground, and reply starts a private exchange rather than a public thread. There is no feed, no profile, and no count of likes.',
+          'Losing the signal is part of the idea. Notes are meant to be waiting when you go under, and anything you write waits with Palo until the city comes back.',
+        ],
+        image: '/images/paloma/screen-1.png',
+        caption: 'Palo keeps the commute company when the signal drops.',
+      },
+      {
+        heading: 'Notes, not a network',
+        paragraphs: [
+          'The prototype treats a message like a little paper note. You pick a color, add a sticker, roll it up, and send it down the line. Opening one is closer to unrolling a ticket than scrolling a chat.',
+          'We first imagined NFC tags inside the cars, then let that go. Asking someone to stand up and tap a stranger’s surface on a moving train asked too much. The discovery stays in the phone, so the surprise does not depend on extra hardware.',
+        ],
+        images: [
+          {
+            src: '/images/paloma/screen-3.png',
+            caption: 'Write a note, add a sticker, and roll it up for Palo.',
+          },
+          {
+            src: '/images/paloma/screen-5.png',
+            caption: 'Notes left along the line, collected or answered in private.',
+          },
+          {
+            src: '/images/paloma/screen-2.png',
+            caption: 'A reply is its own conversation, not a public comment.',
+          },
+        ],
+      },
+    ],
+    gallery: [
+      {
+        src: '/images/paloma/note-1.jpg',
+        caption: 'On the train, Palo reports in from Jay St.',
+      },
+      {
+        src: '/images/paloma/note-2.jpg',
+        caption: 'The same companion, after the ride.',
+      },
+      {
+        src: '/images/paloma/screen-6.png',
+        caption: 'Palo, the carrier pigeon.',
+      },
+    ],
+    galleryTitle: 'Along the way',
+    epilogue: {
+      heading: 'Between stops',
+      paragraphs: [
+        'The design-a-thon asked us to make the journey matter. Paloma:l does not try to fill the commute with more tasks. It leaves room for one unexpected note, and then lets you get off the train.',
+      ],
+    },
+  },
+  {
     id: 'graintwin',
     title: 'GrainTwin',
     subtitle: 'MR Platform with Smart PPE for Collaborative Woodworking',

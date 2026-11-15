@@ -64,9 +64,11 @@ export function Work() {
                       className="work-card__image"
                       loading="lazy"
                     />
-                    <span className="work-card__category">
-                      {getCategoryLabels(item).join(' · ')}
-                    </span>
+                    {getCategoryLabels(item).length > 0 && (
+                      <span className="work-card__category">
+                        {getCategoryLabels(item).join(' · ')}
+                      </span>
+                    )}
                   </div>
                 </Link>
 

@@ -626,7 +626,7 @@ export function DetailPage({
         </Link>
 
         <header className="detail__header">
-          <span className="detail__eyebrow">{eyebrow}</span>
+          {eyebrow && <span className="detail__eyebrow">{eyebrow}</span>}
           <h1 className="detail__title">{title}</h1>
           {subtitle && <p className="detail__subtitle">{subtitle}</p>}
           {meta && meta.length > 0 && (
