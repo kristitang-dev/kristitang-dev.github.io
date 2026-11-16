@@ -1069,13 +1069,19 @@
 }
 
 @media (max-width: 760px) {
+  .spatial__stage > .spatial__close {
+    display: none;
+  }
+
   .spatial__stage {
+    align-items: flex-start;
     padding: 0.6rem;
+    padding-top: calc(var(--nav-height) + 0.35rem);
   }
 
   .spatial-laptop {
     width: calc(100vw - 1.2rem);
-    height: calc(100dvh - 1.2rem);
+    height: calc(100dvh - var(--nav-height) - 0.95rem);
   }
 
   .spatial-abstract {
@@ -1129,7 +1135,7 @@
   }
 
   .spatial-laptop.is-tidy .spatial-grid {
-    padding: 1.15rem 0.85rem 4.6rem;
+    padding: 0.85rem 0.85rem 4.6rem;
   }
 
   .spatial-tools {

@@ -167,6 +167,7 @@ export function HeroScene() {
     controls.dampingFactor = 0.08
     controls.enablePan = false
     controls.enableZoom = false
+    controls.enableRotate = false
     controls.rotateSpeed = 0.7
     controls.minPolarAngle = 0.25
     controls.maxPolarAngle = Math.PI / 2 - 0.04
@@ -463,13 +464,14 @@ export function HeroScene() {
         if (moved > 4) {
           dragged = true
           cameraHover = false
-          canvas.classList.add('is-dragging')
+          canvas.classList.remove('is-camera')
           clearHover()
           return
         }
       }
       let spot = hitTest(event)
       cameraHover = pointerNearCamera()
+      canvas.classList.toggle('is-camera', cameraHover)
       if (cameraHover) spot = null
       if (!spot) canvas.title = cameraHover ? 'Camera' : ''
       const label = spot?.label ?? null
@@ -495,7 +497,7 @@ export function HeroScene() {
     const onLeave = () => {
       if (cameraDragging) return
       cameraHover = false
-      canvas.classList.remove('is-dragging')
+      canvas.classList.remove('is-dragging', 'is-camera')
       clearHover()
     }
 
@@ -639,7 +641,7 @@ export function HeroScene() {
     <canvas
       ref={canvasRef}
       className="hero-scene__canvas"
-      aria-label="Workspace model. Drag the desk camera to move it, or click it to open photographs. Drag elsewhere to turn the view. The bookcase opens an archive, the chair scrolls to about, and the laptop and code wall open projects."
+      aria-label="Workspace model. Drag the desk camera to move it, or click it to open photographs. The bookcase opens an archive, the chair scrolls to about, and the laptop and code wall open projects."
     />
   )
 }

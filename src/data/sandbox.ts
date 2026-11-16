@@ -19,11 +19,11 @@ export const sandboxEntries: CatalogEntry[] = [
   },
   {
     id: 'halftone',
-    title: 'Halftone Camera',
+    title: 'Halftone Moiré',
     kinds: ['code'],
     description:
-      'A p5.js camera sketch — halftone, with a little moiré effect.',
-    image: '/images/halftone.jpg',
+      'A plotted halftone on transparent film — the moiré that led to a p5.js camera.',
+    image: '/images/halftone/morrie.jpg',
     link: 'https://creative-coding-dm-gy6063e-f26.github.io/cchomework-kristitang/halftone-camera/HalftoneCamera.html',
     linkLabel: 'Open the p5 camera sketch',
     detailLinkLabel: 'Try out the halftone camera to create your own image!',
@@ -50,6 +50,10 @@ export const sandboxEntries: CatalogEntry[] = [
         scale: 0.5,
       },
       'And if it could turn Mona Lisa into dots, it could turn anything. That’s the how the halftone camera came.',
+      {
+        type: 'image',
+        src: '/images/halftone/captures.jpg',
+      },
     ],
   },
   // {

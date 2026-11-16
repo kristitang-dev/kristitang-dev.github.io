@@ -139,10 +139,6 @@
   margin: 2.5rem 0 0;
 }
 
-.detail__external--end a {
-  font-style: italic;
-}
-
 .detail__hero {
   margin: 0 0 2.5rem;
   overflow: hidden;

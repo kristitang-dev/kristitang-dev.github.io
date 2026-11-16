@@ -820,19 +820,12 @@ export function DetailPage({
         )}
 
         {tryPrompt && (
-          <p className="detail__external detail__external--icon detail__external--end">
+          <p className="detail__external detail__external--end">
             <a
               href={tryPrompt.href}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {tryPrompt.icon && (
-                <img
-                  src={tryPrompt.icon}
-                  alt=""
-                  className="detail__external-icon"
-                />
-              )}
               {tryPrompt.label}
             </a>
           </p>

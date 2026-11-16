@@ -79,8 +79,12 @@
   width: 100%;
   height: 100%;
   pointer-events: auto;
-  cursor: grab;
+  cursor: default;
   touch-action: pan-y;
+}
+
+.hero-scene__canvas.is-camera {
+  cursor: grab;
 }
 
 .hero-scene__canvas.is-link {

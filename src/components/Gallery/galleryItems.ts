@@ -44,7 +44,7 @@ const previewTags: Record<string, string[]> = {
   nutrisynth: ['AI × Interaction', 'Game'],
   somo: ['Wearable'],
   'time-space-clock': ['P5.js'],
-  halftone: ['P5.js'],
+  halftone: ['Material'],
 }
 
 const sortFromTag: Record<string, string> = {
@@ -106,9 +106,12 @@ export const galleryCards: GalleryCard[] = [
     id: entry.id,
     title: entry.title,
     description: entry.description,
-    tags: entry.kinds.map((kind) => kindLabel[kind] ?? kind),
+    tags:
+      entry.id === 'halftone'
+        ? ['Code', 'Material']
+        : entry.kinds.map((kind) => kindLabel[kind] ?? kind),
     previewTags: previewTags[entry.id],
-    sorts: sortsFor(entry.id),
+    sorts: entry.id === 'halftone' ? ['code', 'material'] : sortsFor(entry.id),
     image: entry.image,
     preview: entry.image ? undefined : entry.preview,
     to: `/garden/${entry.id}`,

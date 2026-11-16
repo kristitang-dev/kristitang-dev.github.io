@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { clearReturnOverlay, useSpatialStore } from '../../store/spatialStore'
+import { clearReturnOverlay, dismissGallery, useSpatialStore } from '../../store/spatialStore'
 import './Nav.css'
 
 const LINKS = [
@@ -14,6 +14,8 @@ export function Nav() {
   const location = useLocation()
   const navigate = useNavigate()
   const isHome = location.pathname === '/'
+  const overlay = useSpatialStore((state) => state.activeOverlay)
+  const covered = scrolled || !isHome || overlay !== null
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -32,7 +34,7 @@ export function Nav() {
   }
 
   return (
-    <header className={`nav${scrolled || !isHome ? ' nav--scrolled' : ''}`}>
+    <header className={`nav${covered ? ' nav--scrolled' : ''}${overlay ? ' nav--overlay' : ''}`}>
       <nav className="nav__inner" aria-label="Main">
         <Link
           to="/"
@@ -59,6 +61,13 @@ export function Nav() {
             </li>
           ))}
         </ul>
+        {overlay && (
+          <button type="button" className="nav__close" aria-label="Close" onClick={dismissGallery}>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M3.2 3.2 12.8 12.8M12.8 3.2 3.2 12.8" />
+            </svg>
+          </button>
+        )}
       </nav>
     </header>
   )

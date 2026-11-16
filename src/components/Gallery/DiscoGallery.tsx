@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { CameraControls, CameraControlsImpl, Html } from '@react-three/drei'
-import type { Group } from 'three'
+import { Vector3, type Group, type PerspectiveCamera } from 'three'
 import { galleryCards, type GalleryCard } from './galleryItems'
 import { dismissGallery, useSpatialStore } from '../../store/spatialStore'
 import { FlowField } from './FlowField'
@@ -102,6 +102,7 @@ function Thumbnail({
   const settled = useRef(reduceMotion)
   const drift = useRef({ x: 0, y: 0 })
   const phase = (hashId(item.id) % 1000) / 1000 * Math.PI * 2
+  const [distanceFactor, setDistanceFactor] = useState(6)
 
   useLayoutEffect(() => {
     if (!settled.current || !ref.current) return
@@ -112,7 +113,7 @@ function Thumbnail({
     )
   }, [position])
 
-  useFrame(({ clock }) => {
+  useFrame(({ camera, clock }) => {
     const group = ref.current
     if (!group) return
     if (!settled.current) {
@@ -125,20 +126,28 @@ function Thumbnail({
         position[2] - 2.6 * (1 - eased),
       )
       if (t >= 1) settled.current = true
-      return
+    } else if (!reduceMotion) {
+      const time = clock.elapsedTime
+      const selected = useSpatialStore.getState().activeProjectId === item.id
+      const goalX = selected ? 0 : Math.sin(time * 0.42 + phase) * 0.08
+      const goalY = selected ? 0 : Math.cos(time * 0.29 + phase * 1.4) * 0.055
+      drift.current.x += (goalX - drift.current.x) * 0.045
+      drift.current.y += (goalY - drift.current.y) * 0.045
+      group.position.set(
+        position[0] + drift.current.x,
+        position[1] + drift.current.y,
+        position[2],
+      )
     }
-    if (reduceMotion) return
-    const time = clock.elapsedTime
-    const selected = useSpatialStore.getState().activeProjectId === item.id
-    const goalX = selected ? 0 : Math.sin(time * 0.42 + phase) * 0.08
-    const goalY = selected ? 0 : Math.cos(time * 0.29 + phase * 1.4) * 0.055
-    drift.current.x += (goalX - drift.current.x) * 0.045
-    drift.current.y += (goalY - drift.current.y) * 0.045
-    group.position.set(
-      position[0] + drift.current.x,
-      position[1] + drift.current.y,
-      position[2],
-    )
+    // Card size uses straight-line distance, while the layout uses view depth.
+    // Match the two so zooming enlarges a project instead of only pushing it away.
+    group.updateWorldMatrix(true, false)
+    cardWorld.setFromMatrixPosition(group.matrixWorld)
+    cameraWorld.setFromMatrixPosition(camera.matrixWorld)
+    const dist = cardWorld.distanceTo(cameraWorld)
+    const depth = Math.max(Math.abs(cardWorld.applyMatrix4(camera.matrixWorldInverse).z), 0.001)
+    const next = 6 * (dist / depth)
+    setDistanceFactor((current) => (Math.abs(current - next) > 0.02 ? next : current))
   })
 
   return (
@@ -148,7 +157,7 @@ function Thumbnail({
     >
       <Html
         center
-        distanceFactor={6}
+        distanceFactor={distanceFactor}
         zIndexRange={[24, 0]}
         style={{ pointerEvents: 'auto' }}
       >
@@ -188,6 +197,8 @@ function DiscoBall({ cards }: { cards: GalleryCard[] }) {
   )
 }
 
+const cardWorld = new Vector3()
+const cameraWorld = new Vector3()
 const gesture = { pressed: false, moved: false, suppress: false }
 let voidHandled = false
 
@@ -215,9 +226,59 @@ const { ACTION } = CameraControlsImpl
 
 function GalleryCamera({ still }: { still: boolean }) {
   const controls = useRef<CameraControlsImpl>(null)
+  const gl = useThree((state) => state.gl)
+  const camera = useThree((state) => state.camera) as PerspectiveCamera
   const activeId = useSpatialStore((state) => state.activeProjectId)
   const width = useThree((state) => state.size.width)
   const narrow = width < 520
+
+  useEffect(() => {
+    const root = gl.domElement.parentElement
+    if (!root) return
+    const onWheel = (event: WheelEvent) => {
+      const rig = controls.current
+      // Pinch sets ctrlKey and camera-controls turns that into a projection zoom,
+      // which spreads the cards without changing their size. Dolly instead.
+      const pinch = event.ctrlKey
+      const pan =
+        !pinch && Math.abs(event.deltaX) > Math.abs(event.deltaY) && event.deltaX !== 0
+
+      if (pan && rig) {
+        event.preventDefault()
+        event.stopPropagation()
+        const height = gl.domElement.clientHeight || 1
+        const fov = (camera.fov * Math.PI) / 180
+        const targetDistance = rig.distance * Math.tan(fov * 0.5)
+        const truckSpeed = 2
+        rig.truck(
+          (truckSpeed * event.deltaX * targetDistance) / height,
+          (truckSpeed * event.deltaY * targetDistance) / height,
+          false,
+        )
+        return
+      }
+
+      if (event.target === gl.domElement && !pinch) return
+
+      event.preventDefault()
+      event.stopPropagation()
+      gl.domElement.dispatchEvent(
+        new WheelEvent('wheel', {
+          deltaX: 0,
+          deltaY: event.deltaY,
+          deltaZ: event.deltaZ,
+          deltaMode: event.deltaMode,
+          clientX: event.clientX,
+          clientY: event.clientY,
+          ctrlKey: false,
+          bubbles: false,
+          cancelable: true,
+        }),
+      )
+    }
+    root.addEventListener('wheel', onWheel, { capture: true, passive: false })
+    return () => root.removeEventListener('wheel', onWheel, { capture: true })
+  }, [camera, gl])
 
   const frame = (id: string | null) => {
     const rig = controls.current
@@ -257,7 +318,7 @@ function GalleryCamera({ still }: { still: boolean }) {
       smoothTime={0.7}
       draggingSmoothTime={0.04}
       dollySpeed={1}
-      dollyToCursor
+      dollyToCursor={false}
       minDistance={narrow ? 3.2 : 2.8}
       maxDistance={narrow ? 18 : 16}
       minAzimuthAngle={0}
@@ -268,11 +329,11 @@ function GalleryCamera({ still }: { still: boolean }) {
         left: ACTION.TRUCK,
         middle: ACTION.TRUCK,
         right: ACTION.TRUCK,
-        wheel: ACTION.NONE,
+        wheel: ACTION.DOLLY,
       }}
       touches={{
         one: ACTION.TOUCH_TRUCK,
-        two: ACTION.TOUCH_TRUCK,
+        two: ACTION.TOUCH_DOLLY,
         three: ACTION.TOUCH_TRUCK,
       }}
       onStart={() => {
