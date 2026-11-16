@@ -1,0 +1,205 @@
+.paloma-flip {
+  --flip-dur: 9.5s;
+  position: relative;
+  margin: 1.75rem 0 0.5rem;
+  padding: 4.25rem 1.25rem 2.75rem;
+  background: #070707;
+  color: #f3f0e8;
+  overflow: hidden;
+}
+
+.paloma-flip__label {
+  position: absolute;
+  top: 1.15rem;
+  left: 1.25rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  animation: paloma-flip-cycle var(--flip-dur) ease infinite;
+}
+
+.paloma-flip__label--problem {
+  color: #d6e36a;
+  animation-name: paloma-label-problem;
+}
+
+.paloma-flip__label--hmw {
+  color: #cbb6ef;
+  animation-name: paloma-label-hmw;
+}
+
+.paloma-flip__row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+
+.paloma-flip__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.paloma-flip__word {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  line-height: 1.2;
+  color: #f3f0e8;
+  animation: paloma-word var(--flip-dur) ease infinite;
+}
+
+.paloma-flip__strike {
+  position: absolute;
+  left: -0.15rem;
+  right: -0.15rem;
+  top: 58%;
+  height: 1px;
+  background: #cbb6ef;
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: paloma-strike var(--flip-dur) ease infinite;
+}
+
+.paloma-flip__answer {
+  max-width: 11rem;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  line-height: 1.35;
+  color: #cbb6ef;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: paloma-answer var(--flip-dur) ease infinite;
+}
+
+.paloma-flip__caption {
+  margin: 2rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: rgba(243, 240, 232, 0.5);
+}
+
+@keyframes paloma-label-problem {
+  0%,
+  34% {
+    opacity: 1;
+  }
+  46%,
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes paloma-label-hmw {
+  0%,
+  34% {
+    opacity: 0;
+  }
+  46%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes paloma-word {
+  0%,
+  32% {
+    color: #f3f0e8;
+  }
+  48%,
+  88% {
+    color: #cbb6ef;
+  }
+  100% {
+    color: #f3f0e8;
+  }
+}
+
+@keyframes paloma-strike {
+  0%,
+  32% {
+    transform: scaleX(0);
+  }
+  48%,
+  88% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes paloma-answer {
+  0%,
+  36% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  50%,
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (max-width: 640px) {
+  .paloma-flip {
+    padding: 3.75rem 1rem 1.75rem;
+  }
+
+  .paloma-flip__row {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .paloma-flip__answer {
+    max-width: 16rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paloma-flip__label,
+  .paloma-flip__word,
+  .paloma-flip__strike,
+  .paloma-flip__answer {
+    animation: none;
+  }
+
+  .paloma-flip__label--problem {
+    opacity: 0;
+  }
+
+  .paloma-flip__label--hmw,
+  .paloma-flip__answer {
+    opacity: 1;
+    transform: none;
+  }
+
+  .paloma-flip__word {
+    color: #cbb6ef;
+  }
+
+  .paloma-flip__strike {
+    transform: scaleX(1);
+  }
+}

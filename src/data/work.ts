@@ -117,63 +117,95 @@ export const workItems: WorkItem[] = [
     link: 'https://www.youtube.com/watch?v=sSR_Nd6q-Vc',
     linkLabel: 'Watch the film',
     featured: true,
-    body: [
-      'Every day, millions of New Yorkers sit shoulder to shoulder on the subway and almost never speak. The ride is treated as empty time between where you are and where you want to be — and when the train takes the signal with it, that time feels even emptier.',
-      'Paloma:l was made with Kate Ju for the 2026 UXC NYU Fall Design-a-thon, on the theme Journey Matters. Named after paloma, Spanish for pigeon, it sends a digital carrier pigeon along your subway line with anonymous notes, sketches, and replies from strangers. I worked mainly on the design concept and the film.',
-    ],
     sections: [
       {
-        heading: 'The ride',
+        heading: '', //'Intro',
         paragraphs: [
-          'Palo delivers a few notes left by people on the same line: a passing thought, a question, a doodle. You can leave one of your own, even while the train is underground, and reply starts a private exchange rather than a public thread. There is no feed, no profile, and no count of likes.',
-          'Losing the signal is part of the idea. Notes are meant to be waiting when you go under, and anything you write waits with Palo until the city comes back.',
+          'Paloma:l is our response to the 2026 UXC NYU Fall Design-a-thon, whose theme was Journey Matters. Made with Kate Ju, I worked mainly on the design concept and the film.',
+          'We started with the MTA subway. Every day, millions of New Yorkers share a car and almost never share a word. Then the train goes underground, the signal drops, and even the phone stops keeping them company.',
         ],
-        image: '/images/paloma/screen-1.png',
-        caption: 'Palo keeps the commute company when the signal drops.',
       },
       {
-        heading: 'Notes, not a network',
-        paragraphs: [
-          'The prototype treats a message like a little paper note. You pick a color, add a sticker, roll it up, and send it down the line. Opening one is closer to unrolling a ticket than scrolling a chat.',
-          'We first imagined NFC tags inside the cars, then let that go. Asking someone to stand up and tap a stranger’s surface on a moving train asked too much. The discovery stays in the phone, so the surprise does not depend on extra hardware.',
+        heading: 'Problem',
+        blocks: [
+          {
+            type: 'statement',
+            text: '“No signal, the same line, every day: an already long commute starts to feel endless.”',
+          },
+          {
+            type: 'text',
+            text: 'When we searched online, riders kept describing exactly this. It came down to three words: disconnected, repeated, and long. Going underground cuts you off from your social network, and the same stops and routine turn the ride into a loop.',
+          },
+          { type: 'palomaFlip' },
         ],
-        images: [
+      },
+      {
+        heading: 'Solution',
+        blocks: [
           {
-            src: '/images/paloma/screen-3.png',
-            caption: 'Write a note, add a sticker, and roll it up for Palo.',
+            type: 'text',
+            text: 'Each pain point became a question for the design. How might we connect riders with the people who share their line? How might we bring a spark of the unexpected into a repeated trip? And how might we turn the ride into something you look forward to?',
           },
           {
-            src: '/images/paloma/screen-5.png',
-            caption: 'Notes left along the line, collected or answered in private.',
+            type: 'text',
+            text: 'The answer is Palo, a carrier pigeon for your line (paloma is Spanish for pigeon). Palo delivers a few notes left by people on the same train: a passing thought, a question, a doodle. You can leave one of your own, even while the train is underground, and a reply opens a private exchange rather than a public thread. There is no feed, no profile, and no follower count.',
           },
           {
-            src: '/images/paloma/screen-2.png',
-            caption: 'A reply is its own conversation, not a public comment.',
+            type: 'image',
+            src: '/images/paloma/screen-1.png',
+            caption: 'Palo keeps the commute company when the signal drops.',
           },
+          {
+            type: 'text',
+            text: 'Losing the signal is part of the idea. Notes are waiting when you go under, and anything you write waits with Palo until the city comes back. A message is treated like a little paper note: pick a color, add a sticker, roll it up, and send it down the line.',
+          },
+          {
+            type: 'imageGrid',
+            fit: 'width',
+            images: [
+              {
+                src: '/images/paloma/screen-3.png',
+                caption: 'Write a note, add a sticker, and roll it up for Palo.',
+              },
+              {
+                src: '/images/paloma/screen-5.png',
+                caption: 'Notes left along the line, collected or answered in private.',
+              },
+              {
+                src: '/images/paloma/screen-2.png',
+                caption: 'A reply is its own conversation, not a public comment.',
+              },
+            ],
+          },
+          {
+            type: 'imageGrid',
+            fit: 'width',
+            images: [
+              {
+                src: '/images/paloma/note-1.jpg',
+                caption: 'On the train, Palo reports in from Jay St.',
+              },
+              {
+                src: '/images/paloma/note-2.jpg',
+                caption: 'The same companion, after the ride.',
+              },
+              {
+                src: '/images/paloma/screen-6.png',
+                caption: 'Palo, the carrier pigeon.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        heading: 'Reflection',
+        paragraphs: [
+          'What makes Paloma:l original is that we do not treat “no signal” as a bug to fix. We turn it into a cozy, zero-pressure space where commuters can share a real human moment. Instead of chasing a global algorithm, you’re simply connecting with real people riding the exact same train line. No profiles, no follower counts — just a genuine human connection.',
+          //'Two things we want to take further. First, Palo’s personality: more New York attitude, like stopping for a pizza break on the platform, or partying with other pigeons while you wait for the signal to return. Second, what a note can hold. Beyond text, a rider could leave a hand sketch, a custom sticker, or a short voicemail.',
+          'Beyond the prototype, we want to see how Paloma:l changes how a commute feels. Can a surprise note make a familiar trip feel new? Can a quick, anonymous message make you feel closer to the city? Can a tiny moment of curiosity turn lost time underground into time well spent?',
         ],
       },
     ],
-    gallery: [
-      {
-        src: '/images/paloma/note-1.jpg',
-        caption: 'On the train, Palo reports in from Jay St.',
-      },
-      {
-        src: '/images/paloma/note-2.jpg',
-        caption: 'The same companion, after the ride.',
-      },
-      {
-        src: '/images/paloma/screen-6.png',
-        caption: 'Palo, the carrier pigeon.',
-      },
-    ],
-    galleryTitle: 'Along the way',
-    epilogue: {
-      heading: 'Between stops',
-      paragraphs: [
-        'The design-a-thon asked us to make the journey matter. Paloma:l does not try to fill the commute with more tasks. It leaves room for one unexpected note, and then lets you get off the train.',
-      ],
-    },
   },
   {
     id: 'graintwin',

@@ -1,7 +1,7 @@
 export const site = {
     name: 'Kristi (Lu) Tang',
     shortName: 'KT',
-    tagline: 'Kristi Tang is a Multidisciplinary Designer.',
+    tagline: 'Kristi Tang is a Interdisciplinary Designer.',
     email: 'kristitang@outlook.com',
     instagramUrl: 'https://www.instagram.com/157k.jpg/',
     instagramHandle: '@157k.jpg',

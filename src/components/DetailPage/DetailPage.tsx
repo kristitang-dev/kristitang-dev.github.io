@@ -5,6 +5,7 @@ import {
   HistoryTimeline,
   type HistoryEra,
 } from './HistoryTimeline'
+import { PalomaFlip } from './PalomaFlip'
 import './DetailPage.css'
 
 export type DetailSectionBlock =
@@ -30,6 +31,9 @@ export type DetailSectionBlock =
       /** text-image = words left; image-text = picture left */
       layout?: 'text-image' | 'image-text'
     }
+  | { type: 'palomaFlip' }
+  /** One larger line that carries the section's main point */
+  | { type: 'statement'; text: string }
 
 export interface DetailSection {
   heading: string
@@ -396,6 +400,18 @@ function DetailSectionView({ section }: { section: DetailSection }) {
               ))}
             </div>
           )
+        }
+
+        if (block.type === 'statement') {
+          return (
+            <p key={`statement-${index}`} className="detail-section__statement">
+              {block.text}
+            </p>
+          )
+        }
+
+        if (block.type === 'palomaFlip') {
+          return <PalomaFlip key={`paloma-flip-${index}`} />
         }
 
         if (block.type === 'historyTimeline') {
