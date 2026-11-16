@@ -32,6 +32,8 @@ export type WorkSectionBlock =
       caption?: string
       layout?: 'text-image' | 'image-text'
     }
+  | { type: 'palomaFlip' }
+  | { type: 'statement'; text: string }
 
 export interface WorkSection {
   heading: string
@@ -117,6 +119,7 @@ export const workItems: WorkItem[] = [
     link: 'https://www.youtube.com/watch?v=sSR_Nd6q-Vc',
     linkLabel: 'Watch the film',
     featured: true,
+    body: [],
     sections: [
       {
         heading: '', //'Intro',
