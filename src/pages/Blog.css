@@ -356,17 +356,20 @@
 }
 
 .blog__prose p:has(> img[src*="Saint-Remy"]),
-.blog__prose p:has(> img[src*="Letter"]) {
+.blog__prose p:has(> img[src*="Letter"]),
+.blog__prose p:has(> img[src*="metro-tech"]) {
   margin-bottom: 0;
 }
 
 .blog__prose p:has(> img[src*="Saint-Remy"]) img,
-.blog__prose p:has(> img[src*="Letter"]) img {
+.blog__prose p:has(> img[src*="Letter"]) img,
+.blog__prose p:has(> img[src*="metro-tech"]) img {
   margin-bottom: 0.55rem;
 }
 
 .blog__prose p:has(> img[src*="Saint-Remy"]) + p,
-.blog__prose p:has(> img[src*="Letter"]) + p {
+.blog__prose p:has(> img[src*="Letter"]) + p,
+.blog__prose p:has(> img[src*="metro-tech"]) + p {
   max-width: 42rem;
   margin: 0 auto 1.5rem;
   text-align: center;

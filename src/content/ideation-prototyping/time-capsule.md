@@ -1,6 +1,6 @@
 ---
 title: Time Capsule
-date: 2026-11-09T00:00:00.000Z
+date: 2026-11-09
 excerpt: Archiving the sensory memories of 2026; misinterpreted by a world built only for survival.
 cover: /images/garden/time-capsule/cover.jpg
 ---
