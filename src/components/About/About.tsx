@@ -30,33 +30,6 @@ export function About() {
               </p>
             ))}
 
-            {site.cvUrl && (
-              <div className="about__cv">
-                <a
-                  href={site.cvUrl}
-                  className="about__cv-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View My CV
-                </a>
-              </div>
-            )}
-
-            <nav className="about__contact" aria-label="Contact">
-              <a className="about__contact-link" href={`mailto:${site.email}`}>
-                Contact me
-              </a>
-              <a
-                className="about__contact-link"
-                href={site.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {site.linkedinLabel}
-              </a>
-            </nav>
-
             <div className="about__tags">
               {site.about.skills.map((skill) => (
                 <span key={skill} className="about__tag">

@@ -10,7 +10,7 @@ import {
   useSpatialStore,
   type ReturnPlace,
 } from '../../store/spatialStore'
-import { DiscoGallery, galleryDragged, onGalleryVoid, ProjectTile } from '../Gallery/DiscoGallery'
+import { GalleryBackdrop, ProjectTile } from '../Gallery/DiscoGallery'
 import './SpatialLayer.css'
 
 type FilmFrame = {
@@ -177,48 +177,11 @@ function overlayReturn(path: string) {
 }
 
 
-function AbstractPanel({ tidy }: { tidy: boolean }) {
+function AbstractPanel() {
   const activeProjectId = useSpatialStore((state) => state.activeProjectId)
   const item = activeProjectId ? getGalleryCard(activeProjectId) : undefined
   const panel = useRef<HTMLElement>(null)
   const skipIntro = useRef(true)
-  const [spot, setSpot] = useState({ left: 0, top: 0, width: 280 })
-
-  useEffect(() => {
-    if (!item || tidy) return
-    let frame = 0
-    const place = () => {
-      frame = requestAnimationFrame(place)
-      const host = panel.current?.closest('.spatial-laptop')
-      if (!host || !panel.current) return
-      const anchor = document.querySelector(`[data-project-id="${CSS.escape(item.id)}"]`)
-      if (!anchor) return
-      const bounds = host.getBoundingClientRect()
-      const margin = 44
-      const width = Math.min(280, bounds.width - margin * 2)
-      const height = panel.current.offsetHeight
-      const card = anchor.getBoundingClientRect()
-      let left = card.right - bounds.left + margin
-      let top = card.top - bounds.top + card.height * 0.12
-      if (left + width > bounds.width - margin) left = card.left - bounds.left - width - margin
-      if (left < margin) {
-        left = Math.min(Math.max(margin, card.left - bounds.left), bounds.width - width - margin)
-        top = card.bottom - bounds.top + margin
-        if (top + height > bounds.height - margin) top = card.top - bounds.top - height - margin
-      }
-      top = Math.min(Math.max(margin, top), Math.max(margin, bounds.height - height - margin))
-      left = Math.min(Math.max(margin, left), Math.max(margin, bounds.width - width - margin))
-      setSpot((current) => (
-        Math.abs(current.left - left) < 0.5
-        && Math.abs(current.top - top) < 0.5
-        && current.width === width
-          ? current
-          : { left, top, width }
-      ))
-    }
-    place()
-    return () => cancelAnimationFrame(frame)
-  }, [item, tidy])
 
   useEffect(() => {
     const node = panel.current
@@ -230,17 +193,13 @@ function AbstractPanel({ tidy }: { tidy: boolean }) {
     node.style.animation = 'none'
     void node.offsetWidth
     node.style.animation = ''
-  }, [item?.id, tidy])
+  }, [item?.id])
 
   if (!item) return null
 
   return (
-    <aside
-      ref={panel}
-      className="spatial-glass spatial-abstract"
-      style={tidy ? undefined : { left: spot.left, top: spot.top, width: spot.width }}
-    >
-      {tidy && <h2 className="spatial-abstract__title">{item.title}</h2>}
+    <aside ref={panel} className="spatial-glass spatial-abstract">
+      <h2 className="spatial-abstract__title">{item.title}</h2>
       <p className="spatial-abstract__body">{item.description}</p>
       {item.tags.length > 0 && (
         <ul className="spatial-abstract__tags">
@@ -256,21 +215,12 @@ function AbstractPanel({ tidy }: { tidy: boolean }) {
   )
 }
 
-function tidyGalleryByDefault() {
-  return window.matchMedia('(max-width: 760px)').matches
-}
-
 function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
   const [query, setQuery] = useState('')
-  const [still, setStill] = useState(tidyGalleryByDefault)
-  const [gridMounted, setGridMounted] = useState(false)
-  const [gridOn, setGridOn] = useState(false)
   const [group, setGroup] = useState('all')
-  const [sortOpen, setSortOpen] = useState(false)
-  const sortMenu = useRef<HTMLDivElement>(null)
   const cards = galleryCards.filter((card) => {
     if (!galleryCardMatches(card, query)) return false
-    if (!still || group === 'all') return true
+    if (group === 'all') return true
     return card.sorts?.includes(group) ?? false
   })
 
@@ -280,99 +230,32 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
     const ids = cardIds ? cardIds.split('\n') : []
     const activeId = useSpatialStore.getState().activeProjectId
     if (activeId && ids.includes(activeId)) return
-    if (still && ids[0]) {
-      useSpatialStore.getState().setActiveProject(ids[0])
-      return
-    }
-    if (activeId) useSpatialStore.getState().setActiveProject(null)
-  }, [still, cardIds])
-
-  useEffect(() => {
-    if (still) {
-      setGridMounted(true)
-      setGridOn(true)
-      return
-    }
-    setGridOn(false)
-    setSortOpen(false)
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const timer = window.setTimeout(() => setGridMounted(false), reduce ? 0 : 620)
-    return () => window.clearTimeout(timer)
-  }, [still])
-
-  useEffect(() => {
-    if (!sortOpen) return
-    const close = (event: PointerEvent) => {
-      if (!sortMenu.current?.contains(event.target as Node)) setSortOpen(false)
-    }
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return
-      event.stopImmediatePropagation()
-      setSortOpen(false)
-    }
-    window.addEventListener('pointerdown', close)
-    window.addEventListener('keydown', onKey, true)
-    return () => {
-      window.removeEventListener('pointerdown', close)
-      window.removeEventListener('keydown', onKey, true)
-    }
-  }, [sortOpen])
+    useSpatialStore.getState().setActiveProject(ids[0] ?? null)
+  }, [cardIds])
 
   return (
-    <div className={`spatial-laptop${still ? ' is-tidy' : ''}`}>
+    <div className="spatial-laptop is-tidy">
       <div
         className="spatial-gallery"
         onClick={(event) => {
           if (exiting) return
           const target = event.target as HTMLElement
-          if (target.closest('.disco-tile, .spatial-tools, .spatial-search, .spatial-abstract, a, button')) return
-          if (galleryDragged()) return
-          onGalleryVoid(still)
+          if (target.closest('.disco-tile, .spatial-pills, .spatial-search, .spatial-abstract, a, button')) return
+          dismissGallery()
         }}
       >
-        <div className="spatial-tools">
-          <button
-            type="button"
-            className={`spatial-layout${still ? ' is-active' : ''}`}
-            aria-pressed={still}
-            onClick={() => setStill((value) => !value)}
-          >
-            Clean Up
-          </button>
-          {gridMounted && (
-            <div className="spatial-sort" ref={sortMenu}>
-              <button
-                type="button"
-                className={`spatial-sort__button${sortOpen ? ' is-open' : ''}${group !== 'all' ? ' is-active' : ''}`}
-                aria-expanded={sortOpen}
-                aria-haspopup="menu"
-                onClick={() => setSortOpen((open) => !open)}
-              >
-                Sort Up
-              </button>
-              {sortOpen && (
-                <ul className="spatial-sort__menu" role="menu" aria-label="Sort by">
-                  <li className="spatial-sort__label" role="presentation">Sort by</li>
-                  {gallerySorts.map(({ id, label }) => (
-                    <li key={id} role="none">
-                      <button
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={group === id}
-                        className={group === id ? ' is-active' : ''}
-                        onClick={() => {
-                          setGroup(id)
-                          setSortOpen(false)
-                        }}
-                      >
-                        {label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
+        <div className="spatial-pills" role="group" aria-label="Sort projects">
+          {gallerySorts.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              className={`spatial-pill${group === id ? ' is-active' : ''}`}
+              aria-pressed={group === id}
+              onClick={() => setGroup(id)}
+            >
+              {label}
+            </button>
+          ))}
         </div>
         <form className="spatial-search" role="search" onSubmit={(event) => event.preventDefault()}>
           <input
@@ -383,27 +266,18 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
             onChange={(event) => setQuery(event.target.value)}
           />
         </form>
-        <DiscoGallery cards={cards} exiting={exiting} still={still} />
-        {gridMounted && (
-          <div
-            className={`spatial-grid${gridOn ? ' is-shown' : ''}`}
-            onClick={(event) => {
-              const target = event.target as HTMLElement
-              if (target.closest('.disco-tile, .spatial-sort, a, button')) return
-              onGalleryVoid(true)
-            }}
-          >
-            <ul className="spatial-grid__list">
-              {cards.map((item) => (
-                <li key={item.id}>
-                  <ProjectTile item={item} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <GalleryBackdrop exiting={exiting} />
+        <div className="spatial-grid is-shown">
+          <ul className="spatial-grid__list">
+            {cards.map((item) => (
+              <li key={item.id}>
+                <ProjectTile item={item} />
+              </li>
+            ))}
+          </ul>
+        </div>
         {cards.length === 0 && <p className="spatial-search__empty">No matching projects</p>}
-        <AbstractPanel tidy={still} />
+        <AbstractPanel />
       </div>
     </div>
   )

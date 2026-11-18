@@ -7,7 +7,7 @@ import './HeroContent.css'
 export function Hero() {
   const scrollDown = () => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    document.getElementById('about')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
+    document.getElementById('work')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
   }
 
   return (
@@ -20,7 +20,7 @@ export function Hero() {
         </div>
       </div>
 
-      <button type="button" className="hero__scroll-hint" onClick={scrollDown} aria-label="Scroll to about">
+      <button type="button" className="hero__scroll-hint" onClick={scrollDown} aria-label="Scroll to work">
         <span className="hero__scroll-line" aria-hidden="true" />
       </button>
 

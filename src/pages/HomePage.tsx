@@ -99,10 +99,10 @@ export function HomePage() {
   return (
     <>
       <Hero />
-      <About />
       <Work />
       <Research />
       <Bookshelf />
+      <About />
     </>
   )
 }

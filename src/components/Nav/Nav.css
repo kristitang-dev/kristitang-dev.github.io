@@ -30,8 +30,17 @@
 
 .nav__brand,
 .nav__links,
-.nav__link {
+.nav__link,
+.nav__toggle {
   pointer-events: auto;
+}
+
+.nav__menu {
+  position: relative;
+}
+
+.nav__toggle {
+  display: none;
 }
 
 .nav__brand {
@@ -77,6 +86,7 @@
   display: none;
 }
 
+.nav__toggle svg,
 .nav__close svg {
   width: 0.85rem;
   height: 0.85rem;
@@ -86,6 +96,83 @@
 }
 
 @media (max-width: 760px) {
+  .nav__menu {
+    position: static;
+  }
+
+  .nav__toggle {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background-color: rgba(43, 76, 126, 0.1);
+    color: var(--blue-600);
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .nav__toggle[aria-expanded='true'] {
+    background-color: rgba(214, 59, 59, 0.1);
+    color: var(--red-500);
+  }
+
+  .nav__links {
+    position: fixed;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    z-index: 4;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.2rem var(--section-padding) 0.5rem;
+    border-bottom: 1px solid var(--grey-300);
+    background-color: rgba(242, 242, 244, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    animation: nav-menu-in 0.22s ease;
+  }
+
+  .nav__links.is-open {
+    display: flex;
+  }
+
+  .nav__links li + li {
+    border-top: 1px solid rgba(26, 26, 31, 0.08);
+  }
+
+  .nav__links .nav__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    width: 100%;
+    padding: 0.65rem 0;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    text-align: left;
+    color: var(--grey-900);
+  }
+
+  .nav__links .nav__link:hover,
+  .nav__links .nav__link:focus-visible {
+    color: var(--red-500);
+  }
+
+  .nav__links a.nav__link::after {
+    content: '↗';
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--red-500);
+  }
+
   .nav--overlay.nav--scrolled {
     background-color: transparent;
     backdrop-filter: none;
@@ -128,8 +215,20 @@
   }
 }
 
-@media (max-width: 480px) {
+
+@keyframes nav-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.3rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
   .nav__links {
-    gap: 1rem;
+    animation: none;
   }
 }
