@@ -2,6 +2,40 @@
 
 let stars = []; //the scattered stars in the universe
 
+// "Read the clock" mode: 0 = orbit view, 1 = clock centered and facing you.
+let focusAmount = 0;
+let focusTarget = 0;
+const focusButton = document.getElementById('focus-toggle');
+
+function setFocus(on) {
+  focusTarget = on ? 1 : 0;
+  // Undo any orbitControl dragging by switching to a fresh default camera.
+  setCamera(createCamera());
+  if (focusButton) {
+    focusButton.textContent = on ? 'Back to orbit' : 'Read the clock';
+    focusButton.setAttribute('aria-pressed', String(on));
+  }
+}
+
+if (focusButton) focusButton.addEventListener('click', () => setFocus(focusTarget === 0));
+
+function keyPressed() {
+  if (key === 'f' || key === 'F') setFocus(focusTarget === 0);
+  if (keyCode === ESCAPE && focusTarget === 1) setFocus(false);
+}
+
+function doubleClicked() {
+  setFocus(focusTarget === 0);
+}
+
+// The readout panels sit on the left on wide screens; is that column in use?
+function hudColumnWidth() {
+  const panel = document.querySelector('.hud__panel--earth');
+  if (!panel || height > width) return 0;
+  const box = panel.getBoundingClientRect();
+  return box.width > 0 ? box.right : 0;
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   angleMode(DEGREES);
@@ -20,10 +54,20 @@ function setup() {
 function draw() {
   background(8, 8, 12);
   orbitControl(); 
-  rotateX(-15);
+
+  focusAmount += (focusTarget - focusAmount) * 0.08;
+  const f = focusAmount;
+
+  // Wide screens: move the scene into the space right of the readout panels.
+  const hudRight = hudColumnWidth();
+  const offsetX = hudRight > 0 ? hudRight / 2 : 0;
+  translate(offsetX, 0, 0);
+
+  rotateX(lerp(-15, -20, f));
   
-  let ms = millis();
-  let s = second() + ms / 1000;
+  let ms = millis(); // animation clock
+  // Real wall-clock time, with the current fraction of a second for smooth hands.
+  let s = second() + new Date().getMilliseconds() / 1000;
   let m = minute() + s / 60;
   let h = hour() % 12 + m / 60;
 
@@ -31,7 +75,8 @@ function draw() {
   let isPortrait = height > width;
   let dim = min(width, height);
   
-  let scaleFactor = isPortrait ? 0.4 : 0.25; 
+  // Slightly smaller when the panels share the screen, so the orbit clears them.
+  let scaleFactor = isPortrait ? 0.4 : hudRight > 0 ? 0.21 : 0.25; 
   
   let rSec = dim * scaleFactor;
   let rMin = dim * (scaleFactor * 0.7); 
@@ -39,7 +84,7 @@ function draw() {
   let orbitRadius = dim * (scaleFactor * 1.3); 
 
   if (isPortrait) {
-    translate(0, -dim * 0.2, 0); 
+    translate(0, -dim * 0.2 * (1 - f * 0.5), 0); 
   }
 
   // Get calendar orbit and spin angles based on the current date and time
@@ -60,6 +105,16 @@ function draw() {
   let continuousHour = hour() + (minute() / 60.0) + (s / 3600.0);
   let spinAngle = map(continuousHour, 0, 24, 0, 360);
 
+  // Live readout (hud.js) uses the same values the scene is drawn with.
+  if (window.updateHud) {
+    updateHud({
+      orbitAngle,
+      dayOfYear,
+      daysInYear: currentYear % 4 === 0 ? 366 : 365,
+      fractionalDay,
+    });
+  }
+
   //Starts moving based on the ms
   push();
   rotateY(ms * 0.0005);
@@ -79,7 +134,7 @@ function draw() {
   rotateX(90); 
   noFill();
   strokeWeight(1);
-  stroke(255, 255, 255, 50); 
+  stroke(255, 255, 255, 50 * (1 - f)); 
   circle(0, 0, orbitRadius * 2);
   pop();
 
@@ -88,9 +143,13 @@ function draw() {
   let earthZ = sin(orbitAngle - 90) * orbitRadius;
 
   push();
-  translate(earthX, 0, earthZ);
-  rotateZ(23.5); //The earth's axial tilt. So the clock/earth's Z axis(the hour hand) is tilted.
-  rotateY(spinAngle); 
+  // In "Read the clock" mode the clock glides to the center, drops its tilt and
+  // spin so the dials face you, and grows to fill the free space.
+  translate(earthX * (1 - f), 0, earthZ * (1 - f));
+  const freeSpace = min(width - offsetX * 2, height);
+  scale(lerp(1, (freeSpace * 0.36) / rSec, f));
+  rotateZ(23.5 * (1 - f)); //The earth's axial tilt. So the clock/earth's Z axis(the hour hand) is tilted.
+  rotateY(spinAngle * (1 - f)); 
 
   // Making it a topological clock so that we can actually read earth time
   let ambientR = map(sin(ms * 0.03), -1, 1, 40, 200);

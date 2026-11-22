@@ -47,6 +47,7 @@ export function GardenDetail() {
       image={item.image}
       imageAlt={item.title}
       preview={item.preview}
+      previewNote={item.previewNote}
       body={item.body}
       gallery={item.gallery}
       galleryTitle={item.galleryTitle}

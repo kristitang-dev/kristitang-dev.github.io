@@ -16,6 +16,8 @@ export interface CatalogEntry {
   image?: string
   /** Live page embedded in place of the cover image */
   preview?: string
+  /** Small note under the live preview, with an optional link */
+  previewNote?: { text: string; link?: { href: string; label: string } }
   link?: string
   linkLabel?: string
   /** Detail-page label when it should differ from the card link */

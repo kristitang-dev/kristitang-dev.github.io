@@ -216,7 +216,8 @@ function AbstractPanel() {
 }
 
 function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
-  const [query, setQuery] = useState('')
+  // Search is hidden while the project list is short; restore setQuery with the form below.
+  const [query] = useState('')
   const [group, setGroup] = useState('all')
   const cards = galleryCards.filter((card) => {
     if (!galleryCardMatches(card, query)) return false
@@ -257,6 +258,7 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
             </button>
           ))}
         </div>
+        {/* Search hidden for now — not enough projects to need it.
         <form className="spatial-search" role="search" onSubmit={(event) => event.preventDefault()}>
           <input
             type="search"
@@ -266,6 +268,7 @@ function LaptopLayer({ exiting = false }: { exiting?: boolean }) {
             onChange={(event) => setQuery(event.target.value)}
           />
         </form>
+        */}
         <GalleryBackdrop exiting={exiting} />
         <div className="spatial-grid is-shown">
           <ul className="spatial-grid__list">

@@ -170,6 +170,27 @@
   background: #0a0a0d;
 }
 
+/* Note under a live preview: sits tight under the figure, before the body. */
+.detail__hero-note {
+  margin: -1.85rem 0 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--grey-500);
+}
+
+.detail__hero-note a {
+  color: var(--grey-700);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.detail__hero-note a:hover,
+.detail__hero-note a:focus-visible {
+  color: var(--red-500);
+}
+
 .detail__hero-preview {
   display: block;
   width: 100%;
@@ -193,6 +214,30 @@
 .detail__hero-link:hover .detail__hero-play,
 .detail__hero-link:focus-visible .detail__hero-play {
   opacity: 1;
+}
+
+/* Hover clip sits over the still, under the play button. */
+.detail__hero-motion {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: detail-hero-motion-in 0.25s ease both;
+}
+
+@keyframes detail-hero-motion-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* With a clip playing, a lighter wash so the footage stays visible. */
+.detail__hero-link--motion .detail__hero-play {
+  background: linear-gradient(to top, rgba(12, 12, 15, 0.38), rgba(12, 12, 15, 0.08) 60%);
 }
 
 .detail__hero-play-icon {
@@ -319,18 +364,27 @@
   background: #0c0c0f;
   color: var(--grey-100);
   padding: 3.5rem 0 4rem;
-  margin-top: 1rem;
+  /* Full-bleed: cancel .detail's side padding so the band runs edge to edge,
+     and its inner padding (same value) keeps the text on the page's column. */
+  margin: 1rem calc(-1 * var(--section-padding)) 0;
   overflow-x: clip;
 }
 
+/* The band ends the page: run it down to the footer, past .detail's bottom padding. */
+.detail__dark-band:last-child {
+  margin-bottom: -4rem;
+}
+
 .detail__dark-band-inner {
-  max-width: 760px;
+  /* Content column matches .detail__inner (760px) above the band; the max-width
+     adds the side padding back so the text lines up instead of shrinking. */
+  max-width: calc(760px + 2 * var(--section-padding));
   margin: 0 auto;
   padding: 0 var(--section-padding);
 }
 
 .detail--photo-grid .detail__dark-band-inner {
-  max-width: 1100px;
+  max-width: calc(1100px + 2 * var(--section-padding));
 }
 
 .detail__dark-band .detail__sections {
@@ -347,6 +401,15 @@
 .detail__dark-band .detail__gallery-title {
   color: #7de8ff;
   text-shadow: 0 0 12px rgba(125, 232, 255, 0.35);
+}
+
+/* Theme-red headings instead of cyan (Paloma:l). */
+.detail__dark-band--red .detail-section__heading,
+.detail__dark-band--red .detail-timeline__title,
+.detail__dark-band--red .detail-epilogue__heading,
+.detail__dark-band--red .detail__gallery-title {
+  color: var(--red-500);
+  text-shadow: 0 0 12px rgba(214, 59, 59, 0.4);
 }
 
 .detail__dark-band .detail-section__text,

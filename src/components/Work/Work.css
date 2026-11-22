@@ -27,30 +27,74 @@
 }
 
 .work__more {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
   width: fit-content;
   margin: 2.75rem 0 0 auto;
-  padding: 0.5rem 0.9rem;
-  border: 1px solid var(--red-500);
-  border-radius: 2px;
-  background-color: var(--red-500);
+  padding: 0.25rem 0;
+  border: none;
+  background: none;
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  font-style: italic;
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   line-height: 1.6;
-  color: white;
+  color: var(--red-500);
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease;
+}
+
+.work__more-label {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.35em;
+  transition: text-decoration-color 0.2s ease;
+}
+
+/* A gentle nudge to the right invites a click; it slides further on hover. */
+.work__more-arrow {
+  display: inline-block;
+  font-style: normal;
+  font-size: 1.15em;
+  line-height: 1;
+  animation: work-more-nudge 1.6s ease-in-out infinite;
+}
+
+@keyframes work-more-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(0.3em);
+  }
 }
 
 .work__more:hover,
 .work__more:focus-visible {
-  background-color: var(--red-700);
-  border-color: var(--red-700);
-  color: white;
+  color: var(--red-700);
+}
+
+.work__more:hover .work__more-label,
+.work__more:focus-visible .work__more-label {
+  text-decoration-color: currentColor;
+}
+
+.work__more:hover .work__more-arrow,
+.work__more:focus-visible .work__more-arrow {
+  animation: none;
+  transform: translateX(0.45em);
+  transition: transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work__more-arrow {
+    animation: none;
+  }
 }
 
 .work__more:focus-visible {

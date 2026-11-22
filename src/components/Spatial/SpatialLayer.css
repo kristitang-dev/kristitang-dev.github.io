@@ -23,23 +23,27 @@
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.78);
+  background: transparent;
   color: var(--grey-900);
   cursor: pointer;
   pointer-events: auto;
-  box-shadow: 0 10px 28px rgba(15, 27, 46, 0.1);
+  transition: color 0.2s ease;
 }
 
 .spatial__close svg {
-  width: 0.85rem;
-  height: 0.85rem;
+  width: 1rem;
+  height: 1rem;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 1.5px;
   fill: none;
 }
 
 .spatial__close:hover {
   color: var(--red-500);
+}
+
+.spatial__stage--laptop > .spatial__close {
+  top: var(--tabs-top);
 }
 
 .spatial__close:focus-visible {
@@ -66,6 +70,12 @@
 }
 
 .spatial__stage {
+  /* Desktop gallery rows share one top line: the tabs and × sit just above the
+     grid, and the grid and details card start together. The gallery box is
+     centered, so derive its top edge from .spatial-laptop's height. */
+  --gallery-top: calc((100vh - min(820px, 100vh - 3rem)) / 2);
+  --tabs-top: max(calc(var(--nav-height) + 0.85rem), calc(var(--gallery-top) + 2.25rem));
+  --grid-start: calc(var(--tabs-top) + 3.25rem - var(--gallery-top));
   position: fixed;
   inset: 0;
   z-index: 201;
@@ -101,6 +111,10 @@
   height: 100% !important;
 }
 
+.spatial-gallery > div.disco-gallery--behind {
+  height: auto !important;
+}
+
 .disco-gallery {
   position: absolute;
   inset: 0;
@@ -114,7 +128,11 @@
   cursor: grabbing;
 }
 
+/* The dots fill the window below the nav, not just the gallery box, so resizing
+   never shows the canvas edge. No ancestor has a transform, so fixed means viewport. */
 .disco-gallery--behind {
+  position: fixed;
+  inset: var(--nav-height) 0 0;
   z-index: 0;
   pointer-events: none;
 }
@@ -334,7 +352,7 @@
   flex-direction: column;
   overflow: hidden;
   pointer-events: none;
-  padding: 5.25rem 1.5rem 4.75rem;
+  padding: calc(var(--grid-start) - 0.25rem) 1.5rem 4.75rem;
   opacity: 0;
   transition: opacity 0.55s ease;
 }
@@ -345,10 +363,17 @@
 }
 
 .spatial-pills {
+  /* Line the tabs up with the grid's first column. The grid is centered in the
+     gallery box minus the details panel, so rebuild that edge from the same sizes
+     (.spatial-laptop width, .spatial-grid padding, 3 x 210px columns). */
+  --gallery-w: min(1180px, calc(100vw - 3rem));
+  --panel-room: calc(min(300px, var(--gallery-w) * 0.32) + 2.75rem);
+  --grid-room: calc(var(--gallery-w) - 1.5rem - var(--panel-room));
+  --grid-w: min(var(--grid-room), calc(630px + 2.2rem));
   position: fixed;
   z-index: 40;
-  top: calc(var(--nav-height) + 0.85rem);
-  right: calc(1.15rem + 2.5rem + 1.1rem);
+  top: var(--tabs-top);
+  left: calc((100vw - var(--gallery-w)) / 2 + 1.5rem + max(0.15rem, (var(--grid-room) - var(--grid-w)) / 2));
   display: flex;
   align-items: center;
   gap: 1.4rem;
@@ -407,7 +432,8 @@
   min-height: 0;
   grid-template-columns: repeat(3, minmax(0, 210px));
   justify-content: center;
-  align-content: safe center;
+  /* Top-aligned so a short filtered list sits right under the tabs. */
+  align-content: start;
   gap: 1.15rem 1.1rem;
   margin: 0;
   padding: 0.25rem 0.15rem 0.35rem;
@@ -484,7 +510,7 @@
 .spatial-laptop.is-tidy .spatial-abstract {
   left: auto;
   right: clamp(1rem, 2%, 1.75rem);
-  top: 6.75rem;
+  top: var(--grid-start);
   width: min(300px, 32%);
   max-height: calc(100% - 11.2rem);
   transform: none;
@@ -966,6 +992,10 @@
   .spatial-laptop.is-tidy .spatial-abstract {
     width: min(260px, 36%);
   }
+
+  .spatial-pills {
+    --panel-room: calc(min(260px, var(--gallery-w) * 0.36) + 2.25rem);
+  }
 }
 
 @media (max-width: 760px) {
@@ -992,7 +1022,8 @@
     top: auto;
     right: 0.7rem;
     left: 0.7rem;
-    bottom: 3.9rem;
+    /* 3.9rem when the search bar is shown */
+    bottom: 0.9rem;
     width: auto;
     max-height: none;
     margin: 0;
@@ -1070,9 +1101,9 @@
   .spatial-pills {
     top: calc(var(--nav-height) + 1.35rem);
     left: 1.45rem;
-    right: calc(var(--section-padding) + 2.25rem + 0.75rem);
-    justify-content: space-between;
-    gap: 0.5rem;
+    right: calc(var(--section-padding) + 2rem + 0.75rem);
+    justify-content: flex-start;
+    gap: 1.1rem;
     height: 2.25rem;
   }
 
@@ -1095,7 +1126,8 @@
   }
 
   .spatial-laptop.is-tidy:has(.spatial-abstract) .spatial-grid__list {
-    padding-bottom: 12.2rem;
+    /* 12.2rem when the search bar is shown */
+    padding-bottom: 9.2rem;
   }
 
   .spatial-speed {

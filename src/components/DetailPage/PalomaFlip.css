@@ -20,7 +20,7 @@
 }
 
 .paloma-flip__label--problem {
-  color: #d6e36a;
+  color: var(--red-500);
   animation-name: paloma-label-problem;
 }
 

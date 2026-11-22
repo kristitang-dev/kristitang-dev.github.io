@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import type { BufferAttribute, ShaderMaterial } from 'three'
+import type { BufferAttribute, PerspectiveCamera, ShaderMaterial } from 'three'
 import { perlin2 } from './perlin'
 import { useSpatialStore } from '../../store/spatialStore'
 
@@ -39,8 +39,9 @@ function createField() {
   const seeds = new Float32Array(COUNT)
 
   for (let i = 0; i < COUNT; i += 1) {
-    homes[i * 3] = (Math.random() - 0.5) * 14
-    homes[i * 3 + 1] = (Math.random() - 0.5) * 9
+    // x/y are fractions of the visible area, so the field always fills the canvas.
+    homes[i * 3] = Math.random() - 0.5
+    homes[i * 3 + 1] = Math.random() - 0.5
     homes[i * 3 + 2] = -2.6 - Math.random() * 2.4
     sizes[i] = 6 + Math.random() * 12
     seeds[i] = Math.random() * 20
@@ -62,6 +63,7 @@ export function FlowField({ exiting = false, calm = false }: { exiting?: boolean
   const fade = useRef(1)
   const uniforms = useMemo(() => ({ uAlpha: { value: 1 } }), [])
   const field = useMemo(createField, [])
+  const spanRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -73,7 +75,7 @@ export function FlowField({ exiting = false, calm = false }: { exiting?: boolean
     return () => media.removeEventListener('change', apply)
   }, [])
 
-  useFrame(({ clock }, delta) => {
+  useFrame(({ clock, camera, size }, delta) => {
     const step = Math.min(delta, 0.05)
     life.current += step
     const burst = reduceMotion.current ? 1 : Math.min(1, life.current / 0.95)
@@ -86,10 +88,23 @@ export function FlowField({ exiting = false, calm = false }: { exiting?: boolean
     const time = clock.elapsedTime * 0.045
     const { positions, homes, seeds } = field
 
+    // Visible half-extent at the field's mean depth, plus a margin so dots wrap
+    // off-screen. Recomputed every frame, so a resize just re-spreads the field.
+    const fov = ((camera as PerspectiveCamera).fov ?? 36) * (Math.PI / 180)
+    const halfH = Math.tan(fov / 2) * (camera.position.z + 3.8) * 1.12
+    const halfW = halfH * (size.width / Math.max(size.height, 1))
+    const spanX = halfW * 2
+    const spanY = halfH * 2
+    const prevX = spanRef.current.x
+    const prevY = spanRef.current.y
+    spanRef.current = { x: spanX, y: spanY }
+    const rescaleX = burst >= 1 && prevX > 0 ? spanX / prevX : 1
+    const rescaleY = burst >= 1 && prevY > 0 ? spanY / prevY : 1
+
     for (let i = 0; i < COUNT; i += 1) {
       const i3 = i * 3
-      const hx = homes[i3]
-      const hy = homes[i3 + 1]
+      const hx = homes[i3] * spanX
+      const hy = homes[i3 + 1] * spanY
       const hz = homes[i3 + 2]
 
       if (burst < 1) {
@@ -106,8 +121,8 @@ export function FlowField({ exiting = false, calm = false }: { exiting?: boolean
         continue
       }
 
-      let x = positions[i3]
-      let y = positions[i3 + 1]
+      let x = positions[i3] * rescaleX
+      let y = positions[i3 + 1] * rescaleY
       const nx = x * 0.14 + seeds[i]
       const ny = y * 0.14
       const eps = 0.22
@@ -120,10 +135,10 @@ export function FlowField({ exiting = false, calm = false }: { exiting?: boolean
         y += y * step * 1.4
       }
       if (!exiting) {
-        if (x > 7.4) x = -7.4
-        if (x < -7.4) x = 7.4
-        if (y > 4.8) y = -4.8
-        if (y < -4.8) y = 4.8
+        if (x > halfW) x = -halfW
+        if (x < -halfW) x = halfW
+        if (y > halfH) y = -halfH
+        if (y < -halfH) y = halfH
       }
       positions[i3] = x
       positions[i3 + 1] = y

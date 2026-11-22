@@ -74,6 +74,10 @@ export interface WorkItem {
   tags: string[]
   tools: string[]
   image: string
+  /** Featured Work card preview (usually a GIF). Falls back to `image`. */
+  cardImage?: string
+  /** GIF that plays over the case-study cover while it's hovered. */
+  heroMotion?: string
   /** Motion hero on the case study. Homepage cards keep the still. */
   detailImage?: string
   link?: string
@@ -90,6 +94,8 @@ export interface WorkItem {
   galleryTitle?: string
   /** From this section heading through gallery/epilogue, render on a black band */
   darkBandFrom?: string
+  /** Heading color in the dark band. Default is SoMo's glowing cyan. */
+  darkBandAccent?: 'red'
   /** Closing note at the end of the detail page */
   epilogue?: {
     heading: string
@@ -116,6 +122,12 @@ export const workItems: WorkItem[] = [
     tags: ['Anonymous Note-Sharing', 'Mobile App'],
     tools: ['Figma', 'Premiere Pro'],
     image: '/images/paloma/paloma-cover.jpg',
+    cardImage: '/images/herogallery/paloma-reply.gif',
+    // Like SoMo: the page turns dark from this section on.
+    darkBandFrom: 'Problem',
+    darkBandAccent: 'red',
+    // Opening seconds of the film, played while the cover is hovered.
+    heroMotion: '/images/herogallery/paloma.gif',
     link: 'https://www.youtube.com/watch?v=sSR_Nd6q-Vc',
     linkLabel: 'Watch the film',
     featured: true,
@@ -223,6 +235,7 @@ export const workItems: WorkItem[] = [
     tags: ['Human–Machine Interaction', 'Smart Manufacturing', 'Mixed Reality'],
     tools: ['Figma', 'Unity', 'Apple Vision Pro'],
     image: '/images/graintwin.jpg',
+    // cardImage: GIF coming later
     featured: true,
     body: [
       'During a co-op at a furniture company, I watched SMEs struggle with manual workflows, safety risks, and inefficient material use — often ending in costly waste. Traditional woodworking shops urgently need digital transformation.',
@@ -372,6 +385,7 @@ export const workItems: WorkItem[] = [
     tags: ['VR Narrative', 'Social Bias Research', 'Photography Technology'],
     tools: ['Unreal Engine', 'Blender', 'Meta'],
     image: '/images/lens-of-bias.jpg',
+    cardImage: '/images/herogallery/Trimmed_Through.gif',
     detailImage: '/images/ThroughLens.gif',
     link: 'https://vimeo.com/1106333943?share=copy',
     linkLabel: 'Watch Playthrough Video',
@@ -957,6 +971,7 @@ export const workItems: WorkItem[] = [
     tags: ['AI × Interaction', 'Speculative Game', 'Futuristic Game'],
     tools: ['Unity', 'OpenAI', 'C#', 'ElevenLabs'],
     image: '/images/nutrisynth.jpg',
+    cardImage: '/images/herogallery/LLM%20AI%20Native%20Game%20-%20NutriSynth.gif',
     detailImage: '/images/NutriSynthIntro.gif',
     link: 'https://youtu.be/ZiPtCssE_RU',
     linkLabel: 'Watch trailer',

@@ -9,6 +9,10 @@ export const sandboxEntries: CatalogEntry[] = [
     description:
       'Built this clock on the concept of adding time as the fourth dimension.',
     preview: '/sketches/time-space-clock/index.html',
+    previewNote: {
+      text: 'Time and orbit readouts are approximate, from low-precision formulas. For exact positions, see',
+      link: { href: 'https://ssd.jpl.nasa.gov/horizons/', label: 'NASA JPL Horizons' },
+    },
     link: '/sketches/time-space-clock/index.html',
     linkLabel: 'Open the clock',
     body: [

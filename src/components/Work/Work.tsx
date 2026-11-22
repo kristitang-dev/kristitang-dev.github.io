@@ -35,7 +35,7 @@ export function Work() {
                 >
                   <div className="work-card__media">
                     <img
-                      src={item.image}
+                      src={item.cardImage ?? item.image}
                       alt=""
                       className="work-card__image"
                       loading="lazy"
@@ -87,7 +87,10 @@ export function Work() {
           className="work__more"
           onClick={() => useSpatialStore.getState().setActiveOverlay('laptop')}
         >
-          See more of my work
+          <span className="work__more-label">See more of my work</span>
+          <span className="work__more-arrow" aria-hidden="true">
+            →
+          </span>
         </button>
       </div>
     </section>

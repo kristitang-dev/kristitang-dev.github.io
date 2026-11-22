@@ -11,3 +11,231 @@ body {
 canvas {
   display: block;
 }
+
+
+/* ---- Live readout ---- */
+
+.hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: rgba(255, 255, 255, 0.86);
+  -webkit-font-smoothing: antialiased;
+}
+
+.hud p,
+.hud dl,
+.hud dd,
+.hud ul {
+  margin: 0;
+  padding: 0;
+}
+
+.hud__panel {
+  position: absolute;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(14, 14, 20, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.hud__panel--time {
+  top: 1.25rem;
+  left: 1.25rem;
+}
+
+.hud__panel--earth {
+  bottom: 1.25rem;
+  left: 1.25rem;
+  width: 17.5rem;
+}
+
+.hud__label {
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.hud__time {
+  margin-top: 0.3rem;
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.hud__big {
+  margin-top: 0.15rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud__meta {
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.hud__orbit-head {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.hud__orbit {
+  flex: 0 0 auto;
+  width: 4rem;
+  height: 4rem;
+  overflow: visible;
+}
+
+.hud__orbit-path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 1;
+}
+
+.hud__orbit-sweep {
+  fill: none;
+  stroke: rgba(130, 160, 255, 0.75);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.hud__orbit-sun {
+  fill: #ffcf6b;
+}
+
+.hud__orbit-earth {
+  fill: #7fb2ff;
+  stroke: rgba(8, 8, 12, 0.9);
+  stroke-width: 1.2;
+}
+
+.hud__rows {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.8rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.7rem;
+}
+
+.hud__rows div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.hud__rows dt {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.hud__rows dd {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud__legend {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+  list-style: none;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.hud__legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hud__swatch {
+  width: 0.9rem;
+  height: 2px;
+  border-radius: 2px;
+}
+
+.hud__swatch--sec { background: rgb(255, 60, 60); }
+.hud__swatch--min { background: rgb(60, 230, 90); }
+.hud__swatch--hour { background: rgb(100, 120, 255); }
+
+/* Centers the clock and turns it to face you (sketch.js). Also: double-click, F key. */
+.hud__focus {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(14, 14, 20, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.9);
+  font: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.hud__focus:hover,
+.hud__focus:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.hud__focus:focus-visible {
+  outline: 2px solid rgba(130, 160, 255, 0.8);
+  outline-offset: 3px;
+}
+
+.hud__focus[aria-pressed='true'] {
+  border-color: rgba(130, 160, 255, 0.6);
+}
+
+/* Phones: time stays top-left, Earth panel spans the bottom, legend hides. */
+@media (max-width: 560px) {
+  .hud__panel--time {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  .hud__time {
+    font-size: 1.6rem;
+  }
+
+  .hud__focus {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .hud__panel--earth {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    width: auto;
+  }
+
+  .hud__legend {
+    display: none;
+  }
+}
+
+/* Tiny embeds (gallery thumbnails): just the clock. */
+@media (max-height: 360px), (max-width: 300px) {
+  .hud {
+    display: none;
+  }
+}

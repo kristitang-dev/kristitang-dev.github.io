@@ -30,6 +30,7 @@ export function WorkDetail() {
       meta={[item.period, item.type, item.tools.join(' · ')]}
       image={item.detailImage ?? item.image}
       imageAlt={item.title}
+      imageMotion={item.heroMotion}
       body={item.body}
       sections={item.sections}
       timeline={item.timeline}
@@ -37,6 +38,7 @@ export function WorkDetail() {
       gallery={item.gallery}
       galleryTitle={item.galleryTitle}
       darkBandFrom={item.darkBandFrom}
+      darkBandAccent={item.darkBandAccent}
       epilogue={item.epilogue}
       tags={item.tags}
       externalLink={

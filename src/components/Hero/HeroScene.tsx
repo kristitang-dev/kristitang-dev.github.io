@@ -238,6 +238,9 @@ export function HeroScene() {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       renderer.setSize(width, height, false)
       frameCamera(camera, fit, width / height, introScale)
+      // setSize wipes the canvas, and ResizeObserver fires after this frame's
+      // render, so redraw now or the scene flashes blank / clipped while resizing.
+      renderer.render(scene, camera)
     }
 
     const raycaster = new THREE.Raycaster()

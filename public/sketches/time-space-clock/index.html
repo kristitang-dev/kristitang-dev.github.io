@@ -4,11 +4,69 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Time &amp; Space</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+    />
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script src="libraries/p5.min.js"></script>
     <script src="libraries/p5.sound.min.js"></script>
   </head>
   <body>
+    <!-- Live readout over the 3D clock. Filled in by hud.js. -->
+    <div class="hud" aria-live="off">
+      <section class="hud__panel hud__panel--time" aria-label="Local time">
+        <p class="hud__label">Local time</p>
+        <p class="hud__time" id="hud-time">--:--:--</p>
+        <p class="hud__meta" id="hud-date"></p>
+        <p class="hud__meta" id="hud-zone"></p>
+      </section>
+
+      <section class="hud__panel hud__panel--earth" aria-label="Earth's position">
+        <div class="hud__orbit-head">
+          <svg class="hud__orbit" viewBox="0 0 64 64" aria-hidden="true">
+            <circle class="hud__orbit-path" cx="32" cy="32" r="26" />
+            <circle
+              class="hud__orbit-sweep"
+              id="hud-orbit-sweep"
+              cx="32"
+              cy="32"
+              r="26"
+              transform="rotate(-90 32 32)"
+            />
+            <circle class="hud__orbit-sun" cx="32" cy="32" r="3.2" />
+            <circle class="hud__orbit-earth" id="hud-orbit-earth" cx="32" cy="6" r="3" />
+          </svg>
+          <div>
+            <p class="hud__label">Earth · orbit</p>
+            <p class="hud__big" id="hud-progress">--</p>
+            <p class="hud__meta" id="hud-day"></p>
+          </div>
+        </div>
+        <dl class="hud__rows">
+          <div><dt>Calendar angle</dt><dd id="hud-angle">--</dd></div>
+          <div><dt>True longitude</dt><dd id="hud-longitude">--</dd></div>
+          <div><dt>From the Sun</dt><dd id="hud-distance">--</dd></div>
+          <div><dt>Orbital speed</dt><dd id="hud-speed">--</dd></div>
+          <div><dt>Earth rotation</dt><dd id="hud-spin">--</dd></div>
+          <div><dt>Season</dt><dd id="hud-season">--</dd></div>
+        </dl>
+      </section>
+
+      <button type="button" class="hud__focus" id="focus-toggle" aria-pressed="false">
+        Read the clock
+      </button>
+
+      <ul class="hud__legend" aria-label="Clock hands">
+        <li><span class="hud__swatch hud__swatch--sec"></span>Seconds · X–Y</li>
+        <li><span class="hud__swatch hud__swatch--min"></span>Minutes · X–Y</li>
+        <li><span class="hud__swatch hud__swatch--hour"></span>Hours · X–Z</li>
+      </ul>
+    </div>
+
+    <script src="hud.js"></script>
     <script src="sketch.js"></script>
   </body>
 </html>

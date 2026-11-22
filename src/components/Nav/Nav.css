@@ -9,13 +9,20 @@
   height: var(--nav-height);
   padding: 0 var(--section-padding);
   pointer-events: none;
-  transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
-.nav--scrolled {
+/* The bar's frost lives on a pseudo-element: a backdrop-filter on .nav itself
+   would trap the fixed mobile menu and scrim inside the 58px bar. */
+.nav--scrolled::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background-color: rgba(242, 242, 244, 0.85);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--grey-300);
+  pointer-events: none;
 }
 
 .nav__inner {
@@ -82,7 +89,22 @@
   color: var(--red-500);
 }
 
-.nav__close {
+/* External links (the CV) get an arrow so it's clear they open elsewhere. */
+a.nav__link::after {
+  content: '↗';
+  display: inline-block;
+  margin-left: 0.3em;
+  letter-spacing: 0;
+  transition: transform 0.2s ease;
+}
+
+a.nav__link:hover::after,
+a.nav__link:focus-visible::after {
+  transform: translate(0.12em, -0.12em);
+}
+
+.nav__close,
+.nav__scrim {
   display: none;
 }
 
@@ -91,8 +113,16 @@
   width: 0.85rem;
   height: 0.85rem;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 1.5px;
   fill: none;
+}
+
+/* Icons render at different sizes; a non-scaling stroke keeps every line
+   (menu, close, gallery close) the same 1.5px weight. */
+.nav__toggle svg path,
+.nav__close svg path,
+.spatial__close svg path {
+  vector-effect: non-scaling-stroke;
 }
 
 @media (max-width: 760px) {
@@ -108,15 +138,16 @@
     padding: 0;
     border: 0;
     border-radius: 999px;
-    background-color: rgba(43, 76, 126, 0.1);
-    color: var(--blue-600);
+    background-color: rgba(26, 26, 31, 0.06);
+    color: var(--grey-700);
     cursor: pointer;
     transition: background-color 0.25s ease, color 0.25s ease;
   }
 
+  .nav__toggle:hover,
   .nav__toggle[aria-expanded='true'] {
-    background-color: rgba(214, 59, 59, 0.1);
-    color: var(--red-500);
+    background-color: rgba(26, 26, 31, 0.1);
+    color: var(--grey-900);
   }
 
   .nav__links {
@@ -131,14 +162,21 @@
     gap: 0;
     padding: 0.2rem var(--section-padding) 0.5rem;
     border-bottom: 1px solid var(--grey-300);
+    /* Same fill as the scrolled top bar so the two read as one panel; a
+       heavier blur keeps busy text behind it unreadable. */
     background-color: rgba(242, 242, 244, 0.85);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     animation: nav-menu-in 0.22s ease;
   }
 
   .nav__links.is-open {
     display: flex;
+  }
+
+  /* At the very top the bar is clear over the white hero, so the sheet is white too. */
+  .nav:not(.nav--scrolled) .nav__links {
+    background-color: rgba(255, 255, 255, 0.92);
   }
 
   .nav__links li + li {
@@ -173,10 +211,20 @@
     color: var(--red-500);
   }
 
-  .nav--overlay.nav--scrolled {
-    background-color: transparent;
-    backdrop-filter: none;
-    border-bottom: 0;
+  .nav__scrim {
+    display: block;
+    position: fixed;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-color: rgba(242, 242, 244, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    pointer-events: auto;
+    touch-action: none;
+    animation: nav-scrim-in 0.22s ease;
   }
 
   .nav--overlay::before {
@@ -184,6 +232,7 @@
     position: absolute;
     inset: 0;
     z-index: 2;
+    border-bottom: 0;
     background-color: rgba(242, 242, 244, 0.72);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -202,16 +251,26 @@
     z-index: 1;
     display: grid;
     place-items: center;
-    width: 2.25rem;
+    /* Same width as .nav__toggle, so the × sits right under the menu icon. */
+    width: 2rem;
     height: 2.25rem;
     padding: 0;
     border: 0;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.72);
+    background: transparent;
     color: var(--grey-900);
     cursor: pointer;
     pointer-events: auto;
-    box-shadow: 0 10px 28px rgba(15, 27, 46, 0.1);
+    transition: color 0.2s ease;
+  }
+
+  .nav--overlay .nav__close svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .nav--overlay .nav__close:hover {
+    color: var(--red-500);
   }
 }
 
@@ -227,8 +286,18 @@
   }
 }
 
+@keyframes nav-scrim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .nav__links {
+  .nav__links,
+  .nav__scrim {
     animation: none;
   }
 }

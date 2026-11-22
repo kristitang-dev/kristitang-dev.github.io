@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { site } from '../../data/site'
 import { clearReturnOverlay, dismissGallery, useSpatialStore } from '../../store/spatialStore'
@@ -14,6 +14,8 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const linksRef = useRef<HTMLUListElement>(null)
+  const [sheetBottom, setSheetBottom] = useState<number | null>(null)
   const location = useLocation()
   const navigate = useNavigate()
   const isHome = location.pathname === '/'
@@ -30,6 +32,19 @@ export function Nav() {
   useEffect(() => {
     setMenuOpen(false)
   }, [location.pathname])
+
+  // The scrim starts under the sheet, so the sheet sits on the bare page exactly
+  // like the top bar does and the two share one color.
+  useLayoutEffect(() => {
+    if (!menuOpen || !linksRef.current) return
+    const sheet = linksRef.current
+    // offsetTop/Height ignore the slide-in transform, so this is the settled edge.
+    const measure = () => setSheetBottom(sheet.offsetTop + sheet.offsetHeight)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(sheet)
+    return () => observer.disconnect()
+  }, [menuOpen])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -86,7 +101,7 @@ export function Nav() {
             </svg>
           </button>
 
-          <ul className={`nav__links${menuOpen ? ' is-open' : ''}`} id="nav-links">
+          <ul ref={linksRef} className={`nav__links${menuOpen ? ' is-open' : ''}`} id="nav-links">
             {LINKS.map(({ label, section }) => (
               <li key={label}>
                 <button type="button" className="nav__link" onClick={() => goToSection(section)}>
@@ -109,6 +124,14 @@ export function Nav() {
             )}
           </ul>
         </div>
+        {/* Frosts the page under the open menu so busy sections don't show through. */}
+        {menuOpen && (
+          <div
+            className="nav__scrim"
+            aria-hidden="true"
+            style={sheetBottom != null ? { top: sheetBottom } : undefined}
+          />
+        )}
         {overlay && (
           <button type="button" className="nav__close" aria-label="Close" onClick={dismissGallery}>
             <svg viewBox="0 0 16 16" aria-hidden="true">

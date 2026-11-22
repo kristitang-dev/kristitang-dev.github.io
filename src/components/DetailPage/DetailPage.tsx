@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { HomeLocationState } from '../../store/spatialStore'
 import {
@@ -87,8 +87,12 @@ interface DetailPageProps {
   meta?: string[]
   image?: string
   imageAlt?: string
+  /** GIF shown over the hero while it's hovered (e.g. the film's opening seconds) */
+  imageMotion?: string
   /** Live page embedded in place of the hero image */
   preview?: string
+  /** Small note under the live preview, with an optional link */
+  previewNote?: { text: string; link?: { href: string; label: string } }
   body?: Array<
     | string
     | { type: 'image'; src: string; caption?: string; scale?: number }
@@ -118,6 +122,8 @@ interface DetailPageProps {
   galleryBlocks?: DetailGalleryBlock[]
   /** From this section heading to the end of the page, use a black band */
   darkBandFrom?: string
+  /** Heading color in the dark band. Default is glowing cyan. */
+  darkBandAccent?: 'red'
   epilogue?: {
     heading: string
     paragraphs: string[]
@@ -144,6 +150,60 @@ type TimelineBlock =
 
 function isVideoHref(href: string) {
   return /(?:youtu\.be|youtube\.com|vimeo\.com)/i.test(href)
+}
+
+/** Cover that links to the film; hovering plays a short clip from its start. */
+function HeroVideoLink({
+  href,
+  label,
+  image,
+  motion,
+}: {
+  href: string
+  label: string
+  image: string
+  motion?: string
+}) {
+  // Each hover mounts a fresh <img>, so the GIF starts again from its first frame.
+  const [play, setPlay] = useState(0)
+  const [hovered, setHovered] = useState(false)
+
+  // Warm the cache so the clip starts the moment the pointer arrives.
+  useEffect(() => {
+    if (!motion) return
+    const preload = new Image()
+    preload.src = motion
+  }, [motion])
+
+  const start = () => {
+    if (hovered) return
+    setHovered(true)
+    setPlay((count) => count + 1)
+  }
+  const stop = () => setHovered(false)
+
+  return (
+    <a
+      className={`detail__hero-link${motion ? ' detail__hero-link--motion' : ''}`}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      onPointerEnter={start}
+      onPointerLeave={stop}
+      onFocus={start}
+      onBlur={stop}
+    >
+      <img src={image} alt="" className="detail__hero-image" />
+      {motion && hovered && (
+        <img key={play} src={motion} alt="" className="detail__hero-motion" />
+      )}
+      <span className="detail__hero-play">
+        <span className="detail__hero-play-icon" aria-hidden="true" />
+        <span className="detail__hero-play-label">{label}</span>
+      </span>
+    </a>
+  )
 }
 
 function highlightCodePlaceholders(code: string) {
@@ -515,7 +575,9 @@ export function DetailPage({
   meta,
   image,
   imageAlt = '',
+  imageMotion,
   preview,
+  previewNote,
   body = [],
   sections,
   timeline,
@@ -525,6 +587,7 @@ export function DetailPage({
   galleryLayout = 'scroll',
   galleryBlocks,
   darkBandFrom,
+  darkBandAccent,
   epilogue,
   tags,
   externalLink,
@@ -683,24 +746,27 @@ export function DetailPage({
           </figure>
         )}
 
+        {preview && previewNote && (
+          <p className="detail__hero-note">
+            {previewNote.text}{' '}
+            {previewNote.link && (
+              <a href={previewNote.link.href} target="_blank" rel="noopener noreferrer">
+                {previewNote.link.label}
+                <span aria-hidden="true"> ↗</span>
+              </a>
+            )}
+          </p>
+        )}
+
         {!preview && image && (
           <figure className="detail__hero">
             {externalLink && isVideoHref(externalLink.href) ? (
-              <a
-                className="detail__hero-link"
+              <HeroVideoLink
                 href={externalLink.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={externalLink.label}
-              >
-                <img src={image} alt="" className="detail__hero-image" />
-                <span className="detail__hero-play">
-                  <span className="detail__hero-play-icon" aria-hidden="true" />
-                  <span className="detail__hero-play-label">
-                    {externalLink.label}
-                  </span>
-                </span>
-              </a>
+                label={externalLink.label}
+                image={image}
+                motion={imageMotion}
+              />
             ) : (
               <img src={image} alt={imageAlt} className="detail__hero-image" />
             )}
@@ -849,7 +915,9 @@ export function DetailPage({
       </div>
 
       {hasDarkBand && (
-        <div className="detail__dark-band">
+        <div
+          className={`detail__dark-band${darkBandAccent ? ` detail__dark-band--${darkBandAccent}` : ''}`}
+        >
           <div className="detail__dark-band-inner">
             {darkSections.length > 0 && (
               <div className="detail__sections">

@@ -69,7 +69,7 @@ export const gallerySorts: { id: string; label: string }[] = [
   { id: 'code', label: 'Code' },
 ]
 
-const heroGallery: Record<string, { still: string; motion: string }> = {
+const heroGallery: Record<string, { still: string; motion?: string }> = {
   paloma: {
     still: '/images/paloma/paloma-cover.jpg',
     motion: '/images/herogallery/paloma-reply.gif',
@@ -78,9 +78,9 @@ const heroGallery: Record<string, { still: string; motion: string }> = {
     still: '/images/NutriSynth.png',
     motion: '/images/herogallery/LLM%20AI%20Native%20Game%20-%20NutriSynth.gif',
   },
+  // No static cover: the GIF is the card image, so it plays by default.
   'lens-of-bias': {
-    still: '/images/lens-of-bias.jpg',
-    motion: '/images/herogallery/Trimmed_Through.gif',
+    still: '/images/herogallery/Trimmed_Through.gif',
   },
 }
 
