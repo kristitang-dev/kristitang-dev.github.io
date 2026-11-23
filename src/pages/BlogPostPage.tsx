@@ -6,6 +6,9 @@ import { getPost } from '../content/loadPosts'
 import { getCatalogEntry } from '../data/catalog'
 import './Blog.css'
 
+// Posts where the line right after an image is styled as a caption
+const captionSlugs = new Set(['develop-by-hand', 'creative-inquiry-evergreen'])
+
 /** Sequence titles on Develop by Hand. Wording is matched exactly. */
 const handHeadings = new Set([
   'What does it cost to take a photo?',
@@ -89,7 +92,7 @@ export function BlogPostPage() {
         )}
 
         <div
-          className={`blog__prose${post.slug === 'develop-by-hand' ? ' blog__prose--captions' : ''}`}
+          className={`blog__prose${captionSlugs.has(post.slug) ? ' blog__prose--captions' : ''}`}
         >
           <Markdown
             components={

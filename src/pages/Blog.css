@@ -346,6 +346,12 @@
   margin-bottom: 0.65rem;
 }
 
+/* Low-res detail shots: show at their real size instead of stretching */
+.blog__prose img[src$='/threads.gif'] {
+  width: min(320px, 72%);
+  height: auto;
+}
+
 .blog__prose p:has(> img.blog__img--small) {
   margin-bottom: 0;
 }

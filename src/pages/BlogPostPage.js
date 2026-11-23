@@ -6,6 +6,9 @@ import { ExternalRedirect } from '../components/ExternalRedirect';
 import { getPost } from '../content/loadPosts';
 import { getCatalogEntry } from '../data/catalog';
 import './Blog.css';
+// Posts where the line right after an image is styled as a caption
+const captionSlugs = new Set(['develop-by-hand', 'creative-inquiry-evergreen'])
+
 /** Sequence titles on Develop by Hand. Wording is matched exactly. */
 const handHeadings = new Set([
     'What does it cost to take a photo?',
@@ -64,7 +67,7 @@ export function BlogPostPage() {
         return _jsx(ExternalRedirect, { url: redirectUrl });
     }
     const videoSrc = drivePreviewSrc(post.video);
-    return (_jsx("main", { className: "blog", children: _jsxs("article", { className: "blog__inner", children: [_jsxs(Link, { to: `/garden/${series.id}`, className: "blog__back", children: ["\u2190 ", series.title] }), _jsx("time", { className: "blog__date", dateTime: post.sortDate, children: post.date }), _jsx("h1", { className: "blog__title", children: post.title }), videoSrc && (_jsx("div", { className: "blog__video", children: _jsx("iframe", { src: videoSrc, title: post.title, allow: "autoplay; fullscreen", allowFullScreen: true }) })), _jsx("div", { className: `blog__prose${post.slug === 'develop-by-hand' ? ' blog__prose--captions' : ''}`, children: _jsx(Markdown, { components: post.slug === 'develop-by-hand'
+    return (_jsx("main", { className: "blog", children: _jsxs("article", { className: "blog__inner", children: [_jsxs(Link, { to: `/garden/${series.id}`, className: "blog__back", children: ["\u2190 ", series.title] }), _jsx("time", { className: "blog__date", dateTime: post.sortDate, children: post.date }), _jsx("h1", { className: "blog__title", children: post.title }), videoSrc && (_jsx("div", { className: "blog__video", children: _jsx("iframe", { src: videoSrc, title: post.title, allow: "autoplay; fullscreen", allowFullScreen: true }) })), _jsx("div", { className: `blog__prose${captionSlugs.has(post.slug) ? ' blog__prose--captions' : ''}`, children: _jsx(Markdown, { components: post.slug === 'develop-by-hand'
                             ? {
                                 h2: ({ children }) => handHeadings.has(plainText(children).trim().replace(/\uFF1F/g, '?')) ? (_jsx("h2", { className: "blog__hand", children: children })) : (_jsx("h2", { children: children })),
                                 img: ({ src, alt }) => {

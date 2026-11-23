@@ -29,7 +29,7 @@ function parseFrontmatter(raw: string) {
     meta[key] = value
   }
 
-  return { meta, markdown: match[2].trim() }
+  return { meta, markdown: match[2].replace(/<!--[\s\S]*?-->/g, "").trim() }
 }
 
 function formatDate(iso: string) {

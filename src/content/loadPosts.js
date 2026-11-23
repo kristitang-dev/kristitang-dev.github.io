@@ -12,7 +12,7 @@ function parseFrontmatter(raw) {
         const value = line.slice(cut + 1).trim();
         meta[key] = value;
     }
-    return { meta, markdown: match[2].trim() };
+    return { meta, markdown: match[2].replace(/<!--[\s\S]*?-->/g, "").trim() };
 }
 function formatDate(iso) {
     const parsed = new Date(`${iso}T12:00:00`);

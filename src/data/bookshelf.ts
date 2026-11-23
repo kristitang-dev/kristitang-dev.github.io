@@ -40,6 +40,11 @@ export const cameraShots: { id: string; title: string; note?: string; image: str
     note: 'Commercial',
     image: '/images/herogallery/morpho.gif',
   },
+  {
+    id: 'emporium',
+    title: 'Emporium Italiani @Little Italy Nov 17, 2026',
+    image: '/images/herogallery/emporium.jpg',
+  },
 ]
 
 export const albums: CatalogEntry[] = [
