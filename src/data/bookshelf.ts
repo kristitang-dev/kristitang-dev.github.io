@@ -26,6 +26,7 @@ export const notebooks: CatalogEntry[] = [
     image: '/images/Goldfish.jpg',
     blog: true,
     courseLabel: 'Ideation & Prototyping',
+    notebookCover: '/images/garden/develop-by-hand/cover.jpg',
     body: [
       '',
     ],
