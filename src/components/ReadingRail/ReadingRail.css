@@ -1,0 +1,197 @@
+/* Reading rail: section ticks in the right margin, back link in the left,
+   beside the 760px reading column. */
+
+.reading-rail,
+.reading-back {
+  /* Distance from the window edge, mirrored on both sides. */
+  --rail-edge: max(1.25rem, calc((100vw - 760px) / 2 - 11rem));
+  /* Free space between the rail (or back link) and the reading column. */
+  --rail-room: calc((100vw - 760px) / 2 - var(--rail-edge) - 1.5rem);
+  --rail-mid: var(--grey-500);
+}
+
+.reading-rail.is-dark,
+.reading-back.is-dark {
+  --rail-mid: rgba(242, 242, 244, 0.6);
+}
+
+/* ---- Rail ---- */
+
+.reading-rail {
+  position: fixed;
+  z-index: 30;
+  top: 50%;
+  right: var(--rail-edge);
+  height: min(34vh, 280px);
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.reading-rail.is-away {
+  opacity: 0;
+}
+
+.reading-rail.is-away .reading-rail__tick {
+  pointer-events: none;
+}
+
+/* No visible line: the track only positions the ticks. */
+.reading-rail__track {
+  position: relative;
+  width: 2px;
+  height: 100%;
+}
+
+/* Each tick is a small dash across the line; the button area is larger to hit. */
+.reading-rail__tick {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  width: 1.75rem;
+  height: 1.25rem;
+  margin: -0.625rem 0 0 -0.875rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.reading-rail__tick::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--rail-mid);
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.reading-rail__tick.is-active::before,
+.reading-rail__tick:hover::before,
+.reading-rail__tick:focus-visible::before {
+  width: 16px;
+  background: var(--red-500);
+}
+
+.reading-rail__tick:focus-visible {
+  outline: none;
+}
+
+/* Section name, to the left of its tick: shown only on hover/focus. */
+.reading-rail__label {
+  position: absolute;
+  right: calc(100% + 0.15rem);
+  text-align: right;
+  max-width: min(9rem, var(--rail-room));
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--rail-mid);
+  opacity: 0;
+  transform: translateX(0.25rem);
+  transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  pointer-events: none;
+}
+
+.reading-rail__tick:hover .reading-rail__label,
+.reading-rail__tick:focus-visible .reading-rail__label {
+  opacity: 1;
+  transform: none;
+  color: var(--red-500);
+}
+
+/* ---- Back button that follows the reader ---- */
+
+.reading-back {
+  position: fixed;
+  z-index: 30;
+  top: calc(var(--nav-height) + 1.25rem);
+  left: calc(var(--rail-edge) - 0.35rem);
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  /* Long collection names wrap instead of running into the text. */
+  max-width: calc(var(--rail-room) + 0.35rem);
+  padding: 0.35rem 0.4rem;
+  line-height: 1.5;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rail-mid);
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(-0.4rem);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, color 0.2s ease;
+}
+
+.reading-back.is-shown {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.reading-back:hover,
+.reading-back:focus-visible {
+  color: var(--red-500);
+}
+
+.reading-back:focus-visible {
+  outline: 2px solid var(--red-500);
+  outline-offset: 2px;
+}
+
+.reading-back__arrow {
+  transition: transform 0.2s ease;
+}
+
+.reading-back:hover .reading-back__arrow {
+  transform: translateX(-0.2rem);
+}
+
+/* ---- Phones / narrow screens: no ticks, back pill bottom-left ---- */
+
+@media (max-width: 1079px) {
+  .reading-rail {
+    display: none;
+  }
+
+  .reading-back {
+    top: auto;
+    bottom: 1rem;
+    left: 1rem;
+    max-width: calc(100vw - 2rem);
+    align-items: center;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(242, 242, 244, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 6px 20px rgba(15, 27, 46, 0.12);
+    color: var(--grey-900);
+    transform: translateY(0.5rem);
+  }
+
+  .reading-back.is-dark {
+    background: rgba(30, 30, 36, 0.88);
+    color: #f2f2f4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reading-back,
+  .reading-rail__label {
+    transition: none;
+  }
+}

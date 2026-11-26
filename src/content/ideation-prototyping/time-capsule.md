@@ -7,7 +7,7 @@ cover: /images/garden/time-capsule/cover.jpg
 
 ## Background
 
-When you move to a new city, it forces a total filter of your physical anchors. Because I don't have many belongings with me right now, it made me reflect on the everyday items I do have. And this led me to a core question: when everything isfiltered, what is truly ‘essential’ to carry into anew life. 
+When you move to a new city, it forces a total filter of your physical anchors. Because I don't have many belongings with me right now, it made me reflect on the everyday items I do have. And this led me to a core question: when everything is filtered, what is truly ‘essential’ to carry into anew life. 
 
 And I realized the most precious things I possess are my sensory memories. So I chose some of my everyday items to represent human's 5 sensory.
 

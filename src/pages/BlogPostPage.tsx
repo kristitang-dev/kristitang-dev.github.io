@@ -1,7 +1,8 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { ExternalRedirect } from '../components/ExternalRedirect'
+import { ReadingRail } from '../components/ReadingRail/ReadingRail'
 import { getPost } from '../content/loadPosts'
 import { getCatalogEntry } from '../data/catalog'
 import './Blog.css'
@@ -52,6 +53,7 @@ export function BlogPostPage() {
   const { id, slug } = useParams<{ id: string; slug: string }>()
   const series = id ? getCatalogEntry(id) : undefined
   const post = id && slug ? getPost(id, slug) : undefined
+  const articleRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -70,7 +72,12 @@ export function BlogPostPage() {
 
   return (
     <main className="blog">
-      <article className="blog__inner">
+      <article ref={articleRef} className="blog__inner">
+        <ReadingRail
+          targetRef={articleRef}
+          headingSelector=".blog__prose h2"
+          back={{ to: `/garden/${series.id}`, label: series.title }}
+        />
         <Link to={`/garden/${series.id}`} className="blog__back">
           ← {series.title}
         </Link>

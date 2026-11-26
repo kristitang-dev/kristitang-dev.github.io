@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import type { HomeLocationState } from '../../store/spatialStore'
 import {
@@ -6,6 +6,7 @@ import {
   type HistoryEra,
 } from './HistoryTimeline'
 import { PalomaFlip } from './PalomaFlip'
+import { ReadingRail } from '../ReadingRail/ReadingRail'
 import './DetailPage.css'
 
 export type DetailSectionBlock =
@@ -594,6 +595,7 @@ export function DetailPage({
   tryPrompt,
   children,
 }: DetailPageProps) {
+  const articleRef = useRef<HTMLElement>(null)
   const blocks = resolveGalleryBlocks(
     galleryBlocks,
     gallery,
@@ -698,7 +700,16 @@ export function DetailPage({
     ) : null
 
   return (
-    <article className={`detail${usesPhotoGrid ? ' detail--photo-grid' : ''}`}>
+    <article
+      ref={articleRef}
+      className={`detail${usesPhotoGrid ? ' detail--photo-grid' : ''}`}
+    >
+      <ReadingRail
+        targetRef={articleRef}
+        headingSelector=".detail-section__heading, .detail-timeline__title, .detail__gallery-title, .detail-epilogue__heading"
+        back={{ to: backTo, label: backLabel, state: backState }}
+        darkSelector=".detail__dark-band"
+      />
       <div className="detail__inner">
         <Link to={backTo} state={backState} className="detail__back">
           ← {backLabel}

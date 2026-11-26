@@ -505,7 +505,8 @@
 }
 
 .detail-section__figure--full-bleed {
-  width: min(1100px, 92vw);
+  /* 40px narrower than the old min(1100px, 92vw) so wide images clear the section ticks. */
+  width: min(1060px, calc(92vw - 40px));
   max-width: none;
   position: relative;
   left: 50%;
