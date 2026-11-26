@@ -30,6 +30,16 @@ export const notebooks: CatalogEntry[] = [
       '',
     ],
   },
+  {
+    // Posts go in src/content/research-methods/ as Markdown files.
+    id: 'research-methods',
+    title: 'Research Methods in Creative Practice',
+    kinds: ['writing'],
+    description: 'Notes for Research Methods in Creative Practice — documented as I go.',
+    blog: true,
+    courseLabel: 'Research Methods in Creative Practice',
+    body: [],
+  },
 ]
 
 /** Light-table frames that are not bookshelf albums. */

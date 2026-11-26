@@ -12,6 +12,10 @@ export interface BlogPost {
   markdown: string
   /** Opens this URL instead of rendering the post */
   redirect?: string
+  /** Heading where the post turns into a letter of photo frames (see HandLetter) */
+  letterFrom?: string
+  /** Optional handwritten opening line for that letter */
+  letterGreeting?: string
 }
 
 function parseFrontmatter(raw: string) {
@@ -66,6 +70,8 @@ export const blogPosts: BlogPost[] = Object.entries(files).map(([path, raw]) => 
     video: meta.video,
     markdown,
     redirect: meta.redirect,
+    letterFrom: meta.letterFrom,
+    letterGreeting: meta.letterGreeting,
   }
 })
 

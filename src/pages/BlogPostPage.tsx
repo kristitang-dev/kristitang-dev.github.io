@@ -1,8 +1,9 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import Markdown from 'react-markdown'
 import { ExternalRedirect } from '../components/ExternalRedirect'
 import { ReadingRail } from '../components/ReadingRail/ReadingRail'
+import { HandLetter } from '../components/HandLetter/HandLetter'
 import { getPost } from '../content/loadPosts'
 import { getCatalogEntry } from '../data/catalog'
 import './Blog.css'
@@ -10,29 +11,18 @@ import './Blog.css'
 // Posts where the line right after an image is styled as a caption
 const captionSlugs = new Set(['develop-by-hand', 'creative-inquiry-evergreen'])
 
-/** Sequence titles on Develop by Hand. Wording is matched exactly. */
-const handHeadings = new Set([
-  'What does it cost to take a photo?',
-  'Back when a photo had to be developed by hand',
-  'Light is only the start',
-  'The picture is taken. It stays dark.',
-  'What makes a photo besides light?',
-  'Shake the formula',
-  'Then set it down',
-  'A warm hand - Hold to appreciate it',
-  'Hold to appreciate it',
-  'The print is in your hands',
-])
 
-function plainText(node: ReactNode): string {
-  if (node == null || typeof node === 'boolean') return ''
-  if (typeof node === 'string' || typeof node === 'number') return String(node)
-  if (Array.isArray(node)) return node.map(plainText).join('')
-  if (typeof node === 'object' && 'props' in node) {
-    const props = (node as { props?: { children?: ReactNode } }).props
-    return plainText(props?.children)
-  }
-  return ''
+/** Splits a post at the heading named in `letterFrom` (full-width ？ counts as ?). */
+function splitAtLetter(markdown: string, letterFrom?: string) {
+  if (!letterFrom) return { body: markdown, letter: '' }
+  const target = letterFrom.replace(/\uFF1F/g, '?').trim()
+  const lines = markdown.split('\n')
+  const at = lines.findIndex((line) => {
+    const heading = line.match(/^#{2,3}\s+(.*)$/)
+    return heading ? heading[1].replace(/\uFF1F/g, '?').trim() === target : false
+  })
+  if (at === -1) return { body: markdown, letter: '' }
+  return { body: lines.slice(0, at).join('\n'), letter: lines.slice(at).join('\n') }
 }
 
 /** Only a Drive file preview is embedded. Other URLs are ignored. */
@@ -69,13 +59,14 @@ export function BlogPostPage() {
   }
 
   const videoSrc = drivePreviewSrc(post.video)
+  const { body, letter } = splitAtLetter(post.markdown, post.letterFrom)
 
   return (
     <main className="blog">
       <article ref={articleRef} className="blog__inner">
         <ReadingRail
           targetRef={articleRef}
-          headingSelector=".blog__prose h2"
+          headingSelector=".blog__prose h2, .hand-letter__greeting"
           back={{ to: `/garden/${series.id}`, label: series.title }}
         />
         <Link to={`/garden/${series.id}`} className="blog__back">
@@ -105,12 +96,6 @@ export function BlogPostPage() {
             components={
               post.slug === 'develop-by-hand'
                 ? {
-                    h2: ({ children }) =>
-                      handHeadings.has(plainText(children).trim().replace(/\uFF1F/g, '?')) ? (
-                        <h2 className="blog__hand">{children}</h2>
-                      ) : (
-                        <h2>{children}</h2>
-                      ),
                     img: ({ src, alt }) => {
                       const url = typeof src === 'string' ? src : ''
                       const fullSize =
@@ -168,9 +153,11 @@ export function BlogPostPage() {
                     : undefined
             }
           >
-            {post.markdown}
+            {body}
           </Markdown>
         </div>
+
+        {letter && <HandLetter markdown={letter} greeting={post.letterGreeting} />}
       </article>
     </main>
   )

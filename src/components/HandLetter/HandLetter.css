@@ -1,0 +1,120 @@
+/* A sheet of ruled letter paper holding instant-photo frames. */
+
+.hand-letter {
+  --ink: #2b3a67;
+  position: relative;
+  margin: 2.5rem 0 1rem;
+  padding: 2rem 2rem 2.25rem 3.25rem;
+  border-radius: 3px;
+  background-color: #fbf8f1;
+  /* Ruled lines, plus a red margin rule on the left. */
+  background-image:
+    linear-gradient(to right, transparent 2.25rem, rgba(214, 59, 59, 0.28) 2.25rem, rgba(214, 59, 59, 0.28) calc(2.25rem + 1px), transparent calc(2.25rem + 1px)),
+    repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(43, 76, 126, 0.09) 31px, rgba(43, 76, 126, 0.09) 32px);
+  box-shadow:
+    0 1px 2px rgba(15, 27, 46, 0.06),
+    0 14px 34px rgba(15, 27, 46, 0.08);
+}
+
+.hand-letter__greeting {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-hand);
+  font-size: clamp(1.5rem, 2.6vw, 1.85rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.hand-letter__frames {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.6rem 1.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each frame is an instant print: white border, thicker bottom for writing. */
+.hand-letter__frame {
+  margin: 0;
+  padding: 0.5rem 0.5rem 0;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(15, 27, 46, 0.1),
+    0 6px 14px rgba(15, 27, 46, 0.1);
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.hand-letter__frame:hover {
+  transform: rotate(0deg) translateY(-3px);
+  box-shadow:
+    0 2px 4px rgba(15, 27, 46, 0.1),
+    0 12px 24px rgba(15, 27, 46, 0.14);
+}
+
+.hand-letter__frame figure {
+  margin: 0;
+}
+
+.hand-letter__photo {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #111;
+}
+
+.hand-letter__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+}
+
+.hand-letter__frame figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-height: 3.9rem;
+  padding: 0.5rem 0.2rem 0.45rem;
+  font-family: var(--font-hand);
+  font-size: 1.12rem;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+/* Sits under the caption on the right, so long captions never run into it. */
+.hand-letter__no {
+  align-self: flex-end;
+  margin-top: auto;
+  padding-top: 0.2rem;
+  line-height: 1;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: rgba(43, 58, 103, 0.4);
+}
+
+@media (max-width: 640px) {
+  .hand-letter {
+    padding: 1.5rem 1.1rem 1.6rem 2.25rem;
+    background-image:
+      linear-gradient(to right, transparent 1.5rem, rgba(214, 59, 59, 0.28) 1.5rem, rgba(214, 59, 59, 0.28) calc(1.5rem + 1px), transparent calc(1.5rem + 1px)),
+      repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(43, 76, 126, 0.09) 31px, rgba(43, 76, 126, 0.09) 32px);
+  }
+
+  .hand-letter__frames {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1rem;
+  }
+
+  .hand-letter__frame figcaption {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hand-letter__frame {
+    transition: none;
+  }
+}

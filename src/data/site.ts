@@ -1,7 +1,7 @@
 export const site = {
   name: 'Kristi (Lu) Tang',
   shortName: 'KT',
-  tagline: 'is a Interdisciplinary Designer',
+  tagline: 'is a spatial & interaction designer studying at NYU Integrated Design & Media',
   email: 'kristitang@outlook.com',
   linkedinUrl: 'https://www.linkedin.com/in/lu-tang-899773291',
   linkedinLabel: 'LinkedIn',

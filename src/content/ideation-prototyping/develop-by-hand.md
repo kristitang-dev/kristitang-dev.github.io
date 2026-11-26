@@ -4,6 +4,7 @@ date: 2026-10-11
 excerpt: A love letter, break-up letter, and “we need to talk” letter to the phone camera and camera roll.
 cover: /images/garden/develop-by-hand/cover.jpg
 video: https://drive.google.com/file/d/1fbl6q3gBQN3eLlxeO1pwtdwuOPLmMFhd/preview
+letterFrom: What does it cost to take a photo?
 ---
 
 *“It’s complicated.”* I shoot instant and old film cameras, and I wait for the right moment because every frame costs something. But my phone lets me shoot 50 versions of the same thing without a second thought. I love how instant and free it is, but I hate that nothing feels worth waiting for.
@@ -62,9 +63,10 @@ Oct 13 - Sucessfully integrated the IPS board!
 
 ## What does it cost to take a photo？
 
+## Back when a photo had to be developed by hand
+
 ![A mannequin hand holds the camera and a screen that reads “Press button to start”](/images/garden/develop-by-hand/press%20to%20start.jpg)
 
-## Back when a photo had to be developed by hand
 ## Light is only the start
 
 ![The screen on the hand reads “Say cheese”](/images/garden/develop-by-hand/saycheese.jpg)
