@@ -9,8 +9,9 @@ export function HeroContent() {
         <div className="hero-copy">
           <h1 className="hero-copy__name">{site.name}</h1>
           <p className="hero-copy__tagline">
-            is a <em>spatial &amp; interaction designer</em> studying at NYU Integrated
-            Design &amp; Media
+            is a <em>spatial &amp; interaction designer</em>{' '}
+            <br />
+            studying at NYU Integrated Design &amp; Media
           </p>
         </div>
       </div>

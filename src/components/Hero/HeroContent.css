@@ -13,7 +13,8 @@
   padding-top: calc(var(--section-padding) + 3rem);
   /* Push copy toward page center while staying in the left half */
   padding-left: clamp(4.5rem, 14vw, 11rem);
-  justify-content: flex-end;
+  padding-right: 0;
+  justify-content: flex-start;
 }
 
 .hero-content__right {
@@ -30,7 +31,11 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  max-width: 360px;
+  /* Wide enough for two tagline lines; may run past the 40% column into the
+     empty space beside the 3D scene. */
+  flex-shrink: 0;
+  width: max-content;
+  max-width: 26rem;
 }
 
 .hero-copy__name {
@@ -46,13 +51,13 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(1.25rem, 2.2vw, 1.625rem);
-  font-style: italic;
+  font-style: normal;
   line-height: 1.35;
   color: var(--grey-700);
 }
 
 .hero-copy__tagline em {
-  font-style: italic;
+  font-style: normal;
   color: var(--red-500);
   font-weight: 400;
 }
@@ -94,6 +99,24 @@
 .hero-scene__canvas.is-dragging,
 .hero-scene__canvas.is-dragging.is-link {
   cursor: grabbing;
+}
+
+/* Narrow laptops / tablets: the scene sits close, so the copy wraps inside its column. */
+@media (min-width: 769px) and (max-width: 1099px) {
+  .hero-content__left {
+    padding-right: var(--section-padding);
+    justify-content: flex-end;
+  }
+
+  .hero-copy {
+    flex-shrink: 1;
+    width: auto;
+    max-width: 360px;
+  }
+
+  .hero-copy__tagline br {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
