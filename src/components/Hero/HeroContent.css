@@ -101,6 +101,197 @@
   cursor: grabbing;
 }
 
+/*
+ * Mini Animator (after Unity's Animator window): Entry -> states -> Exit. A state pins that animation
+ * of the splat avatar; Exit sends her back to wandering. Opens from a small toggle; `right` is set
+ * from script so it lines up under the code wall.
+ */
+.hero-animator {
+  position: absolute;
+  right: 0;
+  bottom: 4%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  font-family: var(--font-mono);
+  opacity: 0;
+  pointer-events: none;   /* only the toggle and the open panel take clicks */
+  transition: opacity 0.4s ease;
+}
+
+.hero-animator.is-ready {
+  opacity: 1;
+}
+
+/* quiet text link rather than a button: just a word that darkens on hover */
+.hero-animator__toggle {
+  margin: 0;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--grey-300);
+  font: inherit;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.hero-animator.is-ready .hero-animator__toggle {
+  pointer-events: auto;
+}
+
+.hero-animator__toggle:hover,
+.hero-animator__toggle:focus-visible,
+.hero-animator[data-open='true'] .hero-animator__toggle {
+  color: var(--grey-700);
+}
+
+/* "↖ try clicking…"; just "click!" while the pointer is on an object; hidden while open */
+.hero-animator__hint {
+  margin: 0;
+  color: var(--grey-300);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+}
+
+.hero-animator__hint i {
+  font-style: italic;
+}
+
+.hero-animator__hint .is-pointing,
+.hero-animator.is-pointing .hero-animator__hint .is-idle {
+  display: none;
+}
+
+.hero-animator.is-pointing .hero-animator__hint .is-pointing {
+  display: inline;
+}
+
+/* hidden but still holding its space, so the toggle never shifts when the panel opens */
+.hero-animator[data-open='true'] .hero-animator__hint {
+  visibility: hidden;
+}
+
+
+/* sits above the toggle without taking up space while closed */
+.hero-animator__panel {
+  position: absolute;
+  right: 0;
+  bottom: 20px;   /* just above the toggle, over the (hidden) hint */
+  width: 240px;
+  height: 70px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+.hero-animator[data-open='true'] .hero-animator__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+}
+
+.hero-animator__wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--grey-300);
+  stroke-width: 1;
+}
+
+.hero-animator__wires marker path {
+  fill: var(--grey-500);
+  stroke: none;
+}
+
+.hero-animator__node {
+  position: absolute;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #fff;
+  font: inherit;
+  font-size: 8.5px;
+  line-height: 14px;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.hero-animator__node.is-entry {
+  top: 27px;
+  left: 4px;
+  width: 40px;
+  background: #3d7fd6;
+}
+
+.hero-animator__node.is-state {
+  left: 84px;
+  width: 72px;
+  border-color: var(--grey-300);
+  background: #fff;
+  color: var(--grey-900);
+  cursor: pointer;
+}
+
+.hero-animator__node.is-state:hover {
+  background: var(--grey-100);
+}
+
+.hero-animator__node.is-state[aria-pressed='true'] {
+  border-color: var(--grey-900);
+}
+
+.hero-animator__node.is-exit {
+  top: 27px;
+  left: 200px;
+  width: 36px;
+  background: var(--red-500);
+  cursor: pointer;
+}
+
+.hero-animator__node.is-exit:disabled {
+  background: #e9b8b8;
+  cursor: default;
+}
+
+.hero-animator__bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: #3d8ee6;
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+}
+
+.hero-animator__node.is-active .hero-animator__bar {
+  opacity: 1;
+}
+
+.hero-animator__node:focus-visible {
+  outline: 1px solid var(--grey-900);
+  outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animator,
+  .hero-animator__panel {
+    transition: none;
+  }
+}
+
 /* Narrow laptops / tablets: the scene sits close, so the copy wraps inside its column. */
 @media (min-width: 769px) and (max-width: 1099px) {
   .hero-content__left {
@@ -150,6 +341,11 @@
 
   .hero-scene--spacer {
     min-height: 58vh;
+  }
+
+  /* phones get just the room and the avatar: no hint, no Animator */
+  .hero-animator {
+    display: none;
   }
 
   .hero-copy__tagline {

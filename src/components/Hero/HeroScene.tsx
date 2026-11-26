@@ -1,9 +1,56 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { useSpatialStore } from '../../store/spatialStore'
+import type { KristiAvatar } from './KristiAvatar'
+
+/**
+ * The splat avatar. hero-room.glb is ~1.2x real scale (seat 0.51 m above the floor, desk 0.93 m), so she
+ * is scaled to match. She shows up like a snapshot: fades in at a random spot (typing in the chair or
+ * browsing the bookcase), lingers, fades away for a while, and repeats. Now and then she trips on the
+ * desk's corner instead, lies there a moment and fades. She first appears a few seconds
+ * after the room has loaded, and fades away while the visitor is using the room's objects.
+ * A small Animator-style panel lets the visitor pin a state; Exit hands her back to the shuffle.
+ * At the chair she rides on the chair pivot (seat centre, foot of the legs), facing the desk (-z).
+ */
+const AVATAR_SCALE = 1.2
+const AVATAR_SEAT = { y: -0.03, z: -0.01 }
+const CHAIR_TUCK = 0.72   // chair pulled in so her hands reach the laptop
+/** In front of the bookcase's open (+x) side, facing it; her hands stay ~0.25 m off the shelves. */
+const AVATAR_BOOKCASE = { x: 0.17, z: 0.34, turn: -Math.PI / 2 }
+const FLOOR_Y = 0.698
+/**
+ * The trip clip walks 3.6 m (at her scale) before she falls, too long for the room, so it starts
+ * `startAt` of the way in. She walks out from beside the desk's right end, angled towards the viewer,
+ * catches her foot on the desk's front-right corner and falls onto the open floor in front.
+ * x/z place the clip's origin, not where she appears.
+ */
+const AVATAR_TRIP = { x: 2.92, z: -2.2, turn: -Math.PI / 8, startAt: 0.25 }
+const TRIP_CHANCE = 0.2
+/** Animator states a visitor can pin from the panel beside the scene. */
+const AVATAR_SNAPS = [
+  { id: 'chair', label: 'Typing' },
+  { id: 'bookcase', label: 'Browsing' },
+  { id: 'trip', label: 'Tripping' },
+] as const
+type AvatarSnap = (typeof AVATAR_SNAPS)[number]['id']
+const ANIMATOR_ROWS = [12, 35, 58]   // centre y (px) of each state node in the panel
+const TRIP_LIE_STILL = 1.2   // seconds she stays down after the clip ends, before fading
+const AVATAR_SHOWN = [12, 22] as const   // seconds visible per snapshot, random within
+const AVATAR_AWAY = [5, 12] as const     // seconds gone between snapshots
+const AVATAR_COMEBACK = 2.5   // gone at least this long after the visitor stops interacting
+const AVATAR_FIRST_DELAY = 5  // seconds after the room loads before her first appearance
+const DESK_DROP = 0.06    // lower the desk (and what's on it) so her typing hands clear the top
+/** Props shrunk to the same 1.2x scale (they were modelled about twice too big next to her). */
+const LAPTOP_SCALE = 0.55
+const LAPTOP_NUDGE = { x: -0.2, z: 0.1 }   // in front of the chair, keyboard under her hands
+const CAMERA_SCALE = 0.6
+const CAMERA_X = -0.85    // its old spot is hidden behind her head; move it along the desk to the open end
+
+/** Share of the canvas's spare width moved from the room's right side to its left (0 = centred). */
+const SCENE_ALIGN_RIGHT = 0.7
 
 /** Click map for the hero model. `section` scrolls the homepage. `route` opens a site page. `url` opens an external link. */
 const HOTSPOTS: {
@@ -81,15 +128,36 @@ function frameCamera(
 ) {
   const spanX = (fit.maxX - fit.minX) * 1.14 * zoomOut
   const spanY = (fit.maxY - fit.minY) * 1.14 * zoomOut
-  const cx = (fit.minX + fit.maxX) / 2
   const cy = (fit.minY + fit.maxY) / 2
   const halfW = spanX / spanY > aspect ? spanX / 2 : (spanY / 2) * aspect
   const halfH = halfW / aspect
+  // when the canvas is wider than the room needs, slide the room towards the right edge
+  const cx = (fit.minX + fit.maxX) / 2 - (halfW - spanX / 2) * SCENE_ALIGN_RIGHT
   camera.left = cx - halfW
   camera.right = cx + halfW
   camera.top = cy + halfH
   camera.bottom = cy - halfH
   camera.updateProjectionMatrix()
+}
+
+/** Scale an object about its own origin, then drop it so its lowest point stays where it was. */
+function shrinkInPlace(obj: THREE.Object3D, factor: number) {
+  const before = new THREE.Box3().setFromObject(obj)
+  obj.scale.multiplyScalar(factor)
+  obj.updateWorldMatrix(true, true)
+  const after = new THREE.Box3().setFromObject(obj)
+  const world = obj.getWorldPosition(new THREE.Vector3())
+  world.y += before.min.y - after.min.y
+  obj.position.copy(obj.parent ? obj.parent.worldToLocal(world) : world)
+}
+
+/** Shorten an object by `amount` (world units), keeping its bottom on the floor. */
+function shortenFromBottom(obj: THREE.Object3D, amount: number) {
+  const before = new THREE.Box3().setFromObject(obj)
+  const height = before.max.y - before.min.y
+  obj.scale.y *= (height - amount) / height
+  obj.updateWorldMatrix(true, true)
+  obj.position.y += before.min.y - new THREE.Box3().setFromObject(obj).min.y
 }
 
 function hotspotFor(name: string) {
@@ -118,11 +186,14 @@ function pivotParts(root: THREE.Object3D, test: (name: string) => boolean) {
 
 export function HeroScene() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const animatorRef = useRef<HTMLDivElement>(null)
+  const [animatorOpen, setAnimatorOpen] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
+    const animatorEl = animatorRef.current
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -197,6 +268,107 @@ export function HeroScene() {
     })
 
     let model: THREE.Object3D | null = null
+    let avatar: KristiAvatar | null = null
+    let avatarShown = false
+    let avatarSnap: AvatarSnap | null = null
+    let avatarUntil = 0         // end of the current snapshot, or of the gap before the next one
+    let requestedSnap: AvatarSnap | null = null
+    let pinnedSnap: AvatarSnap | null = null   // picked in the Animator panel; null = random shuffle
+    let exitRequested = false
+    let hintPointing = false
+    const randomIn = ([min, max]: readonly [number, number]) => min + Math.random() * (max - min)
+    const randomSnap = (): AvatarSnap => {
+      const roll = Math.random()
+      return roll < TRIP_CHANCE ? 'trip' : roll < (1 + TRIP_CHANCE) / 2 ? 'chair' : 'bookcase'
+    }
+
+    // a snapshot: cut straight to a spot, mid-activity (or the whole trip, from the start)
+    const showAvatar = (time: number, snap: AvatarSnap = randomSnap()) => {
+      if (!avatar || !chairPivot) return
+      avatarShown = true
+      avatarSnap = snap
+      avatarUntil = pinnedSnap ? Infinity : time + randomIn(AVATAR_SHOWN)
+      if (snap === 'trip') {
+        scene.add(avatar.root)
+        avatar.root.position.set(AVATAR_TRIP.x, FLOOR_Y, AVATAR_TRIP.z)
+        avatar.root.rotation.set(0, AVATAR_TRIP.turn, 0)
+        avatar.play('Tripping', true, AVATAR_TRIP.startAt)
+        // pinned: trip once and stay down until another state or Exit is picked
+        if (!pinnedSnap) avatarUntil = time + avatar.duration('Tripping') * (1 - AVATAR_TRIP.startAt) + TRIP_LIE_STILL
+      } else if (snap === 'chair') {
+        chairPivot.add(avatar.root)
+        avatar.root.position.set(0, AVATAR_SEAT.y, AVATAR_SEAT.z)
+        avatar.root.rotation.set(0, Math.PI, 0)
+        avatar.play('Typing', false, Math.random())
+      } else {
+        scene.add(avatar.root)
+        avatar.root.position.set(AVATAR_BOOKCASE.x, FLOOR_Y, AVATAR_BOOKCASE.z)
+        avatar.root.rotation.set(0, AVATAR_BOOKCASE.turn, 0)
+        avatar.play('Browsing', false, Math.random())
+      }
+      avatar.fadeTo(1, 0.8)
+    }
+
+    // Animator panel: a state pins that snapshot (looping; the trip plays once and she stays down),
+    // Exit returns to the shuffle
+    const stateButtons = Array.from(animatorEl?.querySelectorAll<HTMLButtonElement>('[data-snap]') ?? [])
+    const exitButton = animatorEl?.querySelector<HTMLButtonElement>('[data-exit]') ?? null
+    const onStateClick = (event: MouseEvent) => {
+      pinnedSnap = (event.currentTarget as HTMLButtonElement).dataset.snap as AvatarSnap
+      requestedSnap = pinnedSnap
+    }
+    const onExitClick = () => {
+      if (!pinnedSnap) return
+      pinnedSnap = null
+      exitRequested = true
+    }
+    for (const button of stateButtons) button.addEventListener('click', onStateClick)
+    exitButton?.addEventListener('click', onExitClick)
+    let markedSnap: AvatarSnap | null = null
+    let markedPinned: AvatarSnap | null = null
+    const markAnimator = (snap: AvatarSnap | null) => {
+      if (snap !== markedSnap || pinnedSnap !== markedPinned) {
+        markedSnap = snap
+        markedPinned = pinnedSnap
+        for (const button of stateButtons) {
+          const id = button.dataset.snap
+          button.classList.toggle('is-active', id === snap)
+          button.setAttribute('aria-pressed', String(id === pinnedSnap))
+        }
+        animatorEl?.classList.toggle('is-pinned', pinnedSnap !== null)
+        if (exitButton) exitButton.disabled = pinnedSnap === null
+      }
+      const bar = snap && animatorEl?.querySelector<HTMLElement>(`[data-snap="${snap}"] .hero-animator__bar`)
+      if (bar && avatar) bar.style.transform = `scaleX(${Math.min(1, avatar.progress()).toFixed(3)})`
+    }
+
+    const hideAvatar = (time: number, seconds: number) => {
+      avatarShown = false
+      avatarUntil = time + randomIn(AVATAR_AWAY)
+      avatar?.fadeTo(0, seconds)
+    }
+
+    // she also steps out while the visitor is busy with the room, and returns no sooner than
+    // AVATAR_COMEBACK after (to her pinned state, if there is one)
+    const updateAvatar = (time: number, busy: boolean) => {
+      if (!avatar) return
+      if (busy) {
+        if (avatarShown) hideAvatar(time, 0.3)
+        avatarUntil = Math.max(avatarUntil, time + AVATAR_COMEBACK)
+      }
+      if (exitRequested) {
+        exitRequested = false
+        if (avatarShown) hideAvatar(time, 0.6)
+      } else if (requestedSnap && !busy) {
+        showAvatar(time, requestedSnap)
+        requestedSnap = null
+      } else if (avatarShown && time > avatarUntil) {
+        hideAvatar(time, 0.9)
+      } else if (!avatarShown && !busy && time > avatarUntil && avatar.opacity() === 0) {
+        showAvatar(time, pinnedSnap ?? randomSnap())
+      }
+      markAnimator(avatarShown ? avatarSnap : null)
+    }
     let chairPivot: THREE.Group | null = null
     let laptopPivot: THREE.Group | null = null
     let chairSpin = 0
@@ -231,6 +403,27 @@ export function HeroScene() {
     const dragWorld = new THREE.Vector3()
     const dragUp = new THREE.Vector3(0, 1, 0)
 
+    // line the Animator up under the code wall's right edge. Measured against the settled framing
+    // (not the zoomed-out intro), so it doesn't jump when the intro finishes.
+    const wallBox = new THREE.Box3()
+    const wallCorner = new THREE.Vector3()
+    const settledCamera = camera.clone()
+    const alignAnimator = () => {
+      const wall = model?.getObjectByName('LedWall')
+      if (!wall || !animatorEl || canvas.clientHeight === 0) return
+      wallBox.setFromObject(wall)
+      settledCamera.copy(camera)
+      frameCamera(settledCamera, fit, canvas.clientWidth / canvas.clientHeight)
+      settledCamera.updateMatrixWorld()
+      let maxX = -Infinity
+      for (let i = 0; i < 8; i++) {
+        wallCorner.set(i & 1 ? wallBox.max.x : wallBox.min.x, i & 2 ? wallBox.max.y : wallBox.min.y, i & 4 ? wallBox.max.z : wallBox.min.z)
+        maxX = Math.max(maxX, wallCorner.project(settledCamera).x)
+      }
+      const right = canvas.clientWidth * (1 - (maxX + 1) / 2)
+      animatorEl.style.right = `${Math.max(0, right).toFixed(1)}px`
+    }
+
     const resize = () => {
       const width = canvas.clientWidth
       const height = canvas.clientHeight
@@ -238,6 +431,7 @@ export function HeroScene() {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       renderer.setSize(width, height, false)
       frameCamera(camera, fit, width / height, introScale)
+      alignAnimator()
       // setSize wipes the canvas, and ResizeObserver fires after this frame's
       // render, so redraw now or the scene flashes blank / clipped while resizing.
       renderer.render(scene, camera)
@@ -289,10 +483,28 @@ export function HeroScene() {
       for (const light of importedLights) light.parent?.remove(light)
 
       chairPivot = pivotParts(model, (name) => name.startsWith('Chair'))
+      if (chairPivot) chairPivot.position.z -= CHAIR_TUCK
       laptopPivot = pivotParts(model, (name) => name.startsWith('Laptop'))
       cameraRig = model.getObjectByName('Camera001')
         ?? model.getObjectByName('Camera.001')
         ?? null
+      const tabletop = model.getObjectByName('Tabletop')
+      if (tabletop) tabletop.position.y -= DESK_DROP
+      for (const name of ['Cube001', 'Cube.001', 'Cube002', 'Cube.002']) {
+        const side = model.getObjectByName(name)
+        if (side) shortenFromBottom(side, DESK_DROP)
+      }
+      if (laptopPivot) {
+        laptopPivot.scale.setScalar(LAPTOP_SCALE)   // pivot sits at the base, so it stays on the desk
+        laptopPivot.position.x += LAPTOP_NUDGE.x
+        laptopPivot.position.y -= DESK_DROP
+        laptopPivot.position.z += LAPTOP_NUDGE.z
+      }
+      if (cameraRig) {
+        shrinkInPlace(cameraRig, CAMERA_SCALE)
+        cameraRig.position.x = CAMERA_X
+        cameraRig.position.y -= DESK_DROP
+      }
 
       const drop: THREE.Object3D[] = []
       model.traverse((obj) => {
@@ -384,6 +596,21 @@ export function HeroScene() {
       introLive = !reduceMotion
       introScale = reduceMotion ? 1 : 1.5
       resize()
+
+      avatarUntil = clock.getElapsedTime() + AVATAR_FIRST_DELAY
+      import('./KristiAvatar').then(({ createKristiAvatar }) => createKristiAvatar(renderer, 'Typing')).then((loaded) => {
+        if (disposed || !chairPivot) {
+          loaded.dispose()
+          return
+        }
+        avatar = loaded
+        avatar.root.scale.setScalar(AVATAR_SCALE)
+        // only the crouched part of the clip (it crouches down by 3 s and stands back up after 11 s)
+        avatar.trimClip('Looking Through Files', 'Browsing', 3.2, 10.6)
+        scene.add(avatar.spark)
+        animatorEl?.classList.add('is-ready')
+        if (import.meta.env.DEV) (window as unknown as { kristiAvatar: KristiAvatar }).kristiAvatar = avatar
+      })
     })
 
     const setPointer = (event: { clientX: number; clientY: number }) => {
@@ -552,10 +779,21 @@ export function HeroScene() {
 
     const clock = new THREE.Clock()
     let raf = 0
+    let lastTime = 0
     const animate = () => {
       const time = clock.getElapsedTime()
       if (!reduceMotion) scrollUniform.value = time * 0.22
       const spatial = useSpatialStore.getState()
+      const busy = hovered !== null || cameraHover || cameraDragging || spatial.activeOverlay !== null
+      updateAvatar(time, busy)
+      // the hint cheers "click!" while the pointer is on an object
+      const pointing = hovered !== null || cameraHover
+      if (pointing !== hintPointing) {
+        hintPointing = pointing
+        animatorEl?.classList.toggle('is-pointing', pointing)
+      }
+      avatar?.update(time - lastTime)
+      lastTime = time
       const chairGoal = (hovered === 'About' ? -0.72 : 0) + (reduceMotion ? 0 : Math.sin(time * 0.85) * 0.04)
       const laptopGoal = hovered === 'Work' || spatial.activeOverlay === 'laptop' ? 0.22 : 0
       const cameraGoal = cameraHover || spatial.activeOverlay === 'camera' ? 0.22 : 0
@@ -624,6 +862,9 @@ export function HeroScene() {
       traceDot.geometry.dispose()
       ;(traceDot.material as THREE.MeshBasicMaterial).dispose()
       scene.remove(traceDot)
+      avatar?.dispose()
+      for (const button of stateButtons) button.removeEventListener('click', onStateClick)
+      exitButton?.removeEventListener('click', onExitClick)
       if (model) {
         model.traverse((obj) => {
           const mesh = obj as THREE.Mesh
@@ -641,10 +882,68 @@ export function HeroScene() {
   }, [navigate])
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="hero-scene__canvas"
-      aria-label="Workspace model. Drag the desk camera to move it, or click it to open photographs. The bookcase opens an archive, the chair scrolls to about, and the laptop and code wall open projects."
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        className="hero-scene__canvas"
+        aria-label="Workspace model. Drag the desk camera to move it, or click it to open photographs. The bookcase opens an archive, the chair scrolls to about, and the laptop and code wall open projects."
+      />
+      {/* className is set imperatively (is-ready, is-pinned), so React only owns data-open here */}
+      <div ref={animatorRef} className="hero-animator" data-open={animatorOpen}>
+        <div
+          id="hero-animator-panel"
+          className="hero-animator__panel"
+          role="group"
+          aria-label="Kristi's animator: pick a state, Exit to let her wander"
+          inert={!animatorOpen}
+        >
+          <svg className="hero-animator__wires" viewBox="0 0 240 70" aria-hidden="true">
+            <defs>
+              <marker id="hero-animator-arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0 0 L6 3 L0 6 z" />
+              </marker>
+            </defs>
+            {ANIMATOR_ROWS.map((y) => (
+              <g key={y}>
+                <path d={`M44 35 C64 35 64 ${y} 83 ${y}`} markerEnd="url(#hero-animator-arrow)" />
+                <path d={`M156 ${y} C176 ${y} 176 35 199 35`} markerEnd="url(#hero-animator-arrow)" />
+              </g>
+            ))}
+          </svg>
+          <span className="hero-animator__node is-entry">Entry</span>
+          {AVATAR_SNAPS.map((snap, i) => (
+            <button
+              key={snap.id}
+              type="button"
+              className="hero-animator__node is-state"
+              style={{ top: ANIMATOR_ROWS[i] - 8 }}
+              data-snap={snap.id}
+              aria-pressed="false"
+            >
+              {snap.label}
+              <i className="hero-animator__bar" />
+            </button>
+          ))}
+          <button type="button" className="hero-animator__node is-exit" data-exit disabled>
+            Exit
+          </button>
+        </div>
+        <p className="hero-animator__hint">
+          <span className="is-idle">
+            <span aria-hidden="true">↖</span> <i>try clicking objects</i>
+          </span>
+          <i className="is-pointing" aria-hidden="true">click!</i>
+        </p>
+        <button
+          type="button"
+          className="hero-animator__toggle"
+          aria-expanded={animatorOpen}
+          aria-controls="hero-animator-panel"
+          onClick={() => setAnimatorOpen((open) => !open)}
+        >
+          Animator
+        </button>
+      </div>
+    </>
   )
 }
